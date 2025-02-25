@@ -17,6 +17,45 @@ const envs: Record<string, Partial<StackInput>> = {
   // },
   dev: {
     // 開発環境のパラメータ
+    modelRegion: 'us-west-2',
+    modelIds: [
+      'anthropic.claude-3-7-sonnet-20250219-v1:0',
+      'anthropic.claude-3-5-sonnet-20240620-v1:0',
+      'anthropic.claude-3-5-haiku-20241022-v1:0',
+      'anthropic.claude-3-5-sonnet-20241022-v2:0',
+      'anthropic.claude-3-opus-20240229-v1:0',
+      'anthropic.claude-3-sonnet-20240229-v1:0',
+      'anthropic.claude-3-haiku-20240307-v1:0',
+      'meta.llama3-1-70b-instruct-v1:0',
+      'meta.llama3-1-8b-instruct-v1:0',
+      'cohere.command-r-plus-v1:0',
+      'cohere.command-r-v1:0',
+      'mistral.mistral-large-2407-v1:0',
+    ],
+    imageGenerationModelIds: [
+      'stability.stable-diffusion-xl-v1',
+      'stability.stable-image-ultra-v1:1',
+      'stability.stable-image-core-v1:1',
+      'amazon.titan-image-generator-v2:0',
+      'amazon.titan-image-generator-v1',
+      'stability.sd3-large-v1:0',
+      'stability.sd3-5-large-v1:0',
+      'stability.stable-image-core-v1:0',
+      'stability.stable-image-ultra-v1:0',
+    ],
+    ragEnabled: true,
+    kendraIndexArn:
+      'arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe',
+    kendraDataSourceBucketName: 'jre-regulations',
+    agentEnabled: true,
+    agents: [
+      {
+        displayName: 'Code Interpreter',
+        agentId: 'TWU9YT34HX',
+        aliasId: 'GDTUY62A3K',
+      },
+    ],
+    allowedSignUpEmailDomains: ['jreast.co.jp'],
   },
   staging: {
     // ステージング環境のパラメータ

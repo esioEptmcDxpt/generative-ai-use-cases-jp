@@ -3,7 +3,7 @@ import InputChatContent from '../components/InputChatContent';
 import { create } from 'zustand';
 import useChat from '../hooks/useChat';
 import useRag from '../hooks/useRag';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ChatMessage from '../components/ChatMessage';
 import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
@@ -14,6 +14,7 @@ import { PiPlus } from 'react-icons/pi';
 import { RagPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import queryString from 'query-string';
+import Alert from '../components/Alert';
 
 type StateType = {
   content: string;
@@ -71,7 +72,7 @@ const RagPage: React.FC = () => {
     <>
       <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-          RAG チャット
+          RAG チャット (AI文書検索システム)
         </div>
 
         <div className="mt-2 flex w-full items-end justify-center lg:mt-0">
@@ -90,6 +91,40 @@ const RagPage: React.FC = () => {
               <KendraIcon className="size-[64px] fill-gray-400" />
               <PiPlus className="text-2xl text-gray-400" />
               <BedrockIcon className="fill-gray-400" />
+            </div>
+          </div>
+        )}
+
+        {isEmpty && (
+          <div
+            className={`absolute inset-x-0 top-28 m-auto flex justify-center`}>
+            <div>
+              <div className="pl-32">
+                <div>👆モデルを選択できます</div>
+                <div>＜おすすめのモデル＞</div>
+                <ul>
+                  <li>万能型：anthropic.claude-3-5-sonnet-20240620-v1:0</li>
+                  <li>スピード型：anthropic.claude-3-5-haiku-20241022-v1:0</li>
+                </ul>
+              </div>
+              <Alert severity="info">
+                <div>
+                  RAG (Retrieval Augmented Generation)
+                  手法のチャットを行うことができます。
+                </div>
+                <div>
+                  メッセージが入力されると Amazon Kendra
+                  でドキュメントを検索し、検索したドキュメントをもとに LLM
+                  が回答を生成します。
+                </div>
+                <div className="font-bold">
+                  Amazon Kendra の検索のみを実行する場合は
+                  <Link className="text-aws-smile" to="/kendra">
+                    こちら
+                  </Link>
+                  のページに遷移してください。
+                </div>
+              </Alert>
             </div>
           </div>
         )}

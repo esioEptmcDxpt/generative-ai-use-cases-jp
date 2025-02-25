@@ -19,6 +19,7 @@ import {
   PiPenNib,
 } from 'react-icons/pi';
 import AwsIcon from '../assets/aws.svg?react';
+import DxIcon from '../assets/DX_Logo_2024.svg?react';
 import useInterUseCases from '../hooks/useInterUseCases';
 import {
   AgentPageQueryParams,
@@ -267,6 +268,7 @@ const LandingPage: React.FC = () => {
       <div className="bg-aws-squid-ink flex flex-col items-center justify-center px-3 py-5 text-xl font-semibold text-white lg:flex-row">
         <AwsIcon className="mr-5 size-20" />
         ではじめる生成 AI
+        <DxIcon className="ml-5 size-20" />
       </div>
 
       <div className="mx-3 mb-6 mt-5 flex flex-col items-center justify-center text-xs lg:flex-row">

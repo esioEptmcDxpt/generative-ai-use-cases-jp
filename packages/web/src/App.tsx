@@ -88,11 +88,11 @@ const App: React.FC = () => {
       : null,
     ragKnowledgeBaseEnabled
       ? {
-          label: 'RAG チャット',
+          label: '電力AI (RAG) チャット',
           to: '/rag-knowledge-base',
           icon: <PiChatCircleText />,
           display: 'usecase' as const,
-          sub: 'Knowledge Base',
+          sub: '文書検索🔎',
         }
       : null,
     agentEnabled && !inlineAgents

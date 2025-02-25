@@ -1,9 +1,7 @@
 {
   "app": "npx ts-node --prefer-ts-exts bin/generative-ai-use-cases.ts",
   "watch": {
-    "include": [
-      "**"
-    ],
+    "include": ["**"],
     "exclude": [
       "README.md",
       "cdk*.json",
@@ -17,10 +15,10 @@
     ]
   },
   "context": {
-    "env": "",
-    "ragEnabled": false,
-    "kendraIndexArn": null,
-    "kendraDataSourceBucketName": null,
+    "env": "dev",
+    "ragEnabled": true,
+    "kendraIndexArn": "arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe",
+    "kendraDataSourceBucketName": "jre-regulations",
     "kendraIndexScheduleEnabled": false,
     "kendraIndexScheduleCreateCron": null,
     "kendraIndexScheduleDeleteCron": null,
@@ -33,27 +31,44 @@
     "rerankingModelId": null,
     "queryDecompositionEnabled": false,
     "selfSignUpEnabled": true,
-    "allowedSignUpEmailDomains": null,
+    "allowedSignUpEmailDomains": ["jreast.co.jp"],
     "samlAuthEnabled": false,
     "samlCognitoDomainName": "",
     "samlCognitoFederatedIdentityProviderName": "",
     "hiddenUseCases": {},
-    "modelRegion": "us-east-1",
+    "modelRegion": "us-west-2",
     "modelIds": [
-      "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
-      "us.anthropic.claude-3-5-haiku-20241022-v1:0",
+      "anthropic.claude-3-5-sonnet-20240620-v1:0",
+      "anthropic.claude-3-5-haiku-20241022-v1:0",
+      "anthropic.claude-3-7-sonnet-20250219-v1:0",
+      "anthropic.claude-3-5-sonnet-20241022-v2:0",
       "us.amazon.nova-pro-v1:0",
       "us.amazon.nova-lite-v1:0",
-      "us.amazon.nova-micro-v1:0"
+      "us.amazon.nova-micro-v1:0",
+      "meta.llama3-1-70b-instruct-v1:0",
+      "meta.llama3-1-8b-instruct-v1:0",
+      "cohere.command-r-plus-v1:0",
+      "cohere.command-r-v1:0",
+      "mistral.mistral-large-2407-v1:0"
     ],
     "imageGenerationModelIds": [
-      "amazon.nova-canvas-v1:0"
+      "stability.stable-image-core-v1:0",
+      "stability.sd3-large-v1:0",
+      "stability.stable-image-ultra-v1:0",
+      "amazon.titan-image-generator-v2:0",
+      "amazon.titan-image-generator-v1"
     ],
     "endpointNames": [],
-    "agentEnabled": false,
+    "agentEnabled": true,
     "searchAgentEnabled": false,
     "searchApiKey": "",
-    "agents": [],
+    "agents": [
+      {
+        "displayName": "Code Interpreter",
+        "agentId": "TWU9YT34HX",
+        "aliasId": "GDTUY62A3K"
+      }
+    ],
     "inlineAgents": false,
     "flows": [],
     "allowedIpV4AddressRanges": null,
@@ -69,10 +84,7 @@
     "useCaseBuilderEnabled": true,
     "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
     "@aws-cdk/core:checkSecretUsage": true,
-    "@aws-cdk/core:target-partitions": [
-      "aws",
-      "aws-cn"
-    ],
+    "@aws-cdk/core:target-partitions": ["aws", "aws-cn"],
     "@aws-cdk-containers/ecs-service-extensions:enableDefaultLogDriver": true,
     "@aws-cdk/aws-ec2:uniqueImdsv2TemplateName": true,
     "@aws-cdk/aws-ecs:arnFormatIncludesClusterName": true,

@@ -55,7 +55,8 @@ const Drawer: React.FC<Props> = (props) => {
           </>
         )}
         <div className="text-aws-smile mx-3 my-1 text-xs">
-          ユースケース <span className="text-gray-400">(生成 AI)</span>
+          ユースケース <span className="text-gray-400">(生成 AI)</span> 🚅
+          電気SIO構築
         </div>
         <div className="scrollbar-thin scrollbar-thumb-white ml-2 mr-1 h-full overflow-y-auto">
           {usecases.map((item, idx) => (
