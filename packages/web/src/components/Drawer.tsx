@@ -56,7 +56,7 @@ const Drawer: React.FC<Props> = (props) => {
         )}
         <div className="text-aws-smile mx-3 my-1 text-xs">
           ユースケース <span className="text-gray-400">(生成 AI)</span> 🚅
-          電気SIO構築
+          電気SIO ver.
         </div>
         <div className="scrollbar-thin scrollbar-thumb-white ml-2 mr-1 h-full overflow-y-auto">
           {usecases.map((item, idx) => (
@@ -74,7 +74,7 @@ const Drawer: React.FC<Props> = (props) => {
           <>
             <ExpandableMenu
               title="ツール"
-              subTitle="(AI サービス)"
+              subTitle="(AI サービス on AWS)"
               className="mx-3 my-2 text-xs">
               <div className="mb-2 ml-2 mr-1">
                 {tools.map((item, idx) => (

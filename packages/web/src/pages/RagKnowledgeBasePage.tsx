@@ -24,6 +24,7 @@ import {
 import { Option, SelectValue } from '../components/FilterSelect';
 import ModalDialog from '../components/ModalDialog';
 import Button from '../components/Button';
+import ChatDisclaimer from '../components/ChatDisclaimer';
 
 type StateType = {
   sessionId: string | undefined;
@@ -267,6 +268,7 @@ const RagKnowledgeBasePage: React.FC = () => {
               setShowSetting(true);
             }}
           />
+          <ChatDisclaimer className="mb-4 mt-2" />
         </div>
       </div>
 

@@ -19,7 +19,7 @@ const envs: Record<string, Partial<StackInput>> = {
     // 開発環境のパラメータ
     modelRegion: 'us-west-2',
     modelIds: [
-      'anthropic.claude-3-7-sonnet-20250219-v1:0',
+      'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
       'anthropic.claude-3-5-sonnet-20240620-v1:0',
       'anthropic.claude-3-5-haiku-20241022-v1:0',
       'anthropic.claude-3-5-sonnet-20241022-v2:0',
@@ -33,9 +33,9 @@ const envs: Record<string, Partial<StackInput>> = {
       'mistral.mistral-large-2407-v1:0',
     ],
     imageGenerationModelIds: [
-      'stability.stable-diffusion-xl-v1',
       'stability.stable-image-ultra-v1:1',
       'stability.stable-image-core-v1:1',
+      'stability.stable-diffusion-xl-v1',
       'amazon.titan-image-generator-v2:0',
       'amazon.titan-image-generator-v1',
       'stability.sd3-large-v1:0',
@@ -50,9 +50,9 @@ const envs: Record<string, Partial<StackInput>> = {
     agentEnabled: true,
     agents: [
       {
-        displayName: 'Code Interpreter',
+        displayName: 'データ分析屋さん (AIエージェント)',
         agentId: 'TWU9YT34HX',
-        aliasId: 'GDTUY62A3K',
+        aliasId: 'MULPCVZTCS',
       },
     ],
     allowedSignUpEmailDomains: ['jreast.co.jp'],

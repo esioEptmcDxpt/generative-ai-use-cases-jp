@@ -15,6 +15,7 @@ import { RagPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import queryString from 'query-string';
 import Alert from '../components/Alert';
+import ChatDisclaimer from '../components/ChatDisclaimer';
 
 type StateType = {
   content: string;
@@ -72,7 +73,7 @@ const RagPage: React.FC = () => {
     <>
       <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-          RAG チャット (AI文書検索システム)
+          電力AI (RAG) チャット (AI文書検索システム)
         </div>
 
         <div className="mt-2 flex w-full items-end justify-center lg:mt-0">
@@ -146,7 +147,7 @@ const RagPage: React.FC = () => {
           <ScrollTopBottom />
         </div>
 
-        <div className="fixed bottom-0 z-0 flex w-full items-end justify-center lg:pr-64 print:hidden">
+        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
           <InputChatContent
             content={content}
             disabled={loading}
@@ -156,6 +157,7 @@ const RagPage: React.FC = () => {
             }}
             onReset={onReset}
           />
+          <ChatDisclaimer className="mb-4 mt-2" />
         </div>
       </div>
     </>

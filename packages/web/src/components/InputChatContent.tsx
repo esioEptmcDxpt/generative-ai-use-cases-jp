@@ -15,6 +15,7 @@ import {
 import useFiles from '../hooks/useFiles';
 import FileCard from './FileCard';
 import { FileLimit } from 'generative-ai-use-cases-jp';
+import ChatDisclaimer from './ChatDisclaimer';
 
 type Props = {
   content: string;
@@ -32,6 +33,8 @@ type Props = {
   fileUpload?: boolean;
   fileLimit?: FileLimit;
   accept?: string[];
+  showDisclaimer?: boolean;
+  disclaimerClassName?: string;
 } & (
   | {
       hideReset?: false;
@@ -246,6 +249,9 @@ const InputChatContent: React.FC<Props> = (props) => {
           </Button>
         )}
       </div>
+      {props.showDisclaimer && (
+        <ChatDisclaimer className={props.disclaimerClassName ?? 'mb-4 mt-2'} />
+      )}
     </div>
   );
 };

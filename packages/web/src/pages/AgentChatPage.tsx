@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
 import { FileLimit } from 'generative-ai-use-cases-jp';
+import ChatDisclaimer from '../components/ChatDisclaimer';
 
 const fileLimit: FileLimit = {
   accept: {
@@ -282,6 +283,7 @@ const AgentChatPage: React.FC = () => {
             fileLimit={fileLimit}
             accept={fileLimit.accept.doc}
           />
+          <ChatDisclaimer className="mb-4 mt-2" />
         </div>
       </div>
     </>

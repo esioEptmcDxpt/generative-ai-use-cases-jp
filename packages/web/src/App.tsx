@@ -19,6 +19,7 @@ import {
   PiFlowArrow,
   PiMagicWand,
   PiTreeStructure,
+  PiLightningFill,
 } from 'react-icons/pi';
 import { Outlet } from 'react-router-dom';
 import Drawer, { ItemProps } from './components/Drawer';
@@ -79,18 +80,18 @@ const App: React.FC = () => {
     },
     ragEnabled
       ? {
-          label: 'RAG チャット',
+          label: '電力AIチャット',
           to: '/rag',
-          icon: <PiChatCircleText />,
+          icon: <PiLightningFill />,
           display: 'usecase' as const,
-          sub: 'Amazon Kendra',
+          sub: '文書検索🔎',
         }
       : null,
     ragKnowledgeBaseEnabled
       ? {
           label: '電力AI (RAG) チャット',
           to: '/rag-knowledge-base',
-          icon: <PiChatCircleText />,
+          icon: <PiLightningFill />,
           display: 'usecase' as const,
           sub: '文書検索🔎',
         }

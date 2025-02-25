@@ -25,6 +25,7 @@ import { getPrompter } from '../prompts';
 import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
 import { FileLimit, SystemContext } from 'generative-ai-use-cases-jp';
+import ChatDisclaimer from '../components/ChatDisclaimer';
 
 const fileLimit: FileLimit = {
   accept: {
@@ -522,7 +523,6 @@ const ChatPage: React.FC = () => {
             content={content}
             disabled={loading}
             onChangeContent={setContent}
-            resetDisabled={!!chatId}
             onSend={() => {
               onSend();
             }}
@@ -531,6 +531,7 @@ const ChatPage: React.FC = () => {
             fileLimit={fileLimit}
             accept={accept}
           />
+          <ChatDisclaimer className="mb-4 mt-2" />
         </div>
       </div>
 
