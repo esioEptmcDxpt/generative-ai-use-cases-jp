@@ -89,9 +89,9 @@ const App: React.FC = () => {
       : null,
     ragKnowledgeBaseEnabled
       ? {
-          label: '電力AI (RAG) チャット',
+          label: '電力AIチャット',
           to: '/rag-knowledge-base',
-          icon: <PiLightningFill />,
+          icon: <PiChatCircleText />,
           display: 'usecase' as const,
           sub: '文書検索🔎',
         }
