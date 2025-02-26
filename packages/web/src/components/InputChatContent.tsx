@@ -128,7 +128,7 @@ const InputChatContent: React.FC<Props> = (props) => {
       )}
       <div
         className={`relative flex items-end rounded-xl border border-black/10 bg-gray-100 shadow-[0_0_30px_1px] shadow-gray-400/40 ${
-          props.disableMarginBottom ? '' : 'mb-7'
+          props.disableMarginBottom ? '' : 'mb-1'
         }`}>
         <div className="flex w-full flex-col">
           {props.fileUpload && uploadedFiles.length > 0 && (

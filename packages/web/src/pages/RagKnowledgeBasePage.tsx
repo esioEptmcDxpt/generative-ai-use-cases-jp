@@ -213,7 +213,7 @@ const RagKnowledgeBasePage: React.FC = () => {
 
   return (
     <>
-      <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
+      <div className={`${!isEmpty ? 'screen:pb-44' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
           RAG チャット
         </div>
@@ -268,7 +268,7 @@ const RagKnowledgeBasePage: React.FC = () => {
               setShowSetting(true);
             }}
           />
-          <ChatDisclaimer className="mb-4 mt-2" />
+          <ChatDisclaimer className="mb-1" />
         </div>
       </div>
 

@@ -1,4 +1,33 @@
-# First Deploy outputs
+# デプロイメモ
+
+## デプロイ先の URL
+
+- 開発用: https://d2pye9lkf1lyw0.cloudfront.net
+- 本番用: https://d3js90bnm4zs1c.cloudfront.net
+
+## デプロイ用のコマンド
+
+``` bash
+# 本番環境向けのデプロイ
+npm run cdk:deploy
+
+# 開発環境向けのデプロイ
+npm run cdk:deploy -- -c env=dev
+```
+
+## ローカル環境で開発する際のコマンド
+
+``` bash
+# ローカル環境で開発
+npm run web:devw
+
+# dev 環境のバックエンドを使用してローカルで開発
+npm run web:devw --env=dev
+```
+
+# Deploy outputs
+
+## First Deploy outputs
 
 ``` bash
 Outputs:
@@ -34,7 +63,7 @@ Stack ARN:
 arn:aws:cloudformation:ap-northeast-1:326497581172:stack/GenerativeAiUseCasesStackdev/7587db30-f36c-11ef-8a20-0e382519b027
 ```
 
-# Second Deploy outputs
+## Second Deploy outputs
 
 ``` bash
 Outputs:
@@ -68,4 +97,10 @@ GenerativeAiUseCasesStackdev.UserPoolId = ap-northeast-1_SuKu3GFPC
 GenerativeAiUseCasesStackdev.WebUrl = https://d2pye9lkf1lyw0.cloudfront.net
 Stack ARN:
 arn:aws:cloudformation:ap-northeast-1:326497581172:stack/GenerativeAiUseCasesStackdev/7587db30-f36c-11ef-8a20-0e382519b027
+```
+
+## 3rd Deploy outputs
+
+``` bash
+
 ```
