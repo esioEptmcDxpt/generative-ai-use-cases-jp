@@ -329,7 +329,7 @@ const LandingPage: React.FC = () => {
             label="Agent チャット"
             onClickDemo={demoAgent}
             icon={<PiRobot />}
-            description="Agent チャットを体験できます。現在は、データ分析屋さん (AIエージェント) を利用して、データ分析を行えますが、今後は複数のエージェントを組み合わせたチャットを行えるようになります。"
+            description="Agent チャットを体験できます。現在は、データ分析屋さん (AIエージェント) を利用して、Pythonを利用したデータ分析が行えます。今後は複数のエージェントを組み合わせたチャットも追加予定です。"
           />
         )}
         {flowChatEnabled && (
