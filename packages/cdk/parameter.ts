@@ -93,12 +93,24 @@ const envs: Record<string, Partial<StackInput>> = {
     kendraIndexArn:
       'arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe',
     kendraDataSourceBucketName: 'jre-regulations',
+    ragKnowledgeBaseEnabled: true,
+    ragKnowledgeBaseId: 'PQSVG6HETU',
+    ragKnowledgeBaseStandbyReplicas: false,
+    ragKnowledgeBaseAdvancedParsing: false,
+    ragKnowledgeBaseAdvancedParsingModelId:
+      'anthropic.claude-3-sonnet-20240229-v1:0',
+    embeddingModelId: 'amazon.titan-embed-text-v2:0',
     agentEnabled: true,
     agents: [
       {
         displayName: 'データ分析屋さん (AIエージェント)',
         agentId: 'TWU9YT34HX',
         aliasId: 'MULPCVZTCS',
+      },
+      {
+        displayName: '電力審査エージェント',
+        agentId: 'XRTHRHNZ2M',
+        aliasId: '3KYC8URE9G',
       },
     ],
     allowedSignUpEmailDomains: ['jreast.co.jp'],
