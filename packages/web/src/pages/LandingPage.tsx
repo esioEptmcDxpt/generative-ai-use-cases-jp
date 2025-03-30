@@ -293,7 +293,7 @@ const LandingPage: React.FC = () => {
     <div className="pb-24">
       <div className="bg-aws-squid-ink flex flex-col items-center justify-center px-3 py-5 text-xl font-semibold text-white lg:flex-row">
         <AwsIcon className="mr-5 size-20" />
-        ではじめる生成 AI - 電力AIチャット
+        ではじめる生成 AI - (社内通称)SIO-AI
         <DxIcon className="ml-5 size-20" />
       </div>
 
@@ -317,7 +317,7 @@ const LandingPage: React.FC = () => {
         />
         {ragEnabled && (
           <CardDemo
-            label="RAG チャット"
+            label="SIO-AI"
             sub="Amazon Kendra"
             onClickDemo={demoRag}
             icon={<PiChatCircleText />}
@@ -326,7 +326,7 @@ const LandingPage: React.FC = () => {
         )}
         {ragKnowledgeBaseEnabled && (
           <CardDemo
-            label="RAG チャット"
+            label="SIO-AI"
             sub="Knowledge Base"
             onClickDemo={demoRagKnowledgeBase}
             icon={<PiChatCircleText />}

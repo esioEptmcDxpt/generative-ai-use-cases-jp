@@ -73,7 +73,7 @@ const RagPage: React.FC = () => {
     <>
       <div className={`${!isEmpty ? 'screen:pb-44' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-          電力AI (RAG) チャット (AI文書検索システム)
+          SIO-AI (AI文書検索システム)
         </div>
 
         <div className="mt-2 flex w-full items-end justify-center lg:mt-0">
@@ -100,14 +100,33 @@ const RagPage: React.FC = () => {
           <div
             className={`absolute inset-x-0 top-28 m-auto flex justify-center`}>
             <div>
-              <div className="pl-32">
-                <div>👆モデルを選択できます</div>
-                <div>＜おすすめのモデル＞</div>
-                <ul>
-                  <li>万能型：anthropic.claude-3-5-sonnet-20240620-v1:0</li>
-                  <li>スピード型：anthropic.claude-3-5-haiku-20241022-v1:0</li>
-                </ul>
-              </div>
+              <Alert severity="info">
+                <div>
+                  <h2 className="mb-2">AIモデルの選択</h2>
+                  <p>セレクトボックスでAIモデルを選択できます</p>
+
+                  <section className="mt-3">
+                    <h3 className="font-medium">おすすめのモデル</h3>
+                    <ul className="mt-2 list-disc pl-5">
+                      <li>
+                        <strong>万能型：</strong>
+                        <span>
+                          us.anthropic.claude-3-7-sonnet-20250219-v1:0
+                        </span>
+                      </li>
+                      <li>
+                        <strong>スピード型：</strong>
+                        <span>anthropic.claude-3-5-haiku-20241022-v1:0</span>
+                      </li>
+                    </ul>
+                  </section>
+                </div>
+                <footer className="mt-4 text-sm text-gray-600">
+                  <p>
+                    ＜参考＞2025年4月から名称を変更しています。旧称：電力AIチャット
+                  </p>
+                </footer>
+              </Alert>
               <Alert severity="info">
                 <div>
                   RAG (Retrieval Augmented Generation)
