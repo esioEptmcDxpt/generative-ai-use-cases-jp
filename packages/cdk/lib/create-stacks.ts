@@ -6,7 +6,8 @@ import { DashboardStack } from './dashboard-stack';
 import { AgentStack } from './agent-stack';
 import { RagKnowledgeBaseStack } from './rag-knowledge-base-stack';
 import { GuardrailStack } from './guardrail-stack';
-import { StackInput } from './stack-input';
+import { ProcessedStackInput } from './stack-input';
+import { VideoTmpBucketStack } from './video-tmp-bucket-stack';
 
 class DeletionPolicySetter implements cdk.IAspect {
   constructor(private readonly policy: cdk.RemovalPolicy) {}
@@ -18,7 +19,7 @@ class DeletionPolicySetter implements cdk.IAspect {
   }
 }
 
-export const createStacks = (app: cdk.App, params: StackInput) => {
+export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
   // CloudFront WAF
   // IP アドレス範囲(v4もしくはv6のいずれか)か地理的制限が定義されている場合のみ、CloudFrontWafStack をデプロイする
   // WAF v2 は us-east-1 でのみデプロイ可能なため、Stack を分けている
@@ -73,8 +74,30 @@ export const createStacks = (app: cdk.App, params: StackInput) => {
       })
     : null;
 
-  // GenU Stack
+  // Video 生成時に StartAsyncInvoke で指定する S3 Bucket は
+  // Bedrock Runtime と同じリージョンにないとエラーになるため
+  // videoGenerationModelIds に定義されたユニークなリージョンごとに Bucket を作成する
+  const videoModelRegions = params.videoGenerationModelIds
+    .map((model) => model.region)
+    .filter((elem, index, self) => self.indexOf(elem) === index);
+  const videoBucketRegionMap: Record<string, string> = {};
 
+  for (const region of videoModelRegions) {
+    const videoTmpBucketStack = new VideoTmpBucketStack(
+      app,
+      `VideoTmpBucketStack${params.env}${region}`,
+      {
+        env: {
+          account: params.account,
+          region,
+        },
+      }
+    );
+
+    videoBucketRegionMap[region] = videoTmpBucketStack.bucketName;
+  }
+
+  // GenU Stack
   const generativeAiUseCasesStack = new GenerativeAiUseCasesStack(
     app,
     `GenerativeAiUseCasesStack${params.env}`,
@@ -94,6 +117,8 @@ export const createStacks = (app: cdk.App, params: StackInput) => {
         ragKnowledgeBaseStack?.dataSourceBucketName,
       // Agent
       agents: agentStack?.agents,
+      // Video Generation
+      videoBucketRegionMap,
       // Guardrail
       guardrailIdentifier: guardrail?.guardrailIdentifier,
       guardrailVersion: 'DRAFT',

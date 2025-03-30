@@ -164,6 +164,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: false,
     ragKnowledgeBaseAdvancedParsingModelId: 'anthropic.claude-3-sonnet-20240229-v1:0',
+    ragKnowledgeBaseBinaryVector: false,
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
@@ -179,6 +180,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": false,
     "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseBinaryVector": false,
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
     "rerankingModelId": "amazon.rerank-v1:0",
     "queryDecompositionEnabled": true,
@@ -210,6 +212,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 変更後に `npm run cdk:deploy` で再度デプロイして反映させます。この際、`modelRegion` で指定されているリージョンに Knowledge Base がデプロイされます。以下に注意してください。
 
+- `modelRegion` リージョンのモデルが 1 つ以上 `modelIds` に定義されている必要があります。
 - `modelRegion` リージョンの Bedrock で `embeddingModelId` のモデルが有効化されている必要があります。
 - `modelRegion` リージョンの Bedrock で `rerankingModelId` のモデルが有効化されている必要があります。
 - `modelRegion` リージョンで `npm run cdk:deploy` の前に AWS CDK の Bootstrap が完了している必要があります。
@@ -250,6 +253,7 @@ const envs: Record<string, Partial<StackInput>> = {
     ragKnowledgeBaseStandbyReplicas: false,
     ragKnowledgeBaseAdvancedParsing: true,
     ragKnowledgeBaseAdvancedParsingModelId: 'anthropic.claude-3-sonnet-20240229-v1:0',
+    ragKnowledgeBaseBinaryVector: false,
     embeddingModelId: 'amazon.titan-embed-text-v2:0',
   },
 };
@@ -265,6 +269,7 @@ const envs: Record<string, Partial<StackInput>> = {
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": true,
     "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseBinaryVector": false,
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
   }
 }
@@ -292,6 +297,15 @@ chunkingConfiguration: {
 
 その後、[Knowledge Base や OpenSearch Service を再作成して変更を加える](./DEPLOY_OPTION.md#knowledge-base-や-opensearch-service-を再作成して変更を加える)の章を参照して、変更を加えます。
 
+#### Binary Vector Embedding を有効化
+
+[Binary Vector Embedding 機能](https://aws.amazon.com/jp/blogs/machine-learning/build-cost-effective-rag-applications-with-binary-embeddings-in-amazon-titan-text-embeddings-v2-amazon-opensearch-serverless-and-amazon-bedrock-knowledge-bases/) を有効化できます。Binary Vector Embedding は float（浮動小数点 32 bit）で表現していたベクトルデータを、binary（1 bit）で表現する機能です。バイナリ埋め込みは、ストレージ効率、計算速度、およびスケーラビリティに大きなメリットをもたらします。
+
+- `ragKnowledgeBaseBinaryVector` : `true` で Binary Vector Embedding を有効化
+  - [サポートしているモデル](https://docs.aws.amazon.com/bedrock/latest/userguide/knowledge-base-supported.html#knowledge-base-supported-embeddings) (2025/03 現在)
+    - `amazon.titan-embed-text-v2:0`
+    - `cohere.embed-multilingual-v3`
+    - `cohere.embed-english-v3`
 
 
 #### Knowledge Base や OpenSearch Service を再作成して変更を加える
@@ -302,6 +316,7 @@ chunkingConfiguration: {
 - `ragKnowledgeBaseStandbyReplicas`
 - `ragKnowledgeBaseAdvancedParsing`
 - `ragKnowledgeBaseAdvancedParsingModelId`
+- `ragKnowledgeBaseBinaryVector`
 
 変更を反映する場合は、以下の手順で既存の Knowledge Base 関連のリソースを削除してから再作成を行います。
 
@@ -585,14 +600,24 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### 画像生成ユースケースの有効化
 
+`imageGenerationModelIds` にモデルを 1 つ以上定義すると有効化されます。
+`imageGenerationModelIds` に関しては [Amazon Bedrock のモデルを変更する](#amazon-bedrock-のモデルを変更する) をご参照ください。
+デフォルト値は [packages/cdk/lib/stack-input.ts](/packages/cdk/lib/stack-input.ts) をご参照ください。
+
+### 動画生成ユースケースの有効化
+
+`videoGenerationModelIds` にモデルを 1 つ以上定義すると有効化されます。
+`videoGenerationModelIds` に関しては [Amazon Bedrock のモデルを変更する](#amazon-bedrock-のモデルを変更する) をご参照ください。
+デフォルト値は [packages/cdk/lib/stack-input.ts](/packages/cdk/lib/stack-input.ts) をご参照ください。
 
 ### 映像分析ユースケースの有効化
 
 映像分析ユースケースでは、映像の画像フレームとテキストを入力して画像の内容を LLM に分析させます。
 映像分析ユースケースを直接有効化するオプションはありませんが、パラメータでマルチモーダルのモデルが有効化されている必要があります。
 
-2024/06 現在、マルチモーダルのモデルは以下です。
+2025/03 現在、マルチモーダルのモデルは以下です。
 
 ```
 "anthropic.claude-3-5-sonnet-20241022-v2:0",
@@ -610,6 +635,7 @@ const envs: Record<string, Partial<StackInput>> = {
 "apac.anthropic.claude-3-haiku-20240307-v1:0",
 "apac.anthropic.claude-3-sonnet-20240229-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
+"apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
 "us.meta.llama3-2-90b-instruct-v1:0",
 "us.meta.llama3-2-11b-instruct-v1:0",
 "amazon.nova-pro-v1:0",
@@ -675,7 +701,8 @@ const envs: Record<string, Partial<StackInput>> = {
       translate: true, // 翻訳を非表示
       webContent: true, // Web コンテンツ抽出を非表示
       image: true, // 画像生成を非表示
-      video: true, // 映像分析を非表示
+      video: true, // 動画生成を非表示
+      videoAnalyzer: true, // 映像分析を非表示
       diagram: true, // ダイアグラム生成を非表示
     }
   },
@@ -695,6 +722,7 @@ const envs: Record<string, Partial<StackInput>> = {
       "webContent": true,
       "image": true,
       "video": true,
+      "videoAnalyzer": true,
       "diagram": true
     }
   }
@@ -727,7 +755,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ## Amazon Bedrock のモデルを変更する
 
-`parameter.ts` もしくは `cdk.json` の `modelRegion`, `modelIds`, `imageGenerationModelIds` でモデルとモデルのリージョンを指定します。`modelIds` と `imageGenerationModelIds` は指定したリージョンで利用できるモデルの中から利用したいモデルのリストで指定してください。AWS ドキュメントに、[モデルの一覧](https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html)と[リージョン別のモデルサポート一覧](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)があります。
+`parameter.ts` もしくは `cdk.json` の `modelRegion`, `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds` でモデルとモデルのリージョンを指定します。`modelIds` と `imageGenerationModelIds` と `videoGenerationModelIds` は指定したリージョンで利用できるモデルの中から利用したいモデルのリストで指定してください。AWS ドキュメントに、[モデルの一覧](https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html)と[リージョン別のモデルサポート一覧](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html)があります。
 
 また、[cross-region inference](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference-support.html)のモデルに対応しています。cross-region inference のモデルは `{us|eu|apac}.{model-provider}.{model-name}` で表されるモデルで、設定した modelRegion で指定したリージョンの `{us|eu|apac}` と一致している必要があります。
 
@@ -755,6 +783,8 @@ const envs: Record<string, Partial<StackInput>> = {
 "apac.anthropic.claude-3-haiku-20240307-v1:0",
 "apac.anthropic.claude-3-sonnet-20240229-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
+"apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
+"us.deepseek.r1-v1:0",
 "amazon.titan-text-premier-v1:0",
 "us.meta.llama3-3-70b-instruct-v1:0",
 "us.meta.llama3-2-90b-instruct-v1:0",
@@ -806,7 +836,118 @@ const envs: Record<string, Partial<StackInput>> = {
 "stability.stable-diffusion-xl-v1",
 ```
 
+このソリューションが対応している動画生成モデルは以下です。
+
+```
+"amazon.nova-reel-v1:0",
+"luma.ray-v2:0"
+```
+
 **指定したリージョンで指定したモデルが有効化されているかご確認ください。**
+
+### 複数のリージョンのモデルを同時に利用する
+
+GenU では、特に指定がない限り`modelRegion`のモデルを使用します。一部リージョンのみで利用可能な最新モデル等を使いたい場合、`modelIds`または`imageGenerationModelIds`または`videoGenerationModelIds`に`{modelId: '<モデル名>', region: '<リージョンコード>'}`を指定することで、そのモデルのみ指定したリージョンから呼び出すことができます。
+
+> [!NOTE]
+> [モニタリング用ダッシュボード](#モニタリング用のダッシュボードの有効化)と複数リージョンのモデル利用を併用する場合、デフォルトのダッシュボード設定では主リージョン（`modelRegion`で指定したリージョン）以外のモデルのプロンプトログが表示されません。
+> 
+> 全リージョンのプロンプトログを一つのダッシュボード上で一覧したい場合は、以下の追加設定が必要です：
+> 
+> 1. 各リージョンのAmazon Bedrock設定画面で「Model invocation logging」を手動で有効化する
+> 2. CloudWatchダッシュボードに各リージョンのログを集計するウィジェットを追加する
+
+#### 東京リージョンを優先しつつ、バージニア北部リージョン・オレゴンリージョンの最新のモデルも使いたい場合
+**[parameter.ts](/packages/cdk/parameter.ts) を編集**
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    modelRegion: 'ap-northeast-1',
+    modelIds: [
+      {modelId: 'us.anthropic.claude-3-7-sonnet-20250219-v1:0', region: 'us-east-1'},
+      'apac.anthropic.claude-3-5-sonnet-20241022-v2:0',
+      'anthropic.claude-3-5-sonnet-20240620-v1:0',
+      {modelId: 'us.anthropic.claude-3-5-haiku-20241022-v1:0', region: 'us-east-1'},
+      'apac.amazon.nova-pro-v1:0',
+      'apac.amazon.nova-lite-v1:0',
+      'apac.amazon.nova-micro-v1:0',
+      {modelId: 'us.deepseek.r1-v1:0', region: 'us-east-1'},
+      {modelId: 'us.meta.llama3-3-70b-instruct-v1:0', region: 'us-east-1'},
+      {modelId: 'us.meta.llama3-2-90b-instruct-v1:0', region: 'us-east-1'},
+    ],
+    imageGenerationModelIds: [
+      'amazon.nova-canvas-v1:0',
+      {modelId: 'stability.sd3-5-large-v1:0', region: 'us-west-2'},
+      {modelId: 'stability.stable-image-core-v1:1', region: 'us-west-2'},
+      {modelId: 'stability.stable-image-ultra-v1:1', region: 'us-west-2'},
+    ],
+    videoGenerationModelIds: [
+      'amazon.nova-reel-v1:0',
+      {modelId: 'luma.ray-v2:0', region: 'us-west-2'},
+    ],
+  },
+};
+```
+
+**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
+```json
+{
+  "context": {
+    "modelRegion": "ap-northeast-1",
+    "modelIds": [
+      {
+        "modelId": "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
+        "region": "us-east-1"
+      },
+      "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
+      "anthropic.claude-3-5-sonnet-20240620-v1:0",
+      {
+        "modelId": "us.anthropic.claude-3-5-haiku-20241022-v1:0",
+        "region": "us-east-1"
+      },
+      "apac.amazon.nova-pro-v1:0",
+      "apac.amazon.nova-lite-v1:0",
+      "apac.amazon.nova-micro-v1:0",
+      {
+        "modelId": "us.deepseek.r1-v1:0",
+        "region": "us-east-1"
+      },
+      {
+        "modelId": "us.meta.llama3-3-70b-instruct-v1:0",
+        "region": "us-east-1"
+      },
+      {
+        "modelId": "us.meta.llama3-2-90b-instruct-v1:0",
+        "region": "us-east-1"
+      }
+    ],
+    "imageGenerationModelIds": [
+      "amazon.nova-canvas-v1:0",
+      {
+        "modelId": "stability.sd3-5-large-v1:0",
+        "region": "us-west-2"
+      },
+      {
+        "modelId": "stability.stable-image-core-v1:1",
+        "region": "us-west-2"
+      },
+      {
+        "modelId": "stability.stable-image-ultra-v1:1",
+        "region": "us-west-2"
+      }
+    ],
+    "videoGenerationModelIds": [
+      "amazon.nova-reel-v1:0",
+      {
+        "modelId": "luma.ray-v2:0",
+        "region": "us-west-2"
+      }
+    ]
+  }
+}
+```
+
 
 ### us-east-1 (バージニア) の Amazon Bedrock のモデルを利用する例
 
@@ -835,6 +976,9 @@ const envs: Record<string, Partial<StackInput>> = {
       "amazon.titan-image-generator-v2:0",
       "amazon.titan-image-generator-v1",
       "stability.stable-diffusion-xl-v1"
+    ],
+    "videoGenerationModelIds": [
+      "amazon.nova-reel-v1:0"
     ],
   },
 };
@@ -866,6 +1010,9 @@ const envs: Record<string, Partial<StackInput>> = {
       "amazon.titan-image-generator-v1",
       "stability.stable-diffusion-xl-v1"
     ],
+    "videoGenerationModelIds": [
+      "amazon.nova-reel-v1:0"
+    ],
   }
 }
 ```
@@ -895,7 +1042,7 @@ const envs: Record<string, Partial<StackInput>> = {
       "amazon.titan-image-generator-v2:0",
       "amazon.titan-image-generator-v1",
       "stability.sd3-large-v1:0",
-      "stability.sd3-5-large-v1:0"
+      "stability.sd3-5-large-v1:0",
       "stability.stable-image-core-v1:0",
       "stability.stable-image-core-v1:1",
       "stability.stable-image-ultra-v1:0",
@@ -956,6 +1103,7 @@ const envs: Record<string, Partial<StackInput>> = {
       "us.anthropic.claude-3-opus-20240229-v1:0",
       "us.anthropic.claude-3-sonnet-20240229-v1:0",
       "us.anthropic.claude-3-haiku-20240307-v1:0",
+      "us.deepseek.r1-v1:0",
       "us.meta.llama3-3-70b-instruct-v1:0",
       "us.meta.llama3-2-90b-instruct-v1:0",
       "us.meta.llama3-2-11b-instruct-v1:0",
@@ -997,6 +1145,7 @@ const envs: Record<string, Partial<StackInput>> = {
       "us.anthropic.claude-3-opus-20240229-v1:0",
       "us.anthropic.claude-3-sonnet-20240229-v1:0",
       "us.anthropic.claude-3-haiku-20240307-v1:0",
+      "us.deepseek.r1-v1:0",
       "us.meta.llama3-3-70b-instruct-v1:0",
       "us.meta.llama3-2-90b-instruct-v1:0",
       "us.meta.llama3-2-11b-instruct-v1:0",
@@ -1036,7 +1185,12 @@ const envs: Record<string, StackInput> = {
       "anthropic.claude-3-5-sonnet-20240620-v1:0",
       "anthropic.claude-3-haiku-20240307-v1:0"
     ],
-    imageGenerationModelIds: [],
+    imageGenerationModelIds: [
+      "amazon.nova-canvas-v1:0"
+    ],
+    videoGenerationModelIds: [
+      "amazon.nova-reel-v1:0"
+    ],
   }
 }
 ```
@@ -1051,12 +1205,15 @@ const envs: Record<string, StackInput> = {
       "anthropic.claude-3-5-sonnet-20240620-v1:0",
       "anthropic.claude-3-haiku-20240307-v1:0"
     ],
-    "imageGenerationModelIds": [],
+    "imageGenerationModelIds": [
+      "amazon.nova-canvas-v1:0"
+    ],
+    "videoGenerationModelIds": [
+      "amazon.nova-reel-v1:0"
+    ],
   }
 }
 ```
-
-**注：UI 上は表示されますが、Stable Diffusion および Titan Image が未対応なため、画像生成は現状 ap-northeast-1 では利用できません。**
 
 ## Amazon SageMaker のカスタムモデルを利用したい場合
 

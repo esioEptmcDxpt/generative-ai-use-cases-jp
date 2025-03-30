@@ -8,6 +8,7 @@ export type Model = {
   modelId: string;
   modelParameters?: AdditionalModelRequestFields;
   sessionId?: string;
+  region?: string;
 };
 
 export type Agent = {
@@ -76,6 +77,7 @@ export type FileLimit = {
   maxImageFileSizeMB: number;
   maxVideoFileCount: number;
   maxVideoFileSizeMB: number;
+  strictImageDimensions?: { width: number; height: number }[];
 };
 
 export type RecordedMessage = PrimaryKey &

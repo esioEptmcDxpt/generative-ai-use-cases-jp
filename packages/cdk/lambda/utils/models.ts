@@ -1,7 +1,9 @@
 import {
   BedrockImageGenerationResponse,
   GenerateImageParams,
+  GenerateVideoParams,
   Model,
+  ModelConfiguration,
   PromptTemplate,
   StableDiffusionParams,
   UnrecordedMessage,
@@ -27,29 +29,59 @@ import { modelFeatureFlags } from '@generative-ai-use-cases-jp/common';
 
 // Default Models
 
-const modelIds: string[] = (
-  JSON.parse(process.env.MODEL_IDS || '[]') as string[]
+const modelIds: ModelConfiguration[] = (
+  JSON.parse(process.env.MODEL_IDS || '[]') as ModelConfiguration[]
 )
-  .map((modelId: string) => modelId.trim())
-  .filter((modelId: string) => modelId);
+  .map((model) => ({
+    modelId: model.modelId.trim(),
+    region: model.region.trim(),
+  }))
+  .filter((model) => model.modelId);
 // 利用できるモデルの中で軽量モデルがあれば軽量モデルを優先する。
 const lightWeightModelIds = modelIds.filter(
-  (modelId: string) => modelFeatureFlags[modelId].light
+  (model: ModelConfiguration) => modelFeatureFlags[model.modelId].light
 );
-const defaultModelId = lightWeightModelIds[0] || modelIds[0];
+const defaultModelConfiguration = lightWeightModelIds[0] || modelIds[0];
 export const defaultModel: Model = {
   type: 'bedrock',
-  modelId: defaultModelId,
+  modelId: defaultModelConfiguration.modelId,
+  region: defaultModelConfiguration.region,
 };
 
-const imageGenerationModelIds: string[] = (
-  JSON.parse(process.env.IMAGE_GENERATION_MODEL_IDS || '[]') as string[]
+const imageGenerationModels: ModelConfiguration[] = (
+  JSON.parse(
+    process.env.IMAGE_GENERATION_MODEL_IDS || '[]'
+  ) as ModelConfiguration[]
 )
-  .map((name: string) => name.trim())
-  .filter((name: string) => name);
+  .map(
+    (model: ModelConfiguration): ModelConfiguration => ({
+      modelId: model.modelId.trim(),
+      region: model.region.trim(),
+    })
+  )
+  .filter((model) => model.modelId);
 export const defaultImageGenerationModel: Model = {
   type: 'bedrock',
-  modelId: imageGenerationModelIds[0],
+  modelId: imageGenerationModels?.[0]?.modelId ?? '',
+  region: imageGenerationModels?.[0]?.region ?? '',
+};
+
+const videoGenerationModels: ModelConfiguration[] = (
+  JSON.parse(
+    process.env.VIDEO_GENERATION_MODEL_IDS || '[]'
+  ) as ModelConfiguration[]
+)
+  .map(
+    (model: ModelConfiguration): ModelConfiguration => ({
+      modelId: model.modelId.trim(),
+      region: model.region.trim(),
+    })
+  )
+  .filter((model) => model.modelId);
+export const defaultVideoGenerationModel: Model = {
+  type: 'bedrock',
+  modelId: videoGenerationModels?.[0]?.modelId ?? '',
+  region: videoGenerationModels?.[0]?.region ?? '',
 };
 
 // Prompt Templates
@@ -135,6 +167,12 @@ const NOVA_DEFAULT_PARAMS: ConverseInferenceParams = {
   maxTokens: 5120,
   temperature: 0.7,
   topP: 0.9,
+};
+
+const DEEPSEEK_DEFAULT_PARAMS: ConverseInferenceParams = {
+  maxTokens: 32768,
+  temperature: 0.6,
+  topP: 0.95,
 };
 
 const USECASE_DEFAULT_PARAMS: UsecaseConverseInferenceParams = {
@@ -662,6 +700,33 @@ const extractOutputImageAmazonImage = (
     throw new Error('Unexpected response type for Amazon Image');
   }
 };
+
+const createBodyVideoNovaReel = (params: GenerateVideoParams) => {
+  return {
+    taskType: 'TEXT_VIDEO',
+    textToVideoParams: {
+      text: params.prompt,
+      images: params.images,
+    },
+    videoGenerationConfig: {
+      durationSeconds: params.durationSeconds,
+      fps: params.fps,
+      dimension: params.dimension,
+      seed: params.seed,
+    },
+  };
+};
+
+const createBodyVideoLumaRayV2 = (params: GenerateVideoParams) => {
+  return {
+    prompt: params.prompt,
+    aspect_ratio: params.aspectRatio,
+    loop: params.loop,
+    duration: `${params.durationSeconds}s`,
+    resolution: params.resolution,
+  };
+};
+
 // テキスト生成に関する、各のModel のパラメーターや関数の定義
 
 export const BEDROCK_TEXT_GEN_MODELS: {
@@ -695,6 +760,14 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
   'us.anthropic.claude-3-5-sonnet-20241022-v2:0': {
+    defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'apac.anthropic.claude-3-5-sonnet-20241022-v2:0': {
     defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
     createConverseCommandInput: createConverseCommandInput,
@@ -1115,6 +1188,14 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  'us.deepseek.r1-v1:0': {
+    defaultParams: DEEPSEEK_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
 };
 
 // 画像生成に関する、各のModel のパラメーターや関数の定義
@@ -1166,6 +1247,20 @@ export const BEDROCK_IMAGE_GEN_MODELS: {
   'amazon.nova-canvas-v1:0': {
     createBodyImage: createBodyImageAmazonAdvancedImage,
     extractOutputImage: extractOutputImageAmazonImage,
+  },
+};
+
+export const BEDROCK_VIDEO_GEN_MODELS: {
+  [key: string]: {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    createBodyVideo: (params: GenerateVideoParams) => any;
+  };
+} = {
+  'amazon.nova-reel-v1:0': {
+    createBodyVideo: createBodyVideoNovaReel,
+  },
+  'luma.ray-v2:0': {
+    createBodyVideo: createBodyVideoLumaRayV2,
   },
 };
 

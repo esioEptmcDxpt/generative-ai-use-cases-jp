@@ -27,6 +27,7 @@
     "ragKnowledgeBaseStandbyReplicas": false,
     "ragKnowledgeBaseAdvancedParsing": false,
     "ragKnowledgeBaseAdvancedParsingModelId": "anthropic.claude-3-sonnet-20240229-v1:0",
+    "ragKnowledgeBaseBinaryVector": false,
     "embeddingModelId": "amazon.titan-embed-text-v2:0",
     "rerankingModelId": null,
     "queryDecompositionEnabled": false,
@@ -57,6 +58,9 @@
       "stability.stable-image-ultra-v1:0",
       "amazon.titan-image-generator-v2:0",
       "amazon.titan-image-generator-v1"
+    ],
+    "videoGenerationModelIds": [
+      "amazon.nova-reel-v1:0"
     ],
     "endpointNames": [],
     "agentEnabled": false,
