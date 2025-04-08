@@ -1,11 +1,67 @@
-# デプロイメモ
+# GenU(SIO-AI)を開発するときのメモ
 
-## デプロイ先の URL
+## GitHub
+
+### GitHub 組織に招待
+
+DXPTのアカウントにログインして、組織 (Organization)にユーザを招待します。
+
+招待するには [右上のアイコン -> organizations -> 組織を選択 -> people](https://github.com/orgs/esioEptmcDxpt/people) から招待 (invite member) する。
+
+### 初めてGitを使うとき
+
+Gitのユーザ名・メールを設定します。
+
+```
+# Git コミット用ユーザ名を設定
+# 例 git config --global user.name "k-nagayama"
+git config --global user.name "{Joi-Netユーザ名}"
+
+# Git コミット用アドレスを設定
+# 例 git config --global user.email "k-nagayama@jreast.co.jp"
+git config --global user.email "{Joi-Netアドレス}"
+```
+
+### (参考) Git コマンド
+
+開発でよく使う Git コマンド ⇒ [Gitでよく使うコマンド一覧](https://qiita.com/uhooi/items/c26c7c1beb5b36e7418e)
+
+
+## リポジトリをクローンする
+
+private リポジトリからコードをクローンしてくる。
+
+```
+git clone https://github.com/esioEptmcDxpt/generative-ai-use-cases-jp.git
+```
+
+## ブランチを切り替える
+
+(2025/4/8時点)開発用ブランチ -> dev
+
+(参考)ブランチの一覧を確認
+```
+git branch
+git branch -a    # remote も含めて確認
+```
+
+開発用のブランチに切り替える
+
+```
+# 既存のブランチ dev に切り替える
+git switch dev
+# 新しくブランチを作成して、切り替える
+git switch -c feat
+```
+
+## デプロイする
+
+### デプロイ先の URL
 
 - 開発用: https://d2pye9lkf1lyw0.cloudfront.net
 - 本番用: https://d3js90bnm4zs1c.cloudfront.net
 
-## デプロイ用のコマンド
+### デプロイ用のコマンド
 
 ``` bash
 # 本番環境向けのデプロイ
@@ -15,7 +71,7 @@ npm run cdk:deploy
 npm run cdk:deploy -- -c env=dev
 ```
 
-## ローカル環境で開発する際のコマンド
+### ローカル環境で開発する際のコマンド
 
 ``` bash
 # ローカル環境で開発
@@ -25,9 +81,9 @@ npm run web:devw
 npm run web:devw --env=dev
 ```
 
-# Deploy outputs
+## Deploy outputs
 
-## First Deploy outputs
+### First Deploy outputs
 
 ``` bash
 Outputs:
@@ -63,7 +119,7 @@ Stack ARN:
 arn:aws:cloudformation:ap-northeast-1:326497581172:stack/GenerativeAiUseCasesStackdev/7587db30-f36c-11ef-8a20-0e382519b027
 ```
 
-## Second Deploy outputs
+### Second Deploy outputs
 
 ``` bash
 Outputs:
@@ -99,8 +155,3 @@ Stack ARN:
 arn:aws:cloudformation:ap-northeast-1:326497581172:stack/GenerativeAiUseCasesStackdev/7587db30-f36c-11ef-8a20-0e382519b027
 ```
 
-## 3rd Deploy outputs
-
-``` bash
-
-```
