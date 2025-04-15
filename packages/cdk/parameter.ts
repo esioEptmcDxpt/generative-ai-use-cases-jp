@@ -50,9 +50,19 @@ const envs: Record<string, Partial<StackInput>> = {
     agentEnabled: true,
     agents: [
       {
-        displayName: 'データ分析屋さん (AIエージェント)',
+        displayName: 'データ分析屋さん',
         agentId: 'TWU9YT34HX',
         aliasId: 'MULPCVZTCS',
+      },
+      {
+        displayName: '安全(SKAI)エージェント',
+        agentId: '9JNBPBZAXJ',
+        aliasId: 'ZXWV0BLNSC',
+      },
+      {
+        displayName: '電力事故記事エージェント',
+        agentId: 'L8T3RJSWOU',
+        aliasId: 'HF5RVNOSWJ',
       },
       {
         displayName: '電力審査エージェント',
