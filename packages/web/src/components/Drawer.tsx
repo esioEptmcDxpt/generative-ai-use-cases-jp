@@ -57,8 +57,8 @@ const Drawer: React.FC<Props> = (props) => {
           </>
         )}
         <div className="text-aws-smile mx-3 my-1 text-xs">
-          {t('drawer.use_cases')}{' '}
-          <span className="text-gray-400">{t('drawer.generative_ai')}</span>
+          ユースケース <span className="text-gray-400">(生成 AI)</span> 🚅
+          電気SIO ver.
         </div>
         <div className="scrollbar-thin scrollbar-thumb-white ml-2 mr-1 h-full overflow-y-auto">
           {usecases.map((item, idx) => (
@@ -75,8 +75,8 @@ const Drawer: React.FC<Props> = (props) => {
         {tools.length > 0 && (
           <>
             <ExpandableMenu
-              title={t('drawer.tools')}
-              subTitle={`(${t('drawer.ai_services')})`}
+              title="ツール"
+              subTitle="(AI サービス on AWS)"
               className="mx-3 my-2 text-xs">
               <div className="mb-2 ml-2 mr-1">
                 {tools.map((item, idx) => (

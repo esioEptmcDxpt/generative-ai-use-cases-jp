@@ -16,6 +16,8 @@ import useFiles from '../hooks/useFiles';
 import FileCard from './FileCard';
 import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
+import ChatDisclaimer from './ChatDisclaimer';
+
 
 type Props = {
   content: string;
@@ -33,6 +35,8 @@ type Props = {
   fileUpload?: boolean;
   fileLimit?: FileLimit;
   accept?: string[];
+  showDisclaimer?: boolean;
+  disclaimerClassName?: string;
 } & (
   | {
       hideReset?: false;
@@ -121,7 +125,7 @@ const InputChatContent: React.FC<Props> = (props) => {
       )}
       <div
         className={`relative flex items-end rounded-xl border border-black/10 bg-gray-100 shadow-[0_0_30px_1px] shadow-gray-400/40 ${
-          props.disableMarginBottom ? '' : 'mb-7'
+          props.disableMarginBottom ? '' : 'mb-1'
         }`}>
         <div className="flex grow flex-col">
           {props.fileUpload && uploadedFiles.length > 0 && (
@@ -244,6 +248,9 @@ const InputChatContent: React.FC<Props> = (props) => {
           </Button>
         )}
       </div>
+      {props.showDisclaimer && (
+        <ChatDisclaimer className={props.disclaimerClassName ?? 'mb-4 mt-2'} />
+      )}
     </div>
   );
 };

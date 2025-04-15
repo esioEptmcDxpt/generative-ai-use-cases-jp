@@ -16,6 +16,7 @@ import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
 import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
+import ChatDisclaimer from '../components/ChatDisclaimer';
 
 const fileLimit: FileLimit = {
   accept: {
@@ -207,7 +208,7 @@ const AgentChatPage: React.FC = () => {
     <>
       <div
         onDragOver={handleDragOver}
-        className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
+        className={`${!isEmpty ? 'screen:pb-44' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
           {title}
         </div>
@@ -282,6 +283,7 @@ const AgentChatPage: React.FC = () => {
             fileLimit={fileLimit}
             accept={fileLimit.accept.doc}
           />
+          <ChatDisclaimer className="mb-1" />
         </div>
       </div>
     </>
