@@ -22,6 +22,7 @@ const envs: Record<string, Partial<StackInput>> = {
     modelRegion: 'us-west-2',
     modelIds: [
       'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
+      'anthropic.claude-3-5-sonnet-20241022-v2:0',
       'anthropic.claude-3-5-haiku-20241022-v1:0',
       'us.amazon.nova-pro-v1:0',
       'us.amazon.nova-lite-v1:0',
@@ -36,7 +37,6 @@ const envs: Record<string, Partial<StackInput>> = {
     imageGenerationModelIds: [
       'stability.stable-image-ultra-v1:1',
       'stability.sd3-5-large-v1:0',
-      'stability.stable-diffusion-xl-v1',
       'stability.stable-image-core-v1:1',
       'amazon.titan-image-generator-v2:0',
       'amazon.titan-image-generator-v1',
@@ -67,7 +67,7 @@ const envs: Record<string, Partial<StackInput>> = {
     modelRegion: 'us-west-2',
     modelIds: [
       'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
-      'anthropic.claude-3-5-haiku-20241022-v1:0',
+      'anthropic.claude-3-5-sonnet-20241022-v2:0',
       'us.amazon.nova-pro-v1:0',
       'us.amazon.nova-lite-v1:0',
       'us.amazon.nova-micro-v1:0',
@@ -81,7 +81,6 @@ const envs: Record<string, Partial<StackInput>> = {
     imageGenerationModelIds: [
       'stability.stable-image-ultra-v1:1',
       'stability.sd3-5-large-v1:0',
-      'stability.stable-diffusion-xl-v1',
       'stability.stable-image-core-v1:1',
       'amazon.titan-image-generator-v2:0',
       'amazon.titan-image-generator-v1',

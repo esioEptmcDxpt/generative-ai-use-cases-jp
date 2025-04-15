@@ -27,6 +27,15 @@ git config --global user.email "{Joi-Netアドレス}"
 開発でよく使う Git コマンド ⇒ [Gitでよく使うコマンド一覧](https://qiita.com/uhooi/items/c26c7c1beb5b36e7418e)
 
 
+## jQuery をインストール
+
+jQuery を使用するため、インストールする。
+
+```
+sudo apt-get update
+sudo apt-get install jq
+```
+
 ## リポジトリをクローンする
 
 private リポジトリからコードをクローンしてくる。
@@ -61,7 +70,15 @@ git switch -c feat
 - 開発用: https://d2pye9lkf1lyw0.cloudfront.net
 - 本番用: https://d3js90bnm4zs1c.cloudfront.net
 
-### デプロイ用のコマンド
+## デプロイ方法
+
+必要な node モジュールをインストールします。
+
+```
+npm ci
+```
+
+あとは、デプロイ用のコマンドを実行
 
 ``` bash
 # 本番環境向けのデプロイ
@@ -73,6 +90,8 @@ npm run cdk:deploy -- -c env=dev
 
 ### ローカル環境で開発する際のコマンド
 
+ローカルホストで開発中のコードを実行する場合は、以下のコマンドを実行する。
+
 ``` bash
 # ローカル環境で開発
 npm run web:devw
@@ -80,6 +99,24 @@ npm run web:devw
 # dev 環境のバックエンドを使用してローカルで開発
 npm run web:devw --env=dev
 ```
+
+#### (参考) SageMaker Code Editor で localhost にアクセスする方法
+
+はじめに、Code Editor を使う場合の設定変更をする。
+
+CodeEditor は Debian で起動しており、 npm コマンドでスクリプトを実行すると bash が実行されずエラーになってしまう。
+そのため、 `package.json` で `source` コマンドを使用している部分を修正する。
+
+```
+   "scripts": {
+-    "web:devw": "source ./setup-env.sh ${npm_config_env} && VITE_APP_VERSION=${npm_package_version} npm -w packages/web run dev",
++    "web:devw": "./setup-env.sh ${npm_config_env} && VITE_APP_VERSION=${npm_package_version} npm -w packages/web run dev",
+```
+
+
+[SageMaker StudioのCode Editorを魔改造してWebアプリのプロキシ機能を追加する](https://qiita.com/moritalous/items/859c9977dd6b923472f1)
+
+Code Editor のディストリビューションを編集して、カスタムしたコンテナで Code Editor を起動したらできる模様
 
 ## Deploy outputs
 
