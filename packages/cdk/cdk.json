@@ -19,6 +19,7 @@
     "ragEnabled": true,
     "kendraIndexArn": "arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe",
     "kendraDataSourceBucketName": "jre-regulations",
+    "kendraIndexLanguage": "ja",
     "kendraIndexScheduleEnabled": false,
     "kendraIndexScheduleCreateCron": null,
     "kendraIndexScheduleDeleteCron": null,
@@ -53,6 +54,7 @@
       "mistral.mistral-large-2407-v1:0"
     ],
     "imageGenerationModelIds": [
+      "amazon.nova-canvas-v1:0",
       "stability.stable-image-core-v1:0",
       "stability.sd3-large-v1:0",
       "stability.stable-image-ultra-v1:0",

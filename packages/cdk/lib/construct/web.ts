@@ -14,39 +14,39 @@ import {
   Flow,
   HiddenUseCases,
   ModelConfiguration,
-} from 'generative-ai-use-cases-jp';
+} from 'generative-ai-use-cases';
 import { ComputeType } from 'aws-cdk-lib/aws-codebuild';
 
 export interface WebProps {
-  apiEndpointUrl: string;
-  userPoolId: string;
-  userPoolClientId: string;
-  idPoolId: string;
-  predictStreamFunctionArn: string;
-  ragEnabled: boolean;
-  ragKnowledgeBaseEnabled: boolean;
-  agentEnabled: boolean;
-  flows?: Flow[];
-  flowStreamFunctionArn: string;
-  optimizePromptFunctionArn: string;
-  selfSignUpEnabled: boolean;
-  webAclId?: string;
-  modelRegion: string;
-  modelIds: ModelConfiguration[];
-  imageGenerationModelIds: ModelConfiguration[];
-  videoGenerationModelIds: ModelConfiguration[];
-  endpointNames: string[];
-  samlAuthEnabled: boolean;
-  samlCognitoDomainName?: string | null;
-  samlCognitoFederatedIdentityProviderName?: string | null;
-  agentNames: string[];
-  inlineAgents: boolean;
-  cert?: ICertificate;
-  hostName?: string | null;
-  domainName?: string | null;
-  hostedZoneId?: string | null;
-  useCaseBuilderEnabled: boolean;
-  hiddenUseCases: HiddenUseCases;
+  readonly apiEndpointUrl: string;
+  readonly userPoolId: string;
+  readonly userPoolClientId: string;
+  readonly idPoolId: string;
+  readonly predictStreamFunctionArn: string;
+  readonly ragEnabled: boolean;
+  readonly ragKnowledgeBaseEnabled: boolean;
+  readonly agentEnabled: boolean;
+  readonly flows?: Flow[];
+  readonly flowStreamFunctionArn: string;
+  readonly optimizePromptFunctionArn: string;
+  readonly selfSignUpEnabled: boolean;
+  readonly webAclId?: string;
+  readonly modelRegion: string;
+  readonly modelIds: ModelConfiguration[];
+  readonly imageGenerationModelIds: ModelConfiguration[];
+  readonly videoGenerationModelIds: ModelConfiguration[];
+  readonly endpointNames: string[];
+  readonly samlAuthEnabled: boolean;
+  readonly samlCognitoDomainName?: string | null;
+  readonly samlCognitoFederatedIdentityProviderName?: string | null;
+  readonly agentNames: string[];
+  readonly inlineAgents: boolean;
+  readonly cert?: ICertificate;
+  readonly hostName?: string | null;
+  readonly domainName?: string | null;
+  readonly hostedZoneId?: string | null;
+  readonly useCaseBuilderEnabled: boolean;
+  readonly hiddenUseCases: HiddenUseCases;
 }
 
 export class Web extends Construct {
@@ -168,7 +168,7 @@ export class Web extends Construct {
       outputSourceDirectory: './packages/web/dist',
       buildCommands: ['npm ci', 'npm run web:build'],
       buildEnvironment: {
-        NODE_OPTIONS: '--max-old-space-size=4096', // デプロイ時のCodeBuildのメモリを設定
+        NODE_OPTIONS: '--max-old-space-size=4096', // Memory for CodeBuild at deployment
         VITE_APP_API_ENDPOINT: props.apiEndpointUrl,
         VITE_APP_REGION: Stack.of(this).region,
         VITE_APP_USER_POOL_ID: props.userPoolId,
@@ -199,7 +199,7 @@ export class Web extends Construct {
         VITE_APP_HIDDEN_USE_CASES: JSON.stringify(props.hiddenUseCases),
       },
     });
-    // コンピューティングリソースを増強
+    // Enhance computing resources
     (
       build.node.findChild('Project').node.defaultChild as CfnResource
     ).addPropertyOverride('Environment.ComputeType', ComputeType.MEDIUM);
