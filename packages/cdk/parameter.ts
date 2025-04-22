@@ -78,6 +78,7 @@ const envs: Record<string, Partial<StackInput>> = {
     modelIds: [
       'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
       'anthropic.claude-3-5-sonnet-20241022-v2:0',
+      'anthropic.claude-3-5-haiku-20241022-v1:0',
       'us.amazon.nova-pro-v1:0',
       'us.amazon.nova-lite-v1:0',
       'us.amazon.nova-micro-v1:0',
@@ -95,6 +96,7 @@ const envs: Record<string, Partial<StackInput>> = {
       'amazon.titan-image-generator-v2:0',
       'amazon.titan-image-generator-v1',
     ],
+    videoGenerationModelIds: ['amazon.nova-reel-v1:0', 'luma.ray-v2:0'],
     ragEnabled: true,
     kendraIndexArn:
       'arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe',

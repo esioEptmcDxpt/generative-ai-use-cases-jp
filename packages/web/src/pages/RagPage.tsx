@@ -14,7 +14,7 @@ import { PiPlus } from 'react-icons/pi';
 import { RagPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import queryString from 'query-string';
-import { useTranslation } from 'react-i18next';
+// import { useTranslation } from 'react-i18next';
 import Alert from '../components/Alert';
 import ChatDisclaimer from '../components/ChatDisclaimer';
 
@@ -35,7 +35,7 @@ const useRagPageState = create<StateType>((set) => {
 });
 
 const RagPage: React.FC = () => {
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const { content, setContent } = useRagPageState();
   const { pathname, search } = useLocation();
   const { getModelId, setModelId } = useChat(pathname);
