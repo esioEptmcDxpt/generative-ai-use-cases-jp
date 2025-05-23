@@ -44,6 +44,7 @@
       "anthropic.claude-3-5-sonnet-20240620-v1:0",
       "anthropic.claude-3-5-haiku-20241022-v1:0",
       "anthropic.claude-3-5-sonnet-20241022-v2:0",
+      "us.amazon.nova-premier-v1:0",
       "us.amazon.nova-pro-v1:0",
       "us.amazon.nova-lite-v1:0",
       "us.amazon.nova-micro-v1:0",
@@ -64,6 +65,7 @@
     "videoGenerationModelIds": [
       "amazon.nova-reel-v1:0"
     ],
+    "speechToSpeechModelIds": ["amazon.nova-sonic-v1:0"],
     "endpointNames": [],
     "agentEnabled": false,
     "searchAgentEnabled": false,

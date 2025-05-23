@@ -143,6 +143,7 @@ export class RagKnowledgeBaseStack extends Stack {
       ragKnowledgeBaseAdvancedParsing,
       ragKnowledgeBaseAdvancedParsingModelId,
       ragKnowledgeBaseBinaryVector,
+      crossAccountBedrockRoleArn,
     } = props.params;
 
     if (typeof embeddingModelId !== 'string') {
@@ -154,6 +155,12 @@ export class RagKnowledgeBaseStack extends Stack {
     if (!EMBEDDING_MODELS.includes(embeddingModelId)) {
       throw new Error(
         `embeddingModelId is invalid (valid embeddingModelId: ${EMBEDDING_MODELS})`
+      );
+    }
+
+    if (crossAccountBedrockRoleArn) {
+      throw new Error(
+        'With `crossAccountBedrockRoleArn` specified, you must use an existing knowledge base. Create a knowledge base in your Bedrock account and provide its `knowledgeBaseId`.'
       );
     }
 
@@ -447,6 +454,8 @@ export class RagKnowledgeBaseStack extends Stack {
       destinationBucket: dataSourceBucket,
       // There is a possibility that access logs are still in the same Bucket from the previous configuration, so this setting is left.
       exclude: ['AccessLogs/*', 'logs*'],
+      prune: false,
+      memoryLimit: 1024,
     });
 
     this.knowledgeBaseId = knowledgeBase.ref;
