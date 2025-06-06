@@ -4,15 +4,15 @@ import {
   stackInputSchema,
   ProcessedStackInput,
 } from './lib/stack-input';
-import { ModelConfiguration } from 'generative-ai-use-cases-jp';
+import { ModelConfiguration } from 'generative-ai-use-cases';
 
-// CDK Context からパラメータを取得する場合
+// Get parameters from CDK Context
 const getContext = (app: cdk.App): StackInput => {
   const params = stackInputSchema.parse(app.node.getAllContext());
   return params;
 };
 
-// パラメータを直接定義する場合
+// If you want to define parameters directly
 const envs: Record<string, Partial<StackInput>> = {
   // 必要に応じて以下をカスタマイズ
   // paramter.ts で無名環境を定義したい場合は以下をアンコメントすると cdk.json の内容が無視され、parameter.ts がより優先されます。
@@ -78,6 +78,7 @@ const envs: Record<string, Partial<StackInput>> = {
     modelIds: [
       'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
       'anthropic.claude-3-5-sonnet-20241022-v2:0',
+      'anthropic.claude-3-5-haiku-20241022-v1:0',
       'us.amazon.nova-pro-v1:0',
       'us.amazon.nova-lite-v1:0',
       'us.amazon.nova-micro-v1:0',
@@ -95,6 +96,7 @@ const envs: Record<string, Partial<StackInput>> = {
       'amazon.titan-image-generator-v2:0',
       'amazon.titan-image-generator-v1',
     ],
+    videoGenerationModelIds: ['amazon.nova-reel-v1:0', 'luma.ray-v2:0'],
     ragEnabled: true,
     kendraIndexArn:
       'arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe',
@@ -109,28 +111,27 @@ const envs: Record<string, Partial<StackInput>> = {
     allowedSignUpEmailDomains: ['jreast.co.jp'],
   },
   staging: {
-    // ステージング環境のパラメータ
+    // Parameters for staging environment
   },
   prod: {
-    // 本番環境のパラメータ
-    // 開発環境のパラメータ
+    // Parameters for production environment
   },
-  // 他環境も必要に応じてカスタマイズ
+  // If you need other environments, customize them as needed
 };
 
-// 後方互換性のため、CDK Context > parameter.ts の順でパラメータを取得する
+// For backward compatibility, get parameters from CDK Context > parameter.ts
 export const getParams = (app: cdk.App): ProcessedStackInput => {
-  // デフォルトでは CDK Context からパラメータを取得する
+  // By default, get parameters from CDK Context
   let params = getContext(app);
 
-  // env が envs で定義したものにマッチ場合は、envs のパラメータを context よりも優先して使用する
+  // If the env matches the ones defined in envs, use the parameters in envs instead of the ones in context
   if (envs[params.env]) {
     params = stackInputSchema.parse({
       ...envs[params.env],
       env: params.env,
     });
   }
-  //modelIds, imageGenerationModelIdsのフォーマットを揃える
+  // Make the format of modelIds, imageGenerationModelIds consistent
   const convertToModelConfiguration = (
     models: (string | ModelConfiguration)[],
     defaultRegion: string
