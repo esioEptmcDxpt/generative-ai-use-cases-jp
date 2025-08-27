@@ -23,6 +23,7 @@ import {
   PiTreeStructure,
   PiNotebook,
   PiGraph,
+  PiLightningFill,
 } from 'react-icons/pi';
 import { Outlet } from 'react-router-dom';
 import Drawer, { ItemProps } from './components/Drawer';
@@ -93,20 +94,20 @@ const App: React.FC = () => {
     },
     ragEnabled
       ? {
-          label: t('navigation.ragChat'),
+          label: 'SIO-AI',
           to: '/rag',
-          icon: <PiChatCircleText />,
+          icon: <PiLightningFill />,
           display: 'usecase' as const,
-          sub: 'Amazon Kendra',
+          sub: '文書検索🔎',
         }
       : null,
     ragKnowledgeBaseEnabled
       ? {
-          label: t('navigation.ragChat'),
+          label: 'SIO-AI',
           to: '/rag-knowledge-base',
           icon: <PiChatCircleText />,
-          display: 'usecase' as const,
-          sub: 'Knowledge Base',
+          display: 'none' as const,//非表示
+          sub: '文書検索🔎',
         }
       : null,
     agentEnabled && !inlineAgents
@@ -172,7 +173,7 @@ const App: React.FC = () => {
       : null,
     enabled('meetingMinutes')
       ? {
-          label: t('navigation.meetingMinutes'),
+          label: '議事録作成 ',
           to: '/meeting-minutes',
           icon: <PiNotebook />,
           display: 'usecase' as const,

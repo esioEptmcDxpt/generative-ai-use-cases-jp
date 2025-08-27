@@ -52,13 +52,6 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
       : null;
 
   // Agent
-  if (params.crossAccountBedrockRoleArn) {
-    if (params.agentEnabled || params.searchApiKey) {
-      throw new Error(
-        'When `crossAccountBedrockRoleArn` is specified, the `agentEnabled` and `searchApiKey` parameters are not supported. Please create agents in the other account and specify them in the `agents` parameter.'
-      );
-    }
-  }
   const agentStack = params.agentEnabled
     ? new AgentStack(app, `WebSearchAgentStack${params.env}`, {
         env: {
@@ -69,6 +62,7 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
         crossRegionReferences: true,
       })
     : null;
+
 
   // Guardrail
   const guardrail = params.guardrailEnabled
@@ -103,9 +97,9 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
 
     videoBucketRegionMap[region] = videoTmpBucketStack.bucketName;
   }
-
-  // GenU Stack
+  // isSageMakerStudio変数を宣言
   const isSageMakerStudio = 'SAGEMAKER_APP_TYPE_LOWERCASE' in process.env;
+  // GenU Stack
   const generativeAiUseCasesStack = new GenerativeAiUseCasesStack(
     app,
     `GenerativeAiUseCasesStack${params.env}`,
@@ -138,11 +132,14 @@ export const createStacks = (app: cdk.App, params: ProcessedStackInput) => {
       isSageMakerStudio,
     }
   );
-
+    // 明示的に依存関係を設定
+  if (agentStack) {
+    generativeAiUseCasesStack.addDependency(agentStack);
+  }
   cdk.Aspects.of(generativeAiUseCasesStack).add(
     new DeletionPolicySetter(cdk.RemovalPolicy.DESTROY)
   );
-
+  
   const dashboardStack = params.dashboard
     ? new DashboardStack(
         app,

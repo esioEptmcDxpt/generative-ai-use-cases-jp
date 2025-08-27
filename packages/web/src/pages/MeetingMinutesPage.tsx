@@ -296,7 +296,8 @@ const MeetingMinutesPage: React.FC = () => {
     autoGenerateSessionTimestamp,
     setGeneratedMinutes,
     setLastProcessedTranscript,
-    setLastGeneratedTime
+    setLastGeneratedTime,
+    'ja'
   );
 
   const speakerMapping = useMemo(() => {
@@ -653,7 +654,7 @@ const MeetingMinutesPage: React.FC = () => {
   return (
     <div className="grid grid-cols-12">
       <div className="invisible col-span-12 my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-        {t('meetingMinutes.title')}
+        会議議事録作成
       </div>
       <div className="col-span-12 col-start-1 mx-2 lg:col-span-10 lg:col-start-2 xl:col-span-10 xl:col-start-2">
         <Card>
@@ -781,7 +782,7 @@ const MeetingMinutesPage: React.FC = () => {
                 {inputMethod !== 'direct' && (
                   <div className="mb-4 px-2">
                     <label className="mb-2 block font-bold">
-                      {t('meetingMinutes.language')}
+                      言語
                     </label>
                     <Select
                       value={languageCode}
@@ -857,7 +858,8 @@ const MeetingMinutesPage: React.FC = () => {
               {/* Header */}
               <div className="mb-4 border-b pb-2">
                 <h2 className="text-lg font-semibold">
-                  {t('meetingMinutes.generate_minutes_header')}
+                  作成された議事録
+                  {/*{t('meetingMinutes.generate_minutes_header')}*/}
                 </h2>
               </div>
 
@@ -865,7 +867,8 @@ const MeetingMinutesPage: React.FC = () => {
               <div className="mb-4">
                 <div className="mb-4">
                   <label className="mb-2 block font-bold">
-                    {t('meetingMinutes.style')}
+                    {/*{t('meetingMinutes.style')}*/}
+                    スタイル
                   </label>
                   <Select
                     value={minutesStyle}
@@ -895,7 +898,8 @@ const MeetingMinutesPage: React.FC = () => {
 
                 <div className="mb-4">
                   <label className="mb-2 block font-bold">
-                    {t('meetingMinutes.model')}
+                    {/*{t('meetingMinutes.model')}*/}
+                    モデル
                   </label>
                   <Select
                     value={modelId}
@@ -986,7 +990,8 @@ const MeetingMinutesPage: React.FC = () => {
                       (minutesStyle === 'custom' &&
                         (!customPrompt || customPrompt.trim() === ''))
                     }>
-                    {t('meetingMinutes.generate')}
+                    {/*{t('meetingMinutes.generate')}*/}
+                    生成する
                   </Button>
                 </div>
               </div>
@@ -999,7 +1004,8 @@ const MeetingMinutesPage: React.FC = () => {
             <div>
               <div className="mb-2 flex items-center justify-between">
                 <div className="font-bold">
-                  {t('meetingMinutes.transcript')}
+                  {/*{t('meetingMinutes.transcript')}*/}
+                  文字起こし
                 </div>
                 {hasTranscriptText && (
                   <div className="flex">
@@ -1047,7 +1053,8 @@ const MeetingMinutesPage: React.FC = () => {
               <div className="mb-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="font-bold">
-                    {t('meetingMinutes.generated_minutes')}
+                    {/*{t('meetingMinutes.generated_minutes')}*/}
+                    生成された議事録
                   </div>
                   {lastGeneratedTime && (
                     <div className="text-sm text-gray-500">
