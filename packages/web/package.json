@@ -8,7 +8,9 @@
     "lint": "eslint . --ext ts,tsx,yaml,yml --report-unused-disable-directives --max-warnings 0",
     "lint:fix": "eslint . --ext ts,tsx,yaml,yml --report-unused-disable-directives --max-warnings 0 --fix",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "web:build": "vite build && npm run copy-locales",
+  "copy-locales": "mkdir -p dist/locales/translation && cp -r public/locales/translation/* dist/locales/translation/"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.1.12",

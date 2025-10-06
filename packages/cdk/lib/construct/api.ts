@@ -26,6 +26,7 @@ import {
   BEDROCK_VIDEO_GEN_MODELS,
   BEDROCK_RERANKING_MODELS,
   BEDROCK_TEXT_MODELS,
+  INFERENCE_PROFILE_ARN_PATTERN,
 } from '@generative-ai-use-cases/common';
 import { allowS3AccessWithSourceIpCondition } from '../utils/s3-access-policy';
 import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
@@ -92,11 +93,6 @@ export class Api extends Construct {
     const agents: Agent[] = [...(props.agents ?? []), ...props.customAgents];
 
     // Validate Model Names
-    for (const model of modelIds) {
-      if (!BEDROCK_TEXT_MODELS.includes(model.modelId)) {
-        throw new Error(`Unsupported Model Name: ${model.modelId}`);
-      }
-    }
     for (const model of imageGenerationModelIds) {
       if (!BEDROCK_IMAGE_GEN_MODELS.includes(model.modelId)) {
         throw new Error(`Unsupported Model Name: ${model.modelId}`);
@@ -120,12 +116,12 @@ export class Api extends Construct {
         .map((m) => m.modelId)
         .filter((item, index, arr) => arr.indexOf(item) !== index)
     );
-    if (duplicateModelIds.size > 0) {
-      throw new Error(
-        'Duplicate model IDs detected. Using the same model ID multiple times is not supported:\n' +
-          [...duplicateModelIds].map((s) => `- ${s}\n`).join('\n')
-      );
-    }
+    //if (duplicateModelIds.size > 0) {
+      //throw new Error(
+        //'Duplicate model IDs detected. Using the same model ID multiple times is not supported:\n' +
+          //[...duplicateModelIds].map((s) => `- ${s}\n`).join('\n')
+      //);
+    //}
 
     // Agent Map
     const agentMap: AgentMap = {};

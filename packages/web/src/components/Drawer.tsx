@@ -64,8 +64,7 @@ const Drawer: React.FC<Props> = (props) => {
         <div className="text-aws-smile mx-3 my-1 flex items-center justify-between text-xs">
           <div>
             {t('drawer.use_cases')}{' '}
-            <span className="text-gray-400">{t('drawer.generative_ai')}</span>🚅
-            電気SIO ver.
+            <span className="text-gray-400">{t('drawer.generative_ai')}</span>{t('navigation.sub')}
           </div>
         </div>
         

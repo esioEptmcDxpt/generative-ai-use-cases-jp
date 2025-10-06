@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import './i18n/config'; 
 import {
   PiList,
   PiHouse,
@@ -94,20 +95,20 @@ const App: React.FC = () => {
     },
     ragEnabled
       ? {
-          label: 'SIO-AI',
+          label: t('navigation.ragChat'),
           to: '/rag',
           icon: <PiLightningFill />,
           display: 'usecase' as const,
-          sub: '文書検索🔎',
+          sub: t('navigation.search'),
         }
       : null,
     ragKnowledgeBaseEnabled
       ? {
-          label: 'SIO-AI',
+          label: t('navigation.ragChat'),
           to: '/rag-knowledge-base',
           icon: <PiChatCircleText />,
           display: 'none' as const,//非表示
-          sub: '文書検索🔎',
+          sub: t('navigation.search'),
         }
       : null,
     agentEnabled && !inlineAgents

@@ -32,6 +32,8 @@ import {
 import ModelParameters from '../components/ModelParameters';
 import { AcceptedDotExtensions } from '../utils/MediaUtils';
 import { useTranslation } from 'react-i18next';
+import ChatDisclaimer from '../components/ChatDisclaimer';
+import { getModelMetadata } from '@generative-ai-use-cases/common';
 
 const fileLimit: FileLimit = {
   accept: AcceptedDotExtensions,
@@ -166,21 +168,21 @@ const ChatPage: React.FC = () => {
     }
   }, [chatId, getChatTitle, t]);
 
-  const accept = useMemo(() => {
-    if (!modelId) return [];
-    const feature = MODELS.modelMetadata[modelId];
-    return [
-      ...(feature.flags.doc ? fileLimit.accept.doc : []),
-      ...(feature.flags.image ? fileLimit.accept.image : []),
-      ...(feature.flags.video ? fileLimit.accept.video : []),
-    ];
-  }, [modelId]);
+ const accept = useMemo(() => {
+  if (!modelId) return [];
+  const feature = getModelMetadata(modelId);
+  return [
+    ...(feature.flags.doc ? fileLimit.accept.doc : []),
+    ...(feature.flags.image ? fileLimit.accept.image : []),
+    ...(feature.flags.video ? fileLimit.accept.video : []),
+  ];
+}, [modelId]);
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
-  const setting = useMemo(() => {
-    return MODELS.modelMetadata[modelId]?.flags.reasoning ?? false;
-  }, [modelId]);
+const setting = useMemo(() => {
+  return getModelMetadata(modelId).flags.reasoning ?? false;
+}, [modelId]);
 
   useEffect(() => {
     const _modelId = !modelId ? availableModels[0] : modelId;
@@ -427,7 +429,7 @@ const ChatPage: React.FC = () => {
     <>
       <div
         onDragOver={fileUpload ? handleDragOver : undefined}
-        className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
+        className={`${!isEmpty ? 'screen:pb-44' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
           {title}
         </div>
@@ -571,7 +573,7 @@ const ChatPage: React.FC = () => {
           )}
           <InputChatContent
             content={content}
-            disabled={loading && !writing}
+            disabled={loading}
             onChangeContent={setContent}
             resetDisabled={!!chatId}
             onSend={() => {
@@ -589,8 +591,8 @@ const ChatPage: React.FC = () => {
             onSetting={() => {
               setShowSetting(true);
             }}
-            canStop={writing}
           />
+          <ChatDisclaimer className="mb-1" />
         </div>
       </div>
 
@@ -672,7 +674,7 @@ const ChatPage: React.FC = () => {
             defaultOpened={true}>
             <div className="">
               <ModelParameters
-                modelFeatureFlags={MODELS.modelMetadata[modelId].flags}
+                modelFeatureFlags={getModelMetadata(modelId).flags}
                 overrideModelParameters={overrideModelParameters}
                 setOverrideModelParameters={setOverrideModelParameters}
               />

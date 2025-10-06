@@ -14,7 +14,7 @@ import { PiPlus } from 'react-icons/pi';
 import { RagPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import queryString from 'query-string';
-//import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import Alert from '../components/Alert';
 import ChatDisclaimer from '../components/ChatDisclaimer';
 
@@ -35,7 +35,7 @@ const useRagPageState = create<StateType>((set) => {
 });
 
 const RagPage: React.FC = () => {
-  //const { t } = useTranslation();
+  const { t } = useTranslation();
   const { content, setContent } = useRagPageState();
   const { pathname, search } = useLocation();
   const { getModelId, setModelId, forceToStop } = useChat(pathname);
@@ -91,8 +91,7 @@ const RagPage: React.FC = () => {
     <>
       <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-          {/*t('rag.title')*/}
-          SIO-AI (AI文書検索システム)
+          {t('rag.title')}
         </div>
 
         <div className="mt-2 flex w-full items-end justify-center lg:mt-0">
@@ -129,7 +128,7 @@ const RagPage: React.FC = () => {
                       <li>
                         <strong>万能型：</strong>
                         <span>
-                          us.anthropic.claude-3-7-sonnet-20250219-v1:0
+                          anthropic.claude-sonnet-4-20250514-v1:0
                         </span>
                       </li>
                       <li>

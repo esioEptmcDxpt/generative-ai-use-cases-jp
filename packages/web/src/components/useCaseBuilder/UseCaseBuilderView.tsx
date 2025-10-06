@@ -10,6 +10,7 @@ import Button from '../Button';
 import useChat from '../../hooks/useChat';
 import { useLocation } from 'react-router-dom';
 import { MODELS } from '../../hooks/useModel';
+import { getModelMetadata } from '@generative-ai-use-cases/common'; 
 import Markdown from '../Markdown';
 import ButtonCopy from '../ButtonCopy';
 import useTyping from '../../hooks/useTyping';
@@ -416,14 +417,14 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
   );
 
   const accept = useMemo(() => {
-    if (!modelId) return [];
-    const feature = MODELS.modelMetadata[modelId].flags;
-    return [
-      ...(feature.doc ? fileLimit.accept.doc : []),
-      ...(feature.image ? fileLimit.accept.image : []),
-      ...(feature.video ? fileLimit.accept.video : []),
-    ];
-  }, [modelId]);
+  if (!modelId) return [];
+  const feature = getModelMetadata(modelId).flags;
+  return [
+    ...(feature.doc ? fileLimit.accept.doc : []),
+    ...(feature.image ? fileLimit.accept.image : []),
+    ...(feature.video ? fileLimit.accept.video : []),
+  ];
+}, [modelId]);
 
   useEffect(() => {
     checkFiles(fileLimit, accept);

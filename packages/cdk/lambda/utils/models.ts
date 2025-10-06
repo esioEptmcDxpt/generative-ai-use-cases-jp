@@ -26,7 +26,7 @@ import {
   ConversationRole,
   ContentBlock,
 } from '@aws-sdk/client-bedrock-runtime';
-import { modelMetadata } from '@generative-ai-use-cases/common';
+import { getModelMetadata } from '@generative-ai-use-cases/common';
 import {
   applyAutoCacheToMessages,
   applyAutoCacheToSystem,
@@ -45,7 +45,7 @@ const modelIds: ModelConfiguration[] = (
   .filter((model) => model.modelId);
 // If there is a lightweight model among the available models, prioritize the lightweight model.
 const lightWeightModelIds = modelIds.filter(
-  (model: ModelConfiguration) => modelMetadata[model.modelId].flags.light
+  (model: ModelConfiguration) => getModelMetadata(model.modelId).flags.light
 );
 const defaultModelConfiguration = lightWeightModelIds[0] || modelIds[0];
 export const defaultModel: Model = {
@@ -130,7 +130,7 @@ const CLAUDE_3_5_DEFAULT_PARAMS: ConverseInferenceParams = {
   inferenceConfig: {
     maxTokens: 8192,
     temperature: 0.6,
-    topP: 0.8,
+    //topP: 0.8,
   },
 };
 
@@ -446,7 +446,7 @@ const createConverseCommandInput = (
   };
 
   if (
-    modelMetadata[model.modelId].flags.reasoning &&
+    getModelMetadata(model.modelId).flags.reasoning &&
     model.modelParameters?.reasoningConfig?.type === 'enabled'
   ) {
     converseCommandInput.inferenceConfig = {
@@ -909,6 +909,14 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseStreamOutput: (body: ConverseStreamOutput) => StreamingChunk;
   };
 } = {
+  'global.anthropic.claude-sonnet-4-5-20250929-v1:0': {
+    defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+    usecaseParams: USECASE_DEFAULT_PARAMS,
+    createConverseCommandInput: createConverseCommandInput,
+    createConverseStreamCommandInput: createConverseStreamCommandInput,
+    extractConverseOutput: extractConverseOutput,
+    extractConverseStreamOutput: extractConverseStreamOutput,
+  },
   'us.anthropic.claude-opus-4-20250514-v1:0': {
     defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
@@ -916,6 +924,54 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     createConverseStreamCommandInput: createConverseStreamCommandInput,
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
+  },
+  'anthropic.claude-sonnet-4-20250514-v1:0': {
+  defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
+'amazon.nova-premier-v1:0': {
+  defaultParams: NOVA_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
+'meta.llama4-maverick-17b-instruct-v1:0': {
+  defaultParams: LLAMA_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
+'twelvelabs.pegasus-1-2-v1:0': {
+  defaultParams: CLAUDE_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
+'mistral.pixtral-large-2502-v1:0': {
+  defaultParams: MISTRAL_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
+  'global.anthropic.claude-sonnet-4-20250514-v1:0': {
+  defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
   },
   'us.anthropic.claude-sonnet-4-20250514-v1:0': {
     defaultParams: CLAUDE_3_5_DEFAULT_PARAMS,
@@ -1159,6 +1215,22 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  'us.meta.llama4-maverick-17b-instruct-v1:0': {
+  defaultParams: LLAMA_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
+'meta.llama4-scout-17b-instruct-v1:0': {
+  defaultParams: LLAMA_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
   'meta.llama3-8b-instruct-v1:0': {
     defaultParams: LLAMA_DEFAULT_PARAMS,
     usecaseParams: USECASE_DEFAULT_PARAMS,
@@ -1461,6 +1533,30 @@ export const BEDROCK_TEXT_GEN_MODELS: {
     extractConverseOutput: extractConverseOutput,
     extractConverseStreamOutput: extractConverseStreamOutput,
   },
+  'us.twelvelabs.pegasus-1-2-v1:0': {
+  defaultParams: CLAUDE_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
+'us.mistral.pixtral-large-2502-v1:0': {
+  defaultParams: MISTRAL_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
+'openai.gpt-oss-120b-1:0': {
+  defaultParams: CLAUDE_DEFAULT_PARAMS,
+  usecaseParams: USECASE_DEFAULT_PARAMS,
+  createConverseCommandInput: createConverseCommandInput,
+  createConverseStreamCommandInput: createConverseStreamCommandInput,
+  extractConverseOutput: extractConverseOutput,
+  extractConverseStreamOutput: extractConverseStreamOutput,
+},
 };
 
 // Definition of parameters and functions for each image generation model
@@ -1529,6 +1625,12 @@ export const BEDROCK_VIDEO_GEN_MODELS: {
   },
   'luma.ray-v2:0': {
     createBodyVideo: createBodyVideoLumaRayV2,
+  },
+    'us.amazon.nova-premier-v1:0': {
+    createBodyVideo: createBodyVideoNovaReelV11,
+  },
+    'arn:aws:bedrock:us-west-2:326497581172:inference-profile/us.amazon.nova-premier-v1:0': {
+    createBodyVideo: createBodyVideoNovaReelV11,
   },
 };
 
