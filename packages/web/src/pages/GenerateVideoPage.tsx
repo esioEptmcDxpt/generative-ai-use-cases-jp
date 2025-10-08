@@ -31,7 +31,7 @@ import { useTranslation } from 'react-i18next';
 import useOneshotTranslation from '../hooks/useOneshotTranslation';
 
 const TASK_TYPES = (modelId: string): string[] => {
-  if (modelId === 'amazon.nova-reel-v1:1') {
+  if (modelId === 'us.amazon.nova-premier-v1:0') {
     return ['TEXT_VIDEO', 'MULTI_SHOT_AUTOMATED'];
   }
 
@@ -43,7 +43,7 @@ const MODEL_PARAMS = (
   taskType: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): Record<string, any> => {
-  if (modelId === 'amazon.nova-reel-v1:0') {
+  if (modelId === 'us.amazon.nova-premier-v1:0') {
     return {
       dimension: ['1280x720'],
       durationSeconds: [6],

@@ -1,5 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import './i18n/config'; 
 import {
   PiList,
   PiHouse,
@@ -23,6 +24,7 @@ import {
   PiTreeStructure,
   PiNotebook,
   PiGraph,
+  PiLightningFill,
 } from 'react-icons/pi';
 import { Outlet } from 'react-router-dom';
 import Drawer, { ItemProps } from './components/Drawer';
@@ -95,9 +97,9 @@ const App: React.FC = () => {
       ? {
           label: t('navigation.ragChat'),
           to: '/rag',
-          icon: <PiChatCircleText />,
+          icon: <PiLightningFill />,
           display: 'usecase' as const,
-          sub: 'Amazon Kendra',
+          sub: t('navigation.search'),
         }
       : null,
     ragKnowledgeBaseEnabled
@@ -105,8 +107,8 @@ const App: React.FC = () => {
           label: t('navigation.ragChat'),
           to: '/rag-knowledge-base',
           icon: <PiChatCircleText />,
-          display: 'usecase' as const,
-          sub: 'Knowledge Base',
+          display: 'none' as const,//非表示
+          sub: t('navigation.search'),
         }
       : null,
     agentEnabled && !inlineAgents
@@ -172,7 +174,7 @@ const App: React.FC = () => {
       : null,
     enabled('meetingMinutes')
       ? {
-          label: t('navigation.meetingMinutes'),
+          label: '議事録作成 ',
           to: '/meeting-minutes',
           icon: <PiNotebook />,
           display: 'usecase' as const,

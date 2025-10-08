@@ -47,5 +47,9 @@
     "**/*": [
       "sh -c 'npm run lint'"
     ]
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock": "^3.895.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.895.0"
   }
 }

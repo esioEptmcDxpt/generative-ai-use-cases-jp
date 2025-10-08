@@ -3,7 +3,7 @@ import InputChatContent from '../components/InputChatContent';
 import { create } from 'zustand';
 import useChat from '../hooks/useChat';
 import useRag from '../hooks/useRag';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import ChatMessage from '../components/ChatMessage';
 import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
@@ -15,6 +15,8 @@ import { RagPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import queryString from 'query-string';
 import { useTranslation } from 'react-i18next';
+import Alert from '../components/Alert';
+import ChatDisclaimer from '../components/ChatDisclaimer';
 
 type StateType = {
   content: string;
@@ -37,12 +39,23 @@ const RagPage: React.FC = () => {
   const { content, setContent } = useRagPageState();
   const { pathname, search } = useLocation();
   const { getModelId, setModelId, forceToStop } = useChat(pathname);
-  const { postMessage, clear, loading, writing, messages, isEmpty } =
-    useRag(pathname);
-  const { scrollableContainer, setFollowing } = useFollow();
-  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
 
+  // 検索のみモードかどうかを判定 - 先に宣言
+  const isSearchOnly = React.useMemo(() => {
+    if (search !== '') {
+      const params = queryString.parse(search) as RagPageQueryParams;
+      return params.mode === 'search-only';
+    }
+    return false;
+  }, [search]);
+  
+  // isSearchOnly を渡す
+  const { postMessage, clear, loading, writing, messages, isEmpty } =
+    useRag(pathname, isSearchOnly);
+  const { scrollableContainer, setFollowing } = useFollow();
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
+  
   useEffect(() => {
     const _modelId = !modelId ? availableModels[0] : modelId;
     if (search !== '') {
@@ -100,7 +113,59 @@ const RagPage: React.FC = () => {
             </div>
           </div>
         )}
+{isEmpty && (
+          <div
+            className={`absolute inset-x-0 top-28 m-auto flex justify-center`}>
+            <div>
+              <Alert severity="info">
+                <div>
+                  <h2 className="mb-2">AIモデルの選択</h2>
+                  <p>セレクトボックスでAIモデルを選択できます</p>
 
+                  <section className="mt-3">
+                    <h3 className="font-medium">おすすめのモデル</h3>
+                    <ul className="mt-2 list-disc pl-5">
+                      <li>
+                        <strong>万能型：</strong>
+                        <span>
+                          anthropic.claude-sonnet-4-20250514-v1:0
+                        </span>
+                      </li>
+                      <li>
+                        <strong>スピード型：</strong>
+                        <span>anthropic.claude-3-5-haiku-20241022-v1:0</span>
+                      </li>
+                    </ul>
+                  </section>
+                </div>
+                <footer className="mt-4 text-sm text-gray-600">
+                  <p>
+                    ＜参考＞2025年4月から名称を変更しています。旧称：電力AIチャット
+                  </p>
+                </footer>
+              </Alert>
+              <Alert severity="info">
+                <div>
+                  RAG (Retrieval Augmented Generation)
+                  手法のチャットを行うことができます。
+                </div>
+                <div>
+                  メッセージが入力されると Amazon Kendra
+                  でドキュメントを検索し、検索したドキュメントをもとに LLM
+                  が回答を生成します。
+                </div>
+                <div className="font-bold">
+                  Amazon Kendra の検索のみを実行する場合は
+                  <Link className="text-aws-smile" to="/rag?mode=search-only" target="_blank" rel="noopener noreferrer">
+                    こちら
+                  </Link>
+                  のページに遷移してください。
+                </div>
+              </Alert>
+            </div>
+          </div>
+        )}
+        
         <div ref={scrollableContainer}>
           {messages.map((chat, idx) => (
             <div key={idx}>
@@ -118,21 +183,17 @@ const RagPage: React.FC = () => {
           <ScrollTopBottom />
         </div>
 
-        <div className="fixed bottom-0 z-0 flex w-full items-end justify-center lg:pr-64 print:hidden">
+        <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
           <InputChatContent
             content={content}
-            disabled={loading && !writing}
+            disabled={loading}
             onChangeContent={setContent}
             onSend={() => {
-              if (!loading) {
-                onSend();
-              } else {
-                onStop();
-              }
+              onSend();
             }}
             onReset={onReset}
-            canStop={writing}
           />
+          <ChatDisclaimer className="mb-1" />
         </div>
       </div>
     </>

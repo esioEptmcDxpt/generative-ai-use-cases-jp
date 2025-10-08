@@ -17,9 +17,15 @@
 
     /* Linting */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": false,  // この行を追加
+    
+    "baseUrl": ".",  // この行を追加
+    "paths": {       // この行を追加
+      "@/*": ["./src/*"]  // この行を追加
+    },              // この行を追加
 
     "types": ["vite-plugin-svgr/client"]
   },

@@ -8,7 +8,7 @@ import useChat from './useChat';
 import useRagKnowledgeBaseApi from './useRagKnowledgeBaseApi';
 import { getPrompter } from '../prompts';
 import { RetrieveResultItem } from '@aws-sdk/client-kendra';
-import { ShownMessage } from 'generative-ai-use-cases';
+import { ShownMessage } from '../@types';
 import { cleanEncode } from '../utils/URLUtils';
 import { arrangeItems } from './useRag';
 import { useTranslation } from 'react-i18next';
@@ -127,20 +127,20 @@ const useRagKnowledgeBase = (id: string) => {
 
       popMessage();
       popMessage();
-      postChat(
-        content,
-        false,
-        (messages: ShownMessage[]) => {
-          // Preprocessing: Few-shot is used, so delete the footnote from the past logs
-          return messages.map((message) => ({
-            ...message,
-            content: message.content
-              .replace(/\[\^0\]:[\s\S]*/s, '') // Delete the footnote at the end of the sentence
-              .replace(/\[\^(\d+)\]/g, '') // Delete the footnote anchor in the sentence
-              .trim(), // Delete the leading and trailing spaces
-          }));
-        },
-        (message: string) => {
+postChat(
+  content,
+  false,
+  (messages: ShownMessage[]) => {
+    // Preprocessing: Few-shot is used, so delete the footnote from the past logs
+    return messages.map((message) => ({
+      role: message.role, // roleプロパティを追加
+      content: message.content
+        .replace(/\[\^0\]:[\s\S]*/s, '') // Delete the footnote at the end of the sentence
+        .replace(/\[\^(\d+)\]/g, '') // Delete the footnote anchor in the sentence
+        .trim(), // Delete the leading and trailing spaces
+    })) as ShownMessage[]; // 型アサーションを追加
+  },
+  (message: string) => {
           // Postprocessing: Add the footnote
           const footnote = items
             .map((item, idx) => {

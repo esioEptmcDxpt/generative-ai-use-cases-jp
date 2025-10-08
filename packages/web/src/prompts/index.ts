@@ -3,6 +3,16 @@ import { RetrieveResultItem } from '@aws-sdk/client-kendra';
 import { claudePrompter } from './claude';
 import { TFunction } from 'i18next';
 
+// ShownMessageをUnrecordedMessageを拡張した型として再定義
+export interface ShownMessage extends UnrecordedMessage {
+  messageId?: string;
+  createdDate?: string;
+  usecase?: string;
+  llmType?: string;
+  traceInlineMessage?: string;
+  metadata?: any;
+}
+
 // Currently, prompter is only for Claude
 export const getPrompter = (modelId: string) => {
   if (modelId.includes('claude')) {
@@ -68,6 +78,7 @@ export type DiagramParams = {
 export type MeetingMinutesParams = {
   style: 'transcription' | 'newspaper' | 'faq' | 'custom';
   customPrompt?: string;
+  targetLanguage?: string; // 言語パラメータを追加
 };
 
 export type PromptListItem = {

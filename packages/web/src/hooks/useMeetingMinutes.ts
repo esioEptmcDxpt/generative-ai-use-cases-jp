@@ -16,7 +16,8 @@ export const useMeetingMinutes = (
   autoGenerateSessionTimestamp: number | null,
   setGeneratedMinutes: (minutes: string) => void,
   setLastProcessedTranscript: (transcript: string) => void,
-  setLastGeneratedTime: (time: Date | null) => void
+  setLastGeneratedTime: (time: Date | null) => void,
+  targetLanguage: string = 'ja' // デフォルトを日本語に設定
 ) => {
   const { predictStream } = useChatApi();
   const { modelIds: availableModels, textModels } = MODELS;
@@ -53,6 +54,7 @@ export const useMeetingMinutes = (
             : prompter.meetingMinutesPrompt({
                 style: minutesStyle,
                 customPrompt,
+              targetLanguage, // 言語パラメータを渡す
               });
 
         const messages: UnrecordedMessage[] = [
@@ -116,6 +118,7 @@ export const useMeetingMinutes = (
       setGeneratedMinutes,
       setLastGeneratedTime,
       setLastProcessedTranscript,
+      targetLanguage, // 依存配列に追加
     ]
   );
 

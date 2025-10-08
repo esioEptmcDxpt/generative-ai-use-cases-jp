@@ -245,6 +245,7 @@ diagram:
       exampleTitle: 睡眠・労働時間例
       title: XYチャート
 drawer:
+  sub: 🚅電気SIO ver.
   ai_services: AI サービス
   builder_mode: ビルダーモード
   done: 完了
@@ -493,7 +494,7 @@ landing:
     blog:
       description: >-
         複数のユースケースを組み合わせて、ブログ記事を生成します。記事の概要とサムネイル画像も自動生成することで、OGP
-        の設定も容易になります。例として、AWS 公式サイトの情報を元に生成 AI を紹介するブログ記事を生成します。
+        の設定も容易になります。例として、AWS 公式サイトの情報を元に生成 AI を紹介するブログ記事を生成できます。
       title: ブログ記事作成
     meeting:
       description: >-
@@ -554,6 +555,9 @@ model:
     reasoning: Reasoning
     reasoning_budget: Reasoning Budget
 navigation:
+  ragChat: SIO-AI
+  sub: 🚅電気SIO ver.
+  search: 文書検索🔎
   agentChat: Agent チャット
   chat: チャット
   diagramGeneration: ダイアグラム生成
@@ -562,7 +566,6 @@ navigation:
   imageGeneration: 画像生成
   meetingMinutes: 議事録生成
   promptOptimization: プロンプト最適化
-  ragChat: RAG チャット
   settings: 設定
   speechRecognition: 音声認識
   summary: 要約
@@ -582,6 +585,7 @@ optimizePrompt:
   result_placeholder: 結果がここに表示されます
   title: プロンプト最適化
 rag:
+  title: SIO-AI (AI文書検索システム)
   can_add_filters: をカスタマイズすることでフィルターを追加できます。
   errorRetrieval: >-
     Kendra から参考ドキュメントを取得できませんでした。以下をご確認ください： - Amazon Kendra
@@ -607,7 +611,6 @@ rag:
   page: ページ
   please_refer: をご参照ください。
   retrieving: Kendra から参考ドキュメントを取得しています...
-  title: RAG チャット
 setting:
   ai_items:
     agent_name: Agent 名
@@ -1070,7 +1073,7 @@ writer:
   example1: 例えば、こちらの文章の続きをAIに出力させることができます：
   example2: また、文章に含まれる事実をチェックすることもできます。以下の文章を選択して「ファクトチェック」を選んでみてください：
   factCheckExample: バラク・オバマは米国の第43代大統領です。彼は2001年から2009年まで大統領を務めました。
-  incorrectTextExample: わたしは日本に行たことがあります。東京はとても美意気な都市です。
+  incorrectTextExample: わたしは日本に行ったことがあります。東京はとても美意気な都市です。
   light: ライト
   link: リンク
   no_issues: 問題は見つかりませんでした

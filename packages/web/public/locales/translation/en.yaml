@@ -694,6 +694,9 @@ model:
     reasoning_budget: Reasoning Budget
 navigation:
   agentChat: Agent Chat
+  ragChat: SIO-AI
+  sub: 🚅ESIO ver.
+  search: search🔎
   chat: Chat
   diagramGeneration: Diagram Generation
   flowChat: Flow Chat
@@ -701,7 +704,6 @@ navigation:
   imageGeneration: Image Generation
   meetingMinutes: Meeting Minutes
   promptOptimization: Prompt Optimization
-  ragChat: RAG Chat
   settings: Settings
   speechRecognition: Speech Recognition
   summary: Summary

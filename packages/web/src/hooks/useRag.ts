@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import useChat from './useChat';
 import useChatApi from './useChatApi';
 import useRagApi from './useRagApi';
-import { ShownMessage } from 'generative-ai-use-cases';
+import { ShownMessage } from '../@types';
 import { findModelByModelId } from './useModel';
 import { getPrompter } from '../prompts';
 import { RetrieveResultItem, DocumentAttribute } from '@aws-sdk/client-kendra';
@@ -38,7 +38,8 @@ export const arrangeItems = (
   return Object.values(res);
 };
 
-const useRag = (id: string) => {
+//const useRag = (id: string) => {
+const useRag = (id: string, isSearchOnly: boolean = false) => {
   const { t } = useTranslation();
 
   const {
@@ -68,6 +69,7 @@ const useRag = (id: string) => {
     loading,
     writing,
     messages,
+    isSearchOnly, // 検索のみモードのフラグを返す
     postMessage: async (content: string) => {
       const model = findModelByModelId(modelId);
 
@@ -117,6 +119,27 @@ const useRag = (id: string) => {
         return;
       }
 
+// 検索のみモードの場合、検索結果だけを表示して終了
+if (isSearchOnly) {
+  popMessage(); // 「検索中...」のメッセージを削除
+  
+  // 検索結果のみを表示するメッセージを作成
+  // 型エラーを避けるため、追加プロパティを使わず、通常のメッセージとして表示
+  pushMessage('assistant', `検索結果:\n\n${items.map((item, idx) => 
+    `${idx + 1}. ${item.DocumentTitle || '無題のドキュメント'}\n${item.Content}\n`
+  ).join('\n')}`);
+  
+  setLoading(false);
+  return;
+}
+  
+//  // 例: messages の最後の要素を直接操作
+  //const lastMessage = messages[messages.length - 1];
+  //if (lastMessage) {
+    //lastMessage.referenceItems = items;
+    //lastMessage.searchOnly = true;
+  //}
+      
       updateSystemContext(
         prompter.ragPrompt({
           promptType: 'SYSTEM_CONTEXT',
@@ -127,20 +150,20 @@ const useRag = (id: string) => {
       // After hiding the loading, execute the POST processing of the normal chat
       popMessage();
       popMessage();
-      postChat(
-        content,
-        false,
-        (messages: ShownMessage[]) => {
-          // Preprocessing: Few-shot is used, so delete the footnote from the past logs
-          return messages.map((message) => ({
-            ...message,
-            content: message.content
-              .replace(/\[\^0\]:[\s\S]*/s, '') // Delete the footnote at the end of the sentence
-              .replace(/\[\^(\d+)\]/g, '') // Delete the footnote anchor in the sentence
-              .trim(), // Delete the leading and trailing spaces
-          }));
-        },
-        (message: string) => {
+postChat(
+  content,
+  false,
+  (messages: ShownMessage[]) => {
+    // Preprocessing: Few-shot is used, so delete the footnote from the past logs
+    return messages.map((message) => ({
+      role: message.role, // roleプロパティを追加
+      content: message.content
+        .replace(/\[\^0\]:[\s\S]*/s, '') // Delete the footnote at the end of the sentence
+        .replace(/\[\^(\d+)\]/g, '') // Delete the footnote anchor in the sentence
+        .trim(), // Delete the leading and trailing spaces
+    })) as ShownMessage[]; // 型アサーションを追加
+  },
+  (message: string) => {
           // Postprocessing: Add the footnote
           const footnote = items
             .map((item, idx) => {

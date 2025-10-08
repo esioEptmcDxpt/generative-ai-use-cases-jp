@@ -427,8 +427,7 @@ landing:
       content: >-
         Vui lòng xuất thiết kế quảng cáo smartphone.
         Dễ thương, thời trang, dễ sử dụng, pop culture, thân thiện, hướng đến giới trẻ, âm nhạc, ảnh, smartphone thịnh hành, background là thành phố
-    rag:
-      content: Vui lòng giải thích tham số của Claude và cách thiết lập.
+      sub: 
     summarize:
       sentence: >-
         Amazon Bedrock là dịch vụ được quản lý hoàn toàn giúp có thể sử dụng các mô hình nền tảng (FM) được cung cấp bởi Amazon và các startup AI hàng đầu thông qua API.
@@ -577,6 +576,9 @@ model:
     reasoning: Reasoning
     reasoning_budget: Reasoning Budget
 navigation:
+  ragChat: SIO-AI
+  sub: 🚅ESIO ver.
+  search: ค้นหาเอกสาร🔎
   agentChat: Agent Chat
   chat: Chat
   diagramGeneration: Tạo sơ đồ
@@ -584,7 +586,6 @@ navigation:
   home: Trang chủ
   imageGeneration: Tạo hình ảnh
   promptOptimization: Tối ưu hóa prompt
-  ragChat: RAG Chat
   settings: Cài đặt
   speechRecognition: Nhận dạng giọng nói
   summary: Tóm tắt

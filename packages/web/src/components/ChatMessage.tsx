@@ -1,3 +1,5 @@
+import { UpdateFeedbackRequest } from 'generative-ai-use-cases';
+import { ShownMessage } from '../@types';
 import React, { useState, useMemo, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Markdown from './Markdown';
@@ -18,9 +20,9 @@ import {
   PiNotePencil,
   PiCheck,
   PiX,
+  PiMagnifyingGlass, //追加
 } from 'react-icons/pi';
 import { BaseProps } from '../@types/common';
-import { ShownMessage, UpdateFeedbackRequest } from 'generative-ai-use-cases';
 import BedrockIcon from '../assets/bedrock.svg?react';
 import useChat from '../hooks/useChat';
 import useTyping from '../hooks/useTyping';
@@ -150,7 +152,7 @@ const ChatMessage: React.FC<Props> = (props) => {
     e.preventDefault();
     setIsOpenTrace(!isOpenTrace);
   };
-
+  
   return (
     <div
       className={`flex justify-center ${
