@@ -11,7 +11,10 @@ const getContext = (app: cdk.App): StackInput => {
   const params = stackInputSchema.parse(app.node.getAllContext());
   return params;
 };
-
+const speechToSpeechModelConfig = {
+  modelId: 'amazon.nova-sonic-v1:0',
+  region: 'ap-northeast-1'
+};
 // If you want to define parameters directly
 const envs: Record<string, Partial<StackInput>> = {
   // If you want to define an anonymous environment, uncomment the following and the content of cdk.json will be ignored.
@@ -21,7 +24,9 @@ const envs: Record<string, Partial<StackInput>> = {
   // If you want to override the default settings, add the following
   modelRegion: 'us-west-2',
   modelIds: [
-    'global.anthropic.claude-sonnet-4-5-20250929-v1:0',
+    {modelId: 'jp.anthropic.claude-sonnet-4-5-20250929-v1:0',
+        region: 'ap-northeast-1',
+      },
     'global.anthropic.claude-sonnet-4-20250514-v1:0',
     //'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
       //'anthropic.claude-3-5-sonnet-20241022-v2:0',
@@ -50,6 +55,7 @@ const envs: Record<string, Partial<StackInput>> = {
       'amazon.titan-image-generator-v1',
     ],
     videoGenerationModelIds: ['luma.ray-v2:0'],
+    speechToSpeechModelIds: [speechToSpeechModelConfig],
     ragEnabled: true,
     kendraIndexArn:
       'arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe',
@@ -63,7 +69,7 @@ const envs: Record<string, Partial<StackInput>> = {
         aliasId: 'MULPCVZTCS',
       },
       {
-        displayName: '安全(SKAI)エージェント',
+        displayName: '安全エージェント',
         agentId: '9JNBPBZAXJ',
         aliasId: 'WNGLTT9I4L',
       },
@@ -102,7 +108,7 @@ const envs: Record<string, Partial<StackInput>> = {
       aliasId: 'MULPCVZTCS',
     },
     {
-      displayName: '安全(SKAI)エージェント',
+      displayName: '安全エージェント',
       agentId: '9JNBPBZAXJ',
       aliasId: 'WNGLTT9I4L',
     },
@@ -125,7 +131,9 @@ const envs: Record<string, Partial<StackInput>> = {
     // 開発環境用のパラメーター
      modelRegion: 'us-west-2',
     modelIds: [
-    'global.anthropic.claude-sonnet-4-5-20250929-v1:0',
+     {modelId: 'jp.anthropic.claude-sonnet-4-5-20250929-v1:0',
+        region: 'ap-northeast-1',
+      },
     'global.anthropic.claude-sonnet-4-20250514-v1:0',
     //'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
       //'anthropic.claude-3-5-sonnet-20241022-v2:0',
@@ -154,6 +162,7 @@ const envs: Record<string, Partial<StackInput>> = {
       'amazon.titan-image-generator-v1',
     ],
     videoGenerationModelIds: ['luma.ray-v2:0'],
+    speechToSpeechModelIds: [speechToSpeechModelConfig],
     ragEnabled: true,
     kendraIndexArn:
       'arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe',
@@ -213,9 +222,17 @@ export const getParams = (app: cdk.App): ProcessedStackInput => {
       params.videoGenerationModelIds,
       params.modelRegion
     ),
-    speechToSpeechModelIds: convertToModelConfiguration(
-      params.speechToSpeechModelIds,
+  speechToSpeechModelIds: convertToModelConfiguration(
+    params.speechToSpeechModelIds && params.speechToSpeechModelIds.length > 0
+      ? params.speechToSpeechModelIds
+      : [speechToSpeechModelConfig],
+    params.modelRegion
+  ),
+    endpointNames: convertToModelConfiguration(
+      params.endpointNames,
       params.modelRegion
     ),
+    // Process agentCoreRegion: null -> modelRegion
+    agentCoreRegion: params.agentCoreRegion || params.modelRegion,
   };
 };

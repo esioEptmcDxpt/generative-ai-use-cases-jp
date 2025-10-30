@@ -45,7 +45,7 @@ export type GenerateTextPageQueryParams = BaseQueryParams & {
 
 export type RagPageQueryParams = BaseQueryParams & {
   content?: string;
-  mode?: string;//追加
+  mode?: string; // このプロパティを追加
 };
 
 export type AgentPageQueryParams = BaseQueryParams & {

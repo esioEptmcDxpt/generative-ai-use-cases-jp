@@ -333,8 +333,8 @@ const UseCaseBuilderEditPage: React.FC = () => {
     // eslint-disable-next-line no-irregular-whitespace
     if (title.replace(/[ 　]/g, '') === '') {
       tmp.push({
-        menu: t('useCaseBuilder.menuUseCaseDefinition'),
-        message: t('useCaseBuilder.enterTitle'),
+        menu: t('useCaseBuilder.menuUseCaseDefinition') as string,
+        message: t('useCaseBuilder.enterTitle') as string,
       });
     }
 

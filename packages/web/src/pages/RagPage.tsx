@@ -38,7 +38,7 @@ const RagPage: React.FC = () => {
   const { t } = useTranslation();
   const { content, setContent } = useRagPageState();
   const { pathname, search } = useLocation();
-  const { getModelId, setModelId, forceToStop } = useChat(pathname);
+  const { getModelId, setModelId } = useChat(pathname);
   const modelId = getModelId();
 
   // 検索のみモードかどうかを判定 - 先に宣言
@@ -51,7 +51,7 @@ const RagPage: React.FC = () => {
   }, [search]);
   
   // isSearchOnly を渡す
-  const { postMessage, clear, loading, writing, messages, isEmpty } =
+  const { postMessage, clear, loading, messages, isEmpty } =
     useRag(pathname, isSearchOnly);
   const { scrollableContainer, setFollowing } = useFollow();
   const { modelIds: availableModels, modelDisplayName } = MODELS;
@@ -82,10 +82,6 @@ const RagPage: React.FC = () => {
     clear();
     setContent('');
   }, [clear, setContent]);
-
-  const onStop = useCallback(() => {
-    forceToStop();
-  }, [forceToStop]);
 
   return (
     <>
@@ -128,12 +124,12 @@ const RagPage: React.FC = () => {
                       <li>
                         <strong>万能型：</strong>
                         <span>
-                          anthropic.claude-sonnet-4-20250514-v1:0
+                          Claude sonnet 4.5
                         </span>
                       </li>
                       <li>
                         <strong>スピード型：</strong>
-                        <span>anthropic.claude-3-5-haiku-20241022-v1:0</span>
+                        <span>Claude 3.5 Haiku</span>
                       </li>
                     </ul>
                   </section>

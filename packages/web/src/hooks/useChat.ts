@@ -1,4 +1,3 @@
-//import { ShownMessage } from '../@types';
 import { produce } from 'immer';
 import { create } from 'zustand';
 import {
@@ -129,7 +128,8 @@ const useChatState = create<{
     id: string,
     chunk: string,
     trace?: string,
-    model?: Model
+    model?: Model,
+    metadata?: Metadata
   ) => void;
   addMessageIdsToUnrecordedMessages: (id: string) => ToBeRecordedMessage[];
   replaceMessages: (id: string, messages: RecordedMessage[]) => void;
@@ -379,8 +379,9 @@ const useChatState = create<{
       };
     });
   };
-
-  const isExactlyCodeBlock = (text: string): boolean => {
+  
+  const isExactlyCodeBlock = (text: string | undefined): boolean => {
+    if (typeof text !== 'string') return false;
     return /^```\s*(\w*)\s*\n([\s\S]*?)\n```\s*$/.test(text);
   };
 
@@ -393,14 +394,30 @@ const useChatState = create<{
   ) => {
     set((state) => {
       const newChats = produce(state.chats, (draft) => {
-        let traceInlineMessage: string | undefined = undefined;
+        const oldAssistantMessage = draft[id].messages.pop()!;
 
         // If the received trace is a code block, do not display it as an inline message
-        if (trace && !isExactlyCodeBlock(trace.trim())) {
+        let traceInlineMessage: string | undefined = undefined;
+        if (typeof trace === 'string' && trace && !isExactlyCodeBlock(trace.trim())) {
           traceInlineMessage = trace.trim();
         }
 
-        const oldAssistantMessage = draft[id].messages.pop()!;
+        // If new metadata came when old metadata exist, add up numbers
+        if (metadata && oldAssistantMessage.metadata) {
+          metadata.usage.inputTokens +=
+            oldAssistantMessage.metadata.usage.inputTokens || 0;
+          metadata.usage.outputTokens +=
+            oldAssistantMessage.metadata.usage.outputTokens || 0;
+          metadata.usage.totalTokens +=
+            oldAssistantMessage.metadata.usage.totalTokens || 0;
+          metadata.usage.cacheReadInputTokens =
+            (metadata.usage.cacheReadInputTokens || 0) +
+            (oldAssistantMessage.metadata.usage.cacheReadInputTokens || 0);
+          metadata.usage.cacheWriteInputTokens =
+            (metadata.usage.cacheWriteInputTokens || 0) +
+            (oldAssistantMessage.metadata.usage.cacheWriteInputTokens || 0);
+        }
+
         const newAssistantMessage: ShownMessage = {
           ...oldAssistantMessage,
           role: 'assistant',
@@ -564,14 +581,34 @@ const useChatState = create<{
       base64Cache
     );
 
-    const stream = predictStream({
-      model: model,
-      messages: formattedMessages,
-      id: id,
-    });
+    const stream = predictStream(
+      {
+        model: model,
+        messages: formattedMessages,
+        id: id,
+      },
+      false
+    );
+
+    const splitByNewlineBinary = (data: Uint8Array): Uint8Array[] => {
+      const newline = 0x0a; // '\n'
+      const result: Uint8Array[] = [];
+
+      let start = 0;
+
+      for (let i = 0; i <= data.length; i++) {
+        if (i === data.length || data[i] === newline) {
+          result.push(data.slice(start, i));
+          start = i + 1;
+        }
+      }
+
+      return result;
+    };
 
     // Update the assistant's message
     let tmpChunk = '';
+    let tmpBuffer: Uint8Array = new Uint8Array([]);
 
     for await (const chunk of stream) {
       if (get().chats[id].forcedStop) {
@@ -584,13 +621,33 @@ const useChatState = create<{
         setWriting(id, true);
       }
 
-      const chunks = chunk.split('\n');
+      const chunks = splitByNewlineBinary(chunk as Uint8Array);
 
       for (const c of chunks) {
         if (c && c.length > 0) {
-          const payload = JSON.parse(c) as StreamingChunk;
+          let payload: StreamingChunk;
 
-          if (payload.text.length > 0) {
+          try {
+            if (tmpBuffer.length === 0) {
+              payload = JSON.parse(
+                new TextDecoder('utf-8').decode(c)
+              ) as StreamingChunk;
+            } else {
+              payload = JSON.parse(
+                new TextDecoder('utf-8').decode(
+                  new Uint8Array([...tmpBuffer, ...c])
+                )
+              ) as StreamingChunk;
+              tmpBuffer = new Uint8Array([]);
+            }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } catch (e: any) {
+            console.warn(e);
+            tmpBuffer = new Uint8Array([...tmpBuffer, ...c]);
+            continue;
+          }
+          
+          if (payload.text && payload.text.length > 0) {
             tmpChunk += payload.text;
           }
 
@@ -1189,9 +1246,10 @@ const useChat = (id: string, chatId?: string) => {
     addChunkToAssistantMessage: (
       chunk: string,
       trace?: string,
-      model?: Model
+      model?: Model,
+      metadata?: Metadata
     ) => {
-      addChunkToAssistantMessage(id, chunk, trace, model);
+      addChunkToAssistantMessage(id, chunk, trace, model, metadata);
     },
     addMessageIdsToUnrecordedMessages: () => {
       return addMessageIdsToUnrecordedMessages(id);

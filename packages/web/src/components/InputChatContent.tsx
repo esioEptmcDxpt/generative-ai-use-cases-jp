@@ -36,7 +36,11 @@ type Props = {
   accept?: string[];
   showDisclaimer?: boolean;
   disclaimerClassName?: string;
-  canStop?: boolean; 
+  canStop?: boolean;
+  // 以下の3つのプロパティを追加
+  reasoning?: boolean;
+  onReasoningSwitched?: () => void;
+  reasoningEnabled?: boolean;
 } & (
   | {
       hideReset?: false;
@@ -106,12 +110,12 @@ const InputChatContent: React.FC<Props> = (props) => {
 
   const disabledSend = useMemo(() => {
     return (
-      props.content.trim() === '' ||
+      (!loading && props.content.trim() === '') ||
       props.disabled ||
       uploading ||
       errorMessages.length > 0
     );
-  }, [props.content, props.disabled, uploading, errorMessages]);
+  }, [props.content, props.disabled, uploading, errorMessages, loading]);
 
   return (
     <div

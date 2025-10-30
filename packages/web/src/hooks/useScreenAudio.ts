@@ -5,14 +5,14 @@ import {
   LanguageCode,
 } from '@aws-sdk/client-transcribe-streaming';
 import MicrophoneStream from 'microphone-stream';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import update from 'immutability-helper';
 import { Buffer } from 'buffer';
 import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
 import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { Transcript } from 'generative-ai-use-cases';
-
+import { UseScreenAudioResult, TranscriptionResult } from '../@types/transcription';
 const pcmEncodeChunk = (chunk: Buffer) => {
   const input = MicrophoneStream.toRaw(chunk);
   let offset = 0;
@@ -26,7 +26,14 @@ const pcmEncodeChunk = (chunk: Buffer) => {
 };
 
 const region = import.meta.env.VITE_APP_REGION;
-const cognito = new CognitoIdentityClient({ region });
+const cognitoIdentityPoolProxyEndpoint = import.meta.env
+  .VITE_APP_COGNITO_IDENTITY_POOL_PROXY_ENDPOINT;
+const cognito = new CognitoIdentityClient({
+  region,
+  ...(cognitoIdentityPoolProxyEndpoint
+    ? { endpoint: cognitoIdentityPoolProxyEndpoint }
+    : {}),
+});
 const userPoolId = import.meta.env.VITE_APP_USER_POOL_ID;
 const idPoolId = import.meta.env.VITE_APP_IDENTITY_POOL_ID;
 const providerName = `cognito-idp.${region}.amazonaws.com/${userPoolId}`;
@@ -36,16 +43,8 @@ const useScreenAudio = () => {
     MicrophoneStream | undefined
   >();
   const [recording, setRecording] = useState(false);
-  const [rawTranscripts, setRawTranscripts] = useState<
-    {
-      resultId: string;
-      startTime: number;
-      endTime: number;
-      isPartial: boolean;
-      transcripts: Transcript[];
-    }[]
-  >([]);
-  const [language, setLanguage] = useState<string>('ja-JP');
+  const [rawTranscripts, setRawTranscripts] = useState<TranscriptionResult[]>([]);
+  const [_language, setLanguage] = useState<string>('ja-JP');
   const [transcribeClient, setTranscribeClient] =
     useState<TranscribeStreamingClient>();
   const [isSupported, setIsSupported] = useState<boolean>(false);
@@ -60,35 +59,6 @@ const useScreenAudio = () => {
       typeof navigator.mediaDevices.getDisplayMedia === 'function';
     setIsSupported(supported);
   }, []);
-
-  const transcriptScreen = useMemo(() => {
-    const transcripts: Transcript[] = rawTranscripts.flatMap(
-      (t) => t.transcripts
-    );
-    // If the speaker is continuous, merge
-    const mergedTranscripts = transcripts.reduce((prev, item) => {
-      if (
-        prev.length === 0 ||
-        item.speakerLabel !== prev[prev.length - 1].speakerLabel
-      ) {
-        prev.push({
-          speakerLabel: item.speakerLabel,
-          transcript: item.transcript,
-        });
-      } else {
-        prev[prev.length - 1].transcript += ' ' + item.transcript;
-      }
-      return prev;
-    }, [] as Transcript[]);
-    // If Japanese, remove spaces
-    if (language === 'ja-JP') {
-      return mergedTranscripts.map((item) => ({
-        ...item,
-        transcript: item.transcript.replace(/ /g, ''),
-      }));
-    }
-    return mergedTranscripts;
-  }, [rawTranscripts, language]);
 
   useEffect(() => {
     // break if already set
@@ -118,7 +88,9 @@ const useScreenAudio = () => {
   const startStream = async (
     stream: MicrophoneStream,
     languageCode?: LanguageCode,
-    speakerLabel: boolean = false
+    speakerLabel: boolean = false,
+    languageOptions?: string[],
+    enableMultiLanguage: boolean = false
   ) => {
     if (!transcribeClient) return;
 
@@ -138,10 +110,40 @@ const useScreenAudio = () => {
     };
 
     // Best Practice: https://docs.aws.amazon.com/transcribe/latest/dg/streaming.html
+    let commandParams;
+
+    if (enableMultiLanguage) {
+      // Multi-language identification mode (bidirectional translation)
+      commandParams = {
+        LanguageCode: undefined,
+        IdentifyLanguage: false,
+        IdentifyMultipleLanguages: true,
+        LanguageOptions: languageOptions
+          ? languageOptions.join(',')
+          : 'en-US,ja-JP',
+      };
+    } else if (languageCode) {
+      // Specific language mode
+      commandParams = {
+        LanguageCode: languageCode,
+        IdentifyLanguage: false,
+        IdentifyMultipleLanguages: false,
+        LanguageOptions: undefined,
+      };
+    } else {
+      // Auto language identification mode
+      commandParams = {
+        LanguageCode: undefined,
+        IdentifyLanguage: true,
+        IdentifyMultipleLanguages: false,
+        LanguageOptions: languageOptions
+          ? languageOptions.join(',')
+          : 'en-US,ja-JP',
+      };
+    }
+
     const command = new StartStreamTranscriptionCommand({
-      LanguageCode: languageCode,
-      IdentifyLanguage: languageCode ? false : true,
-      LanguageOptions: languageCode ? undefined : 'en-US,ja-JP',
+      ...commandParams,
       MediaEncoding: 'pcm',
       MediaSampleRateHertz: 48000,
       AudioStream: audioStream(),
@@ -203,6 +205,7 @@ const useScreenAudio = () => {
                       endTime: result.EndTime || 0,
                       isPartial: result.IsPartial ?? false,
                       transcripts,
+                      languageCode: result.LanguageCode,
                     },
                   ],
                 });
@@ -220,6 +223,7 @@ const useScreenAudio = () => {
                         endTime: result.EndTime || 0,
                         isPartial: result.IsPartial ?? false,
                         transcripts,
+                        languageCode: result.LanguageCode,
                       },
                     ],
                   ],
@@ -239,64 +243,7 @@ const useScreenAudio = () => {
       transcribeClient.destroy();
     }
   };
-
-  const startTranscription = async (
-    languageCode?: LanguageCode,
-    speakerLabel?: boolean
-  ) => {
-    if (!isSupported) {
-      setError('Screen audio capture is not supported in this browser');
-      return;
-    }
-
-    const stream = new MicrophoneStream();
-    try {
-      setError('');
-      setScreenStream(stream);
-
-      // Request screen audio capture
-      // Note: Most browsers require video to be true when capturing audio
-      const displayStream = await navigator.mediaDevices.getDisplayMedia({
-        video: {
-          displaySurface: 'monitor',
-        },
-        audio: true,
-      });
-
-      // Extract only the audio track
-      const audioTracks = displayStream.getAudioTracks();
-      if (audioTracks.length === 0) {
-        throw new Error('No audio track available in screen capture');
-      }
-
-      // Create a new MediaStream with only audio
-      const audioOnlyStream = new MediaStream(audioTracks);
-
-      // Stop the video track to save resources
-      const videoTracks = displayStream.getVideoTracks();
-      videoTracks.forEach((track) => track.stop());
-
-      stream.setStream(audioOnlyStream);
-      setRecording(true);
-      await startStream(stream, languageCode, speakerLabel);
-    } catch (e) {
-      console.log('Screen audio capture error:', e);
-      if (e instanceof Error) {
-        if (e.name === 'NotAllowedError') {
-          setError('Screen audio access was denied');
-        } else if (e.name === 'NotSupportedError') {
-          setError('Screen audio capture is not supported');
-        } else {
-          setError('Failed to start screen audio capture');
-        }
-      }
-    } finally {
-      stream.stop();
-      setRecording(false);
-      setScreenStream(undefined);
-    }
-  };
-
+  
   /**
    * Prepares screen capture by requesting user permission and screen selection.
    * This function only handles the preparation phase (getDisplayMedia) without starting
@@ -359,7 +306,9 @@ const useScreenAudio = () => {
   const startTranscriptionWithStream = async (
     displayStream: MediaStream,
     languageCode?: LanguageCode,
-    speakerLabel?: boolean
+    speakerLabel?: boolean,
+    languageOptions?: string[],
+    enableMultiLanguage?: boolean
   ) => {
     const stream = new MicrophoneStream();
     try {
@@ -381,7 +330,13 @@ const useScreenAudio = () => {
 
       stream.setStream(audioOnlyStream);
       setRecording(true);
-      await startStream(stream, languageCode, speakerLabel);
+      await startStream(
+        stream,
+        languageCode,
+        speakerLabel,
+        languageOptions,
+        enableMultiLanguage
+      );
     } catch (e) {
       console.log('Screen audio transcription error:', e);
       if (e instanceof Error) {
@@ -416,19 +371,16 @@ const useScreenAudio = () => {
     setRawTranscripts([]);
     setError('');
   };
-
+  
   return {
-    startTranscription,
     prepareScreenCapture,
     startTranscriptionWithStream,
     stopTranscription,
     recording,
-    transcriptScreen,
     clearTranscripts,
     isSupported,
     error,
     rawTranscripts,
-  };
+  } as UseScreenAudioResult;
 };
-
 export default useScreenAudio;

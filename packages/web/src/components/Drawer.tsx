@@ -22,7 +22,7 @@ type Props = BaseProps & {
 const Drawer: React.FC<Props> = (props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  //const { settingShowUseCaseBuilder, settingShowTools } = useUserSetting();
+  const { settingShowUseCaseBuilder, settingShowTools } = useUserSetting();
 
   const usecases = useMemo(() => {
     return props.items.filter((i) => i.display === 'usecase');
@@ -48,7 +48,7 @@ const Drawer: React.FC<Props> = (props) => {
   return (
     <>
       <DrawerBase>
-        {useCaseBuilderEnabled /* && settingShowUseCaseBuilder */ && (
+        {useCaseBuilderEnabled && settingShowUseCaseBuilder && (
           <>
             <Switch
               className="mx-3 my-2"
@@ -64,10 +64,15 @@ const Drawer: React.FC<Props> = (props) => {
         <div className="text-aws-smile mx-3 my-1 flex items-center justify-between text-xs">
           <div>
             {t('drawer.use_cases')}{' '}
-            <span className="text-gray-400">{t('drawer.generative_ai')}</span>{t('navigation.sub')}
+            <span className="text-gray-400">{t('drawer.generative_ai')}</span>
           </div>
+          <PiGear
+            className="cursor-pointer text-base text-white"
+            onClick={() => {
+              setSettingVisibility(!settingVisibility);
+            }}
+          />
         </div>
-        
         <div className="scrollbar-thin scrollbar-thumb-white ml-2 mr-1 h-full overflow-y-auto">
           {usecases.map((item, idx) => (
             <DrawerItem
@@ -76,12 +81,11 @@ const Drawer: React.FC<Props> = (props) => {
               icon={item.icon}
               to={item.to}
               sub={item.sub}
-              //settingVisibility={settingVisibility}
+              settingVisibility={settingVisibility}
             />
           ))}
 
-          {/* 
-            settingVisibility && (
+          {settingVisibility && (
             <div className="my-2 flex w-full justify-center">
               <Button
                 className="w-full"
@@ -92,13 +96,10 @@ const Drawer: React.FC<Props> = (props) => {
                 {t('drawer.done')}
               </Button>
             </div>
-            )
-          */}
+          )}
         </div>
-        
         <div className="border-b" />
-        
-        {tools.length > 0 /* && settingShowTools */ && (
+        {tools.length > 0 && settingShowTools && (
           <>
             <ExpandableMenu
               title={t('drawer.tools')}
@@ -119,7 +120,6 @@ const Drawer: React.FC<Props> = (props) => {
             <div className="border-b" />
           </>
         )}
-        
         <ExpandableMenu title={t('chat.history')} className="mx-3 my-2 text-xs">
           <div className="relative mb-2 ml-2 mr-1 w-full pl-1.5 pr-7 pt-1">
             <input

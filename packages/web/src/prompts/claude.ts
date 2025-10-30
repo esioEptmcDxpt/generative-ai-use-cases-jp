@@ -280,83 +280,6 @@ Output the title enclosed in <output></output> tags.`;
   },
   promptList: (t: TFunction): PromptList => {
     return [
-            {
-        title: '電気SIOおすすめサンプル',
-        items: [
-          {
-            title: 'Teams文字起こし→議事録作成',
-            systemContext: `あなたはWeb会議の音声を文字起こししたテキストから議事録を作成するエキスパートです。`,
-            prompt: `# 指示
-あなたは熟練した議事録作成者です。<transcript>のトランスクリプトを使用して、Teams会議の議事録を作成してください。この会議にはアジェンダが提供されていないため、トランスクリプトの内容から会議の構造を推測する必要があります。
-
-## 入力
-
-トランスクリプト: <transcript>で与えられたテキスト
-
-## タスク
-
-1. <transcript>で与えられたトランスクリプトを読み取り、会議の主要なトピックや議論のポイントを特定してください。
-
-2. 特定したトピックに基づいて、論理的な構造を持つ議事録を作成してください。
-
-3. 各トピックについて、以下の情報を含めるよう努めてください：
-   - 主な議論のポイント
-   - 重要な決定事項（もしあれば）
-   - 次のアクションアイテム（もしあれば）
-
-4. 発言者の取り扱いについて：
-   - それぞれの発信者の名前と所属を記載し、発言内容を要約してください。（もしわかれば）
-
-5. 議事録全体を通して、以下の点に注意してください：
-   - 簡潔で明確な文章を使用する
-   - 重要なポイントを強調する
-   - 議論の流れが分かるようにまとめる
-
-6. マークダウン形式で出力し、適切な見出しレベルと箇条書きを使用して、読みやすく整形してください。
-
-7. 議事録の最後に、主な決定事項（もしあれば）と次回に向けてのアクションアイテム（もしあれば）をリストアップしてください。
-
-## 出力形式
-
-マークダウン形式で、以下の構造に従って議事録を作成してください：
-
-# [推測された会議名] 議事録
-
-日時: [トランスクリプトから推測される日付]
-場所: Teams会議
-
-## 1. [特定されたトピック1]
-
-[内容のまとめ]
-
-## 2. [特定されたトピック2]
-
-[内容のまとめ]
-
-...
-
-## 主な決定事項
-
-- [決定事項1]
-- [決定事項2]
-...
-
-
-## 次回に向けてのアクションアイテム
-
-- [アクションアイテム1]
-- [アクションアイテム2]
-...
-
-
-<transcript>
-
-～ここに文字起こしテキストをコピペする～
-
-</transcript>`,
-          },
-        ],
-      },
       {
         title: t('claude.contentGeneration.title', { ns: 'prompts' }),
         items: [
@@ -635,31 +558,20 @@ Output only the selected chart type from the <Choice> list, with an exact match,
       );
   },
   meetingMinutesPrompt(params: MeetingMinutesParams): string {
-    const { style, customPrompt, targetLanguage = 'ja' } = params; // デフォルトを日本語に設定
     if (params.style === 'custom' && params.customPrompt) {
       return params.customPrompt;
     }
-    
-      // 言語指定を追加
-  const languageInstruction = targetLanguage === 'ja' 
-    ? '必ず日本語で出力してください。' 
-    : targetLanguage === 'en' 
-      ? 'in English' 
-      : ''; // 他の言語も必要に応じて追加
-    
+
     switch (params.style) {
       case 'newspaper':
-        return `プロのジャーナリストとして、レポーターから文字起こしされたテキストを受け取り、オーディエンスに包括的な情報を提供するために、元のコンテンツの量をできるだけ保持しながら記事を作成してください。${languageInstruction}`;
-        //return `As a professional journalist. You will receive transcribed text from reporters and craft an article while preserving as much of the original content volume as possible to deliver comprehensive information to your audience. For your audience, you must write the article in received text language.`;
+        return `As a professional journalist. You will receive transcribed text from reporters and craft an article while preserving as much of the original content volume as possible to deliver comprehensive information to your audience. For your audience, you must write the article in received text language.`;
 
       case 'faq':
-        return `プロのアシスタントとして、会話のトピックを特定し、テーマを要約する概要と、元の情報内容をできるだけ保持する質問と回答のペアを作成してください。${languageInstruction}`;
-        //return `As a professional assistant, please identify the conversation topic and write an abstract summarizing the theme along with question-and-answer pairs that preserve the original information content as much as possible. For your boss, you must write in received conversation language.`;
+        return `As a professional assistant, please identify the conversation topic and write an abstract summarizing the theme along with question-and-answer pairs that preserve the original information content as much as possible. For your boss, you must write in received conversation language.`;
 
       case 'transcription':
       default:
-        return `プロの翻訳者として、受け取った文字起こしテキスト内のフィラーワードや誤認識を修正してください。明らかなトピックの変更を検出した場合は段落の区切りを追加し、トピックに関連する重要なステートメントを見つけた場合は太字スタイルでフォーマットしてください。${languageInstruction}`;
-        //return `As a professional translator, please correct filler words and misrecognition in received transcribed text. Please add paragraph breaks if you detect obvious topic changes, and if you find important statements related to the topic, please format them in bold style. For speakers, you must transcribe in received text language.`;
+        return `As a professional translator, please correct filler words and misrecognition in received transcribed text. Please add paragraph breaks if you detect obvious topic changes, and if you find important statements related to the topic, please format them in bold style. For speakers, you must transcribe in received text language.`;
     }
   },
 };

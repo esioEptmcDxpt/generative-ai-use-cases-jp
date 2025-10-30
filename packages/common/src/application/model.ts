@@ -10,6 +10,13 @@ const MODEL_FEATURE: Record<string, FeatureFlags> = {
   // Model Feature Flags
   TEXT_ONLY: { text: true, doc: false, image: false, video: false },
   TEXT_DOC: { text: true, doc: true, image: false, video: false },
+  TEXT_DOC_REASONING: {
+    text: true,
+    doc: true,
+    image: false,
+    video: false,
+    reasoning: true,
+  },
   TEXT_DOC_IMAGE: { text: true, doc: true, image: true, video: false },
   TEXT_DOC_IMAGE_REASONING: {
     text: true,
@@ -38,7 +45,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Claude 3.5 Sonnet v2',
   },
   'anthropic.claude-3-5-haiku-20241022-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
+      ...MODEL_FEATURE.LIGHT,
+    },
     displayName: 'Claude 3.5 Haiku',
   },
   'anthropic.claude-3-5-sonnet-20240620-v1:0': {
@@ -64,11 +74,35 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     },
     displayName: 'Claude 3 Haiku',
   },
+  'us.anthropic.claude-opus-4-1-20250805-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude Opus 4.1',
+  },
+  'us.anthropic.claude-opus-4-20250514-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude Opus 4',
+  },
   'global.anthropic.claude-sonnet-4-5-20250929-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
     displayName: 'Claude Sonnet 4.5',
   },
+  'us.anthropic.claude-sonnet-4-5-20250929-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude Sonnet 4.5',
+  },
+  'eu.anthropic.claude-sonnet-4-5-20250929-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude Sonnet 4.5',
+  },
+  'jp.anthropic.claude-sonnet-4-5-20250929-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude Sonnet 4.5',
+  },
   'global.anthropic.claude-sonnet-4-20250514-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude Sonnet 4',
+  },
+  'us.anthropic.claude-sonnet-4-20250514-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
     displayName: 'Claude Sonnet 4',
   },
@@ -81,7 +115,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Claude 3.5 Sonnet v2',
   },
   'us.anthropic.claude-3-5-haiku-20241022-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    flags: {
+      ...MODEL_FEATURE.TEXT_DOC_IMAGE,
+      ...MODEL_FEATURE.LIGHT,
+    },
     displayName: 'Claude 3.5 Haiku',
   },
   'us.anthropic.claude-3-5-sonnet-20240620-v1:0': {
@@ -107,6 +144,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     },
     displayName: 'Claude 3 Haiku',
   },
+  'eu.anthropic.claude-sonnet-4-20250514-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude Sonnet 4',
+  },
   'eu.anthropic.claude-3-7-sonnet-20250219-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
     displayName: 'Claude 3.7 Sonnet',
@@ -129,6 +170,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
       ...MODEL_FEATURE.LIGHT,
     },
     displayName: 'Claude 3 Haiku',
+  },
+  'apac.anthropic.claude-sonnet-4-20250514-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
+    displayName: 'Claude Sonnet 4',
   },
   'apac.anthropic.claude-3-7-sonnet-20250219-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_REASONING,
@@ -157,27 +202,6 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     },
     displayName: 'Claude 3 Haiku',
   },
-  'anthropic.claude-v2:1': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'Claude 2.1',
-  },
-  'anthropic.claude-v2': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'Claude',
-  },
-  'anthropic.claude-instant-v1': {
-    flags: {
-      ...MODEL_FEATURE.TEXT_DOC,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'Claude Instant',
-  },
   // Amazon Titan
   'amazon.titan-text-express-v1': {
     flags: MODEL_FEATURE.TEXT_DOC,
@@ -188,13 +212,6 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Titan Text G1 - Premier',
   },
   // Amazon Nova
-  'us.amazon.nova-premier-v1:0': {
-      flags: {
-    ...MODEL_FEATURE.TEXT_DOC_IMAGE,
-    ...MODEL_FEATURE.VIDEO_GEN
-  },
-    displayName: 'Nova Premier',
-  },
   'amazon.nova-pro-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE_VIDEO,
     displayName: 'Nova Pro',
@@ -217,6 +234,10 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   // S3 Video Upload only supports us-east-1.
   // If you want to use Video, please use amazon.nova-pro-v1:0 in us-east-1.
   // (Note: If RAG is enabled, it will be deleted when the region is changed)
+  'us.amazon.nova-premier-v1:0': {
+    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
+    displayName: 'Nova Premier',
+  },
   'us.amazon.nova-pro-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
     displayName: 'Nova Pro',
@@ -272,14 +293,6 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Nova Micro',
   },
   // Meta
-  'arn:aws:bedrock:us-west-2:326497581172:inference-profile/us.meta.llama4-maverick-17b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Llama 4 Maverick 17B Instruct',
-  },
-  'arn:aws:bedrock:us-west-2:326497581172:inference-profile/us.meta.llama4-scout-17b-instruct-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Llama 4 Scout 17B Instruct',
-  },
   'meta.llama3-8b-instruct-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC,
     displayName: 'Llama 3 8B Instruct',
@@ -357,10 +370,6 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
     displayName: 'Pixtral Large (25.02)',
   },
-  'arn:aws:bedrock:us-west-2:326497581172:inference-profile/us.mistral.pixtral-large-2502-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Pixtral Large (25.02)',
-  },
   // Cohere
   'cohere.command-r-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC,
@@ -371,9 +380,30 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     displayName: 'Command R+',
   },
   // DeepSeek
+  'deepseek.v3-v1:0': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'DeepSeek V3.1',
+  },
   'us.deepseek.r1-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC,
+    flags: MODEL_FEATURE.TEXT_DOC_REASONING,
     displayName: 'DeepSeek-R1',
+  },
+  // Qwen
+  'qwen.qwen3-235b-a22b-2507-v1:0': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'Qwen3 235B A22B 2507',
+  },
+  'qwen.qwen3-32b-v1:0': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'Qwen3 32B',
+  },
+  'qwen.qwen3-coder-480b-a35b-v1:0': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'Qwen3-Coder 480B A35B Instruct',
+  },
+  'qwen.qwen3-coder-30b-a3b-v1:0': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'Qwen3-Coder 30B A3B Instruct',
   },
   // Writer
   'us.writer.palmyra-x4-v1:0': {
@@ -383,6 +413,15 @@ export const modelMetadata: Record<string, ModelMetadata> = {
   'us.writer.palmyra-x5-v1:0': {
     flags: MODEL_FEATURE.TEXT_DOC,
     displayName: 'Palmyra X5',
+  },
+  // OpenAI
+  'openai.gpt-oss-120b-1:0': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'GPT OSS 120B',
+  },
+  'openai.gpt-oss-20b-1:0': {
+    flags: MODEL_FEATURE.TEXT_ONLY,
+    displayName: 'GPT OSS 20B',
   },
 
   // === Image ===
@@ -395,30 +434,9 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     },
     displayName: 'Stable Diffusion XL',
   },
-  'stability.sd3-large-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.IMAGE_GEN,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'SD3 Large 1.0',
-  },
-  'stability.stable-image-core-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.IMAGE_GEN,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'Stable Image Core v1.0',
-  },
   'stability.stable-image-core-v1:1': {
     flags: MODEL_FEATURE.IMAGE_GEN,
     displayName: 'Stable Image Core v1.1',
-  },
-  'stability.stable-image-ultra-v1:0': {
-    flags: {
-      ...MODEL_FEATURE.IMAGE_GEN,
-      ...MODEL_FEATURE.LEGACY,
-    },
-    displayName: 'Stable Image Ultra v1.0',
   },
   'stability.stable-image-ultra-v1:1': {
     flags: {
@@ -444,16 +462,7 @@ export const modelMetadata: Record<string, ModelMetadata> = {
     flags: MODEL_FEATURE.IMAGE_GEN,
     displayName: 'Nova Canvas',
   },
-  // TwelveLabs
-  'us.twelvelabs.pegasus-1-2-v1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE_VIDEO,
-    displayName: 'Pegasus 1.2',
-  },
-  // OpenAI
-  'openai.gpt-oss-120b-1:0': {
-    flags: MODEL_FEATURE.TEXT_DOC,
-    displayName: 'GPT-OSS 120B',
-  },
+
   // === Video ===
 
   'amazon.nova-reel-v1:0': {
@@ -517,27 +526,29 @@ export const modelMetadata: Record<string, ModelMetadata> = {
 };
 
 export const BEDROCK_TEXT_MODELS = Object.keys(modelMetadata).filter(
-  (model) => getModelMetadata(model).flags.text
+  (model) => modelMetadata[model].flags.text
 );
 export const BEDROCK_IMAGE_GEN_MODELS = Object.keys(modelMetadata).filter(
-  (model) => getModelMetadata(model).flags.image_gen
+  (model) => modelMetadata[model].flags.image_gen
 );
 export const BEDROCK_VIDEO_GEN_MODELS = Object.keys(modelMetadata).filter(
-  (model) => getModelMetadata(model).flags.video_gen
+  (model) => modelMetadata[model].flags.video_gen
 );
 export const BEDROCK_EMBEDDING_MODELS = Object.keys(modelMetadata).filter(
-  (model) => getModelMetadata(model).flags.embedding
+  (model) => modelMetadata[model].flags.embedding
 );
 export const BEDROCK_RERANKING_MODELS = Object.keys(modelMetadata).filter(
-  (model) => getModelMetadata(model).flags.reranking
+  (model) => modelMetadata[model].flags.reranking
 );
 export const BEDROCK_SPEECH_TO_SPEECH_MODELS = Object.keys(
   modelMetadata
-).filter((model) => getModelMetadata(model).flags.speechToSpeech);
+).filter((model) => modelMetadata[model].flags.speechToSpeech);
 
 // Prompt caching
 // https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-caching.html
 export const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
+  'anthropic.claude-sonnet-4-5-20250929-v1:0': ['messages', 'system', 'tools'],
+  'anthropic.claude-opus-4-1-20250805-v1:0': ['messages', 'system', 'tools'],
   'anthropic.claude-opus-4-20250514-v1:0': ['messages', 'system', 'tools'],
   'anthropic.claude-sonnet-4-20250514-v1:0': ['messages', 'system', 'tools'],
   'anthropic.claude-3-7-sonnet-20250219-v1:0': ['messages', 'system', 'tools'],
@@ -548,82 +559,4 @@ export const SUPPORTED_CACHE_FIELDS: Record<string, PromptCacheField[]> = {
   'amazon.nova-micro-v1:0': ['messages', 'system'],
 };
 
-export const CRI_PREFIX_PATTERN = /^(us|eu|apac)\./;
-
-// 推論プロファイルARNのパターン
-export const INFERENCE_PROFILE_ARN_PATTERN = /^arn:aws:bedrock:[a-z0-9-]+:[0-9]+:inference-profile\/.+$/;
-
-// 推論プロファイルARNからモデルメタデータを取得する関数
-export function getModelMetadataForInferenceProfile(arn: string): ModelMetadata | undefined {
-  // ARNが推論プロファイルのパターンにマッチするか確認
-  if (!INFERENCE_PROFILE_ARN_PATTERN.test(arn)) {
-    return undefined;
-  }
-  
-  // モデルメタデータに直接定義されている場合はそれを返す
-  if (arn in modelMetadata) {
-    return modelMetadata[arn];
-  }
-  
-  // 推論プロファイルの場合、デフォルトでClaude 3.5 Sonnetと同等の機能を持つと仮定
-  return {
-    flags: MODEL_FEATURE.TEXT_DOC_IMAGE,
-    displayName: 'Inference Profile',
-  };
-}
-
-// 既存のmodelMetadataを拡張して、ARNをキーとして使用できるようにする
-export function getModelMetadata(modelId: string): ModelMetadata {
-  // 既存のモデルメタデータを確認
-  if (modelId in modelMetadata) {
-    return modelMetadata[modelId];
-  }
-  
-  // 推論プロファイルARNの場合
-  const inferenceProfileMetadata = getModelMetadataForInferenceProfile(modelId);
-  if (inferenceProfileMetadata) {
-    return inferenceProfileMetadata;
-  }
-  
-  // デフォルトのメタデータを返す
-  return {
-    flags: MODEL_FEATURE.TEXT_ONLY,
-    displayName: 'Unknown Model',
-  };
-}
-
-// 推論プロファイルARNに対応するキャッシュフィールドを取得する関数
-export function getSupportedCacheFields(modelId: string): PromptCacheField[] | undefined {
-  // 直接定義されているモデルの場合
-  if (modelId in SUPPORTED_CACHE_FIELDS) {
-    return SUPPORTED_CACHE_FIELDS[modelId];
-  }
-  
-  // 推論プロファイルARNの場合、元のモデルを推測してキャッシュフィールドを返す
-  if (INFERENCE_PROFILE_ARN_PATTERN.test(modelId)) {
-    // ARNから元のモデル名を抽出する試み
-    // 例: arn:aws:bedrock:us-west-2:123456789012:inference-profile/us.anthropic.claude-sonnet-4-20250514-v1:0
-    // から us.anthropic.claude-sonnet-4-20250514-v1:0 を抽出
-    const match = modelId.match(/inference-profile\/([^/]+)$/);
-    if (match && match[1]) {
-      const baseModelId = match[1];
-      if (baseModelId in SUPPORTED_CACHE_FIELDS) {
-        return SUPPORTED_CACHE_FIELDS[baseModelId];
-      }
-      
-      // Claude系の推論プロファイルの場合
-      if (baseModelId.includes('anthropic.claude-3-7') || 
-          baseModelId.includes('anthropic.claude-sonnet-4') || 
-          baseModelId.includes('anthropic.claude-opus-4')) {
-        return ['messages', 'system', 'tools'];
-      }
-      
-      // Nova系の推論プロファイルの場合8
-      if (baseModelId.includes('amazon.nova')) {
-        return ['messages', 'system'];
-      }
-    }
-  }
-  
-  return undefined;
-}
+export const CRI_PREFIX_PATTERN = /^(global|us|eu|apac|jp)\./;

@@ -1,7 +1,7 @@
 import { Model, ModelConfiguration } from 'generative-ai-use-cases';
 import {
   CRI_PREFIX_PATTERN,
-  getModelMetadata,
+  modelMetadata,
 } from '@generative-ai-use-cases/common';
 
 const modelRegion = import.meta.env.VITE_APP_MODEL_REGION;
@@ -19,7 +19,7 @@ const bedrockModelIds: string[] = bedrockModelConfigs.map(
   (model) => model.modelId
 );
 const lightModelIds: string[] = bedrockModelConfigs
-  .filter((model) => getModelMetadata(model.modelId).flags.light)
+  .filter((model) => modelMetadata[model.modelId]?.flags?.light === true)
   .map((model) => model.modelId);
 const modelIdsInModelRegion: string[] = bedrockModelConfigs
   .filter((model) => model.region === modelRegion)
@@ -30,15 +30,19 @@ const duplicateBaseModelIds = new Set(
     .filter((item, index, arr) => arr.indexOf(item) !== index)
 );
 const visionModelIds: string[] = bedrockModelIds.filter(
-  (modelId) => getModelMetadata(modelId).flags.image
+  (modelId) => modelMetadata[modelId]?.flags?.image === true
 );
 const visionEnabled: boolean = visionModelIds.length > 0;
 
-const endpointNames: string[] = JSON.parse(
-  import.meta.env.VITE_APP_ENDPOINT_NAMES
+const endpointConfigs: ModelConfiguration[] = (
+  JSON.parse(import.meta.env.VITE_APP_ENDPOINT_NAMES) as ModelConfiguration[]
 )
-  .map((name: string) => name.trim())
-  .filter((name: string) => name);
+  .map((model) => ({
+    modelId: model.modelId.trim(),
+    region: model.region.trim(),
+  }))
+  .filter((model) => model.modelId);
+const endpointNames = endpointConfigs.map((model) => model.modelId);
 
 const imageModelConfigs = (
   JSON.parse(import.meta.env.VITE_APP_IMAGE_MODEL_IDS) as ModelConfiguration[]
@@ -107,8 +111,13 @@ const textModels = [
         region: model.region,
       }) as Model
   ),
-  ...endpointNames.map(
-    (name) => ({ modelId: name, type: 'sagemaker' }) as Model
+  ...endpointConfigs.map(
+    (model) =>
+      ({
+        modelId: model.modelId,
+        type: 'sagemaker',
+        region: model.region,
+      }) as Model
   ),
 ];
 const imageGenModels = [
@@ -167,7 +176,7 @@ const searchAgent = agentNames.find((name) => name.includes('Search'));
 
 const modelDisplayName = (modelId: string): string => {
   // If there are multiple instances of the same model, add CRI suffix to the display name
-  let displayName = getModelMetadata(modelId).displayName ?? modelId;
+  let displayName = modelMetadata[modelId]?.displayName ?? modelId;
   if (duplicateBaseModelIds.has(modelId.replace(CRI_PREFIX_PATTERN, ''))) {
     const criMatch = modelId.match(CRI_PREFIX_PATTERN);
     if (criMatch) {
@@ -177,10 +186,23 @@ const modelDisplayName = (modelId: string): string => {
   return displayName;
 };
 
+const getModelMetadata = (modelId: string) => {
+  const model = modelMetadata[modelId];
+  if (!model) {
+    return {
+      displayName: modelId,
+      flags: {},
+    };
+  }
+  return model;
+};
+
 export const MODELS = {
   modelRegion: modelRegion,
-  modelIds: [...bedrockModelIds, ...endpointNames],
+  modelIds: bedrockModelIds,
+  allModelIds: [...bedrockModelIds, ...endpointNames],
   modelIdsInModelRegion,
+  modelMetadata,
   getModelMetadata,
   modelDisplayName,
   lightModelIds,

@@ -1,3 +1,5 @@
+// エラーメッセージの型を定義
+type ErrorMessage = string;
 import React, {
   useCallback,
   useEffect,
@@ -10,7 +12,6 @@ import Button from '../Button';
 import useChat from '../../hooks/useChat';
 import { useLocation } from 'react-router-dom';
 import { MODELS } from '../../hooks/useModel';
-import { getModelMetadata } from '@generative-ai-use-cases/common'; 
 import Markdown from '../Markdown';
 import ButtonCopy from '../ButtonCopy';
 import useTyping from '../../hooks/useTyping';
@@ -233,71 +234,69 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
     const hasKendra = retrieveKendraItems.length > 0;
     const hasKnowledgeBase = retrieveKnowledgeBaseItems.length > 0;
     const tmpErrorMessages = [];
-
+    
     if (hasKendra && !ragEnabled) {
-      tmpErrorMessages.push(t('useCaseBuilder.error.rag_kendra_not_enabled'));
+      const errorMsg: ErrorMessage = t('useCaseBuilder.error.rag_kendra_not_enabled');
+      tmpErrorMessages.push(errorMsg);
     }
-
     if (hasKnowledgeBase && !ragKnowledgeBaseEnabled) {
-      tmpErrorMessages.push(
-        t('useCaseBuilder.error.rag_knowledge_base_not_enabled')
-      );
+      const errorMsg: ErrorMessage = t('useCaseBuilder.error.rag_knowledge_base_not_enabled');
+      tmpErrorMessages.push(errorMsg);
     }
-
+    
     for (const item of retrieveKendraItems) {
       const textForm = textFormItems.find((i) => i.label === item.label);
-
+      
       if (!textForm) {
-        tmpErrorMessages.push(
-          t('useCaseBuilder.error.missing_text_form', {
-            label: item.label === NOLABEL ? '' : ':' + item.label,
-          })
-        );
+        const errorMsg: ErrorMessage = t('useCaseBuilder.error.missing_text_form', {
+          label: item.label === NOLABEL ? '' : ':' + item.label,
+        });
+        tmpErrorMessages.push(errorMsg);
       }
     }
 
     for (const item of retrieveKnowledgeBaseItems) {
       const textForm = textFormItems.find((i) => i.label === item.label);
-
+      
       if (!textForm) {
-        tmpErrorMessages.push(
-          t('useCaseBuilder.error.missing_kb_text_form', {
-            label: item.label === NOLABEL ? '' : ':' + item.label,
-          })
-        );
+        const errorMsg: ErrorMessage = t('useCaseBuilder.error.missing_kb_text_form', {
+          label: item.label === NOLABEL ? '' : ':' + item.label,
+        });
+        tmpErrorMessages.push(errorMsg);
       }
     }
-
+    
     for (const item of selectItems) {
       if (!item.options || item.options.length === 0) {
-        tmpErrorMessages.push(t('useCaseBuilder.error.missing_select_options'));
+        const errorMsg: ErrorMessage = t('useCaseBuilder.error.missing_select_options');
+        tmpErrorMessages.push(errorMsg);
       } else {
         const options = item.options.split(',');
         const emptyOptions = options.filter((o) => o === '');
-
+        
         if (emptyOptions.length > 0) {
-          tmpErrorMessages.push(
-            t('useCaseBuilder.error.empty_select_options', {
-              label: item.label,
-            })
-          );
+          const errorMsg: ErrorMessage = t('useCaseBuilder.error.empty_select_options', {
+            label: item.label,
+          });
+          tmpErrorMessages.push(errorMsg);
         }
-
+        
         const uniqueOptions = options.filter(
           (elem, idx, self) => self.findIndex((e) => e === elem) === idx
         );
-
+        
         if (options.length !== uniqueOptions.length) {
-          tmpErrorMessages.push(
-            t('useCaseBuilder.error.duplicate_select_options', {
-              label: item.label,
-            })
-          );
+          const errorMsg: ErrorMessage = t('useCaseBuilder.error.duplicate_select_options', {
+            label: item.label,
+          });
+          tmpErrorMessages.push(errorMsg);
         }
       }
     }
-
-    tmpErrorMessages.push(...fileErrorMessages);
+    if (Array.isArray(fileErrorMessages)) {
+      const typedErrors: ErrorMessage[] = fileErrorMessages.map(err => err as ErrorMessage);
+      tmpErrorMessages.push(...typedErrors);
+    }
 
     setErrorMessages(tmpErrorMessages);
   }, [
@@ -417,14 +416,14 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
   );
 
   const accept = useMemo(() => {
-  if (!modelId) return [];
-  const feature = getModelMetadata(modelId).flags;
-  return [
-    ...(feature.doc ? fileLimit.accept.doc : []),
-    ...(feature.image ? fileLimit.accept.image : []),
-    ...(feature.video ? fileLimit.accept.video : []),
-  ];
-}, [modelId]);
+    if (!modelId) return [];
+    const feature = MODELS.getModelMetadata(modelId);
+    return [
+      ...(feature.flags.doc ? fileLimit.accept.doc : []),
+      ...(feature.flags.image ? fileLimit.accept.image : []),
+      ...(feature.flags.video ? fileLimit.accept.video : []),
+    ];
+  }, [modelId]);
 
   useEffect(() => {
     checkFiles(fileLimit, accept);
@@ -455,13 +454,18 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
   const handleDragOver = (event: React.DragEvent) => {
     // When a file is dragged, display the overlay
     event.preventDefault();
+    event.stopPropagation();
     setIsOver(true);
   };
 
   const handleDragLeave = (event: React.DragEvent) => {
     // When a file is dragged, hide the overlay
+    event.stopPropagation();
     event.preventDefault();
-    setIsOver(false);
+
+    if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+      setIsOver(false);
+    }
   };
 
   const handleDrop = (event: React.DragEvent) => {

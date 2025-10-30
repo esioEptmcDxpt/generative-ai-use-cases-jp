@@ -8,7 +8,7 @@ import useChat from './useChat';
 import useRagKnowledgeBaseApi from './useRagKnowledgeBaseApi';
 import { getPrompter } from '../prompts';
 import { RetrieveResultItem } from '@aws-sdk/client-kendra';
-import { ShownMessage } from '../@types';
+import { ShownMessage } from 'generative-ai-use-cases';
 import { cleanEncode } from '../utils/URLUtils';
 import { arrangeItems } from './useRag';
 import { useTranslation } from 'react-i18next';
@@ -66,7 +66,7 @@ const useRagKnowledgeBase = (id: string) => {
       pushMessage('user', content);
       pushMessage('assistant', t('rag.knowledgeBase.retrieving'));
 
-      let retrievedItems = null;
+      let retrievedItems: any = null;
 
       try {
         retrievedItems = await retrieve(content);
@@ -95,7 +95,7 @@ const useRagKnowledgeBase = (id: string) => {
       // For reusing the prompt, convert the format to the same as the Amazon Kendra retrieve item
       // This processing is not needed for using only the Knowledge Base
       const retrievedItemsKendraFormat: RetrieveResultItem[] =
-        retrievedItems.data.retrievalResults!.map((r, idx) => {
+        retrievedItems.data.retrievalResults!.map((r: any, idx: number) => {
           const sourceUri =
             r.metadata?.['x-amz-bedrock-kb-source-uri']?.toString() ?? '';
           const pageNumber =
@@ -127,20 +127,20 @@ const useRagKnowledgeBase = (id: string) => {
 
       popMessage();
       popMessage();
-postChat(
-  content,
-  false,
-  (messages: ShownMessage[]) => {
-    // Preprocessing: Few-shot is used, so delete the footnote from the past logs
-    return messages.map((message) => ({
-      role: message.role, // roleプロパティを追加
-      content: message.content
-        .replace(/\[\^0\]:[\s\S]*/s, '') // Delete the footnote at the end of the sentence
-        .replace(/\[\^(\d+)\]/g, '') // Delete the footnote anchor in the sentence
-        .trim(), // Delete the leading and trailing spaces
-    })) as ShownMessage[]; // 型アサーションを追加
-  },
-  (message: string) => {
+      postChat(
+        content,
+        false,
+        (messages: ShownMessage[]) => {
+          // Preprocessing: Few-shot is used, so delete the footnote from the past logs
+          return messages.map((message) => ({
+            ...message,
+            content: message.content
+              .replace(/\[\^0\]:[\s\S]*/s, '') // Delete the footnote at the end of the sentence
+              .replace(/\[\^(\d+)\]/g, '') // Delete the footnote anchor in the sentence
+              .trim(), // Delete the leading and trailing spaces
+          }));
+        },
+        (message: string) => {
           // Postprocessing: Add the footnote
           const footnote = items
             .map((item, idx) => {

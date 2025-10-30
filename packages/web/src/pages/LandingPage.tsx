@@ -67,9 +67,9 @@ const LandingPage: React.FC = () => {
 
   const demoChat = () => {
     const params: ChatPageQueryParams = {
-      //content: t('landing.demo.chat.content'),
-      content: `あなたは、最新のデジタル技術とエネルギー効率に精通した鉄道設備エンジニアです。これからの時代、IoTやAI、再生可能エネルギーを駆使して、安全かつ効率的な鉄道インフラの未来を創り出す使命があります。次のテーマについて、具体的な戦略や技術的解決策、そして実現可能なロードマップを交えて語ってください：
-『デジタル化と持続可能性が融合する未来の鉄道システム』`,    // ESIO用サンプル
+      content: t('landing.demo.chat.content'),
+      //content: `あなたは、最新のデジタル技術とエネルギー効率に精通した鉄道設備エンジニアです。これからの時代、IoTやAI、再生可能エネルギーを駆使して、安全かつ効率的な鉄道インフラの未来を創り出す使命があります。次のテーマについて、具体的な戦略や技術的解決策、そして実現可能なロードマップを交えて語ってください：
+//『デジタル化と持続可能性が融合する未来の鉄道システム』`,    // ESIO用サンプル
       systemContext: '',
     };
     navigate(`/chat?${queryString.stringify(params)}`);
@@ -77,8 +77,8 @@ const LandingPage: React.FC = () => {
 
   const demoRag = () => {
     const params: RagPageQueryParams = {
-      //content: t('landing.demo.rag.content'),
-      content: `鋼管ビームにやぐらを取り付けるとき、回転防止はどうしたらいい？`,    // ESIO用サンプル
+      content: t('landing.demo.rag.content'),
+      //content: `鋼管ビームにやぐらを取り付けるとき、回転防止はどうしたらいい？`,    // ESIO用サンプル
     };
     navigate(`/rag?${queryString.stringify(params)}`);
   };
@@ -94,24 +94,7 @@ const LandingPage: React.FC = () => {
     if (agentNames.includes('CodeInterpreter')) {
       const params: AgentPageQueryParams = {
         modelId: 'CodeInterpreter',
-        //content: t('landing.demo.agent.content'),
-        content: `あなたはPythonコードを実行可能なAIエージェントです。以下のタスクに従い、視覚的にインパクトのある3Dグラフを生成し、出力結果とその解説を提示してください。
-        【タスク】
-「サンプルデータを使用して、立体的な3Dグラフ（例：3Dサーフェスプロット）を描画するプログラムを作成せよ」
-
-【要件】
-1. サンプルデータとして、x, y軸のグリッドデータおよび対応するz値（例えば、z = sin(√(x²+y²)) など）を生成すること。
-2. 3Dグラフの描画には、matplotlibの\`mpl_toolkits.mplot3d\`などのライブラリを使用すること。
-3. グラフの見た目や色、角度などを調整し、視覚的なインパクトを高める工夫を盛り込むこと。
-4. コードは簡潔かつ明快に記述し、出力結果（3Dグラフの画像）がインパクトのあるものとなるようにすること。
-5. 生成したコードの各部分について、どのように3Dグラフを生成・調整しているかの解説を添えること。
-
-【出力形式】
-- 生成したPythonコード（コメントを含む）  
-- 実行結果（出力された3Dグラフの画像またはその説明）  
-- コードの動作や調整ポイントについての解説
-
-上記の手順に従い、立体的な3Dグラフを描画するインパクト重視のPythonプログラムを生成し、実行結果と解説を提示してください。`,    // ESIO用サンプル    
+        content: t('landing.demo.agent.content'),
       };
       navigate(`/agent?${queryString.stringify(params)}`);
     } else {
@@ -132,9 +115,9 @@ const LandingPage: React.FC = () => {
 
   const demoGenerate = () => {
     const params: GenerateTextPageQueryParams = {
-      //information: t('landing.demo.generate.information'),
+      information: t('landing.demo.generate.information'),
        // ESIO用サンプル
-      information: `鉄道電化方式の歴史は、19世紀末の蒸気機関車による運行から脱却し、環境負荷の低減と運行効率の向上を目指す技術革新の歩みとして位置付けられます。初期には直流方式が採用され、都市近郊や地下鉄などでシンプルな電力供給システムとして運用され、その実用性が確認されました。以降、送電距離の延長や高出力化の必要性から交流方式が導入され、ヨーロッパや北米、日本各国で独自の技術進展が見られるようになりました。各国の事情に合わせた最適な電化方式の選択は、技術者による絶え間ない研究開発と安全性向上の取り組みの成果です。さらに、近年では再生可能エネルギーやデジタル制御技術との融合が試みられ、従来の方式を超えた次世代の電化システムの実現が期待されています。こうした歴史的な進化の過程は、鉄道輸送の信頼性向上と環境保全、そして経済合理性を両立するための不断の挑戦を象徴しており、今後も持続可能な交通インフラの基盤としてさらなる発展が見込まれています。`,
+      //information: `鉄道電化方式の歴史は、19世紀末の蒸気機関車による運行から脱却し、環境負荷の低減と運行効率の向上を目指す技術革新の歩みとして位置付けられます。初期には直流方式が採用され、都市近郊や地下鉄などでシンプルな電力供給システムとして運用され、その実用性が確認されました。以降、送電距離の延長や高出力化の必要性から交流方式が導入され、ヨーロッパや北米、日本各国で独自の技術進展が見られるようになりました。各国の事情に合わせた最適な電化方式の選択は、技術者による絶え間ない研究開発と安全性向上の取り組みの成果です。さらに、近年では再生可能エネルギーやデジタル制御技術との融合が試みられ、従来の方式を超えた次世代の電化システムの実現が期待されています。こうした歴史的な進化の過程は、鉄道輸送の信頼性向上と環境保全、そして経済合理性を両立するための不断の挑戦を象徴しており、今後も持続可能な交通インフラの基盤としてさらなる発展が見込まれています。`,
       context: t('landing.demo.generate.context'),
     };
     navigate(`/generate?${queryString.stringify(params)}`);
@@ -142,9 +125,9 @@ const LandingPage: React.FC = () => {
 
   const demoSummarize = () => {
     const params: SummarizePageQueryParams = {
-      //sentence: t('landing.demo.summarize.sentence'),
-      sentence:
-        '【鉄道電化方式の歴史】鉄道の電化方式は、19世紀末の産業革命以降、急速な技術進展とともに進化してきた。初期の実験段階では、蒸気機関車による環境負荷や運転効率の問題が指摘され、電力を動力源とする新たな可能性が模索された。最初に採用されたのは直流方式で、都市近郊や地下鉄での運行に適したシンプルな制御系統が特徴であった。これにより、初期の実験路線で一定の成功を収め、電化鉄道の実用化が進んだ。20世紀に入ると、直流方式は広範に普及し、都市部を中心に大量輸送システムが整備された。しかし、送電距離の長大化や高出力を必要とする路線では、直流方式の制限が露呈するようになった。そこで登場したのが交流方式である。交流方式は変圧器や整流装置を利用することで、効率的な長距離送電を可能とし、欧州や一部アジア地域で採用が進んだ。交流と直流、双方の方式が、各国の地理的条件や運行形態に応じて使い分けられるようになった。日本においては、明治以降、都市軌道電車や地下鉄で直流方式が導入され、その後、地方路線や幹線鉄道において交流方式も採用された。高度経済成長期には、通勤輸送の効率化や環境改善を背景に、両方式が融合する形で電化システムが発展し、現在の高性能な鉄道網の基盤を築くに至った。各技術の発展は、安全性やエネルギー効率の向上とともに、経済的合理性を追求する中で、国際的な技術交流や標準化にも寄与している。今日では、再生可能エネルギーの導入やデジタル制御技術の進化が、次世代の電化方式への期待を高めている。鉄道電化の歴史は、技術革新と社会的要請が融合した成果であり、未来の持続可能な交通システムの実現に向けた重要な指針となっている。',
+      sentence: t('landing.demo.summarize.sentence'),
+      //sentence:
+        //'【鉄道電化方式の歴史】鉄道の電化方式は、19世紀末の産業革命以降、急速な技術進展とともに進化してきた。初期の実験段階では、蒸気機関車による環境負荷や運転効率の問題が指摘され、電力を動力源とする新たな可能性が模索された。最初に採用されたのは直流方式で、都市近郊や地下鉄での運行に適したシンプルな制御系統が特徴であった。これにより、初期の実験路線で一定の成功を収め、電化鉄道の実用化が進んだ。20世紀に入ると、直流方式は広範に普及し、都市部を中心に大量輸送システムが整備された。しかし、送電距離の長大化や高出力を必要とする路線では、直流方式の制限が露呈するようになった。そこで登場したのが交流方式である。交流方式は変圧器や整流装置を利用することで、効率的な長距離送電を可能とし、欧州や一部アジア地域で採用が進んだ。交流と直流、双方の方式が、各国の地理的条件や運行形態に応じて使い分けられるようになった。日本においては、明治以降、都市軌道電車や地下鉄で直流方式が導入され、その後、地方路線や幹線鉄道において交流方式も採用された。高度経済成長期には、通勤輸送の効率化や環境改善を背景に、両方式が融合する形で電化システムが発展し、現在の高性能な鉄道網の基盤を築くに至った。各技術の発展は、安全性やエネルギー効率の向上とともに、経済的合理性を追求する中で、国際的な技術交流や標準化にも寄与している。今日では、再生可能エネルギーの導入やデジタル制御技術の進化が、次世代の電化方式への期待を高めている。鉄道電化の歴史は、技術革新と社会的要請が融合した成果であり、未来の持続可能な交通システムの実現に向けた重要な指針となっている。',
       additionalContext: '',
     };
     navigate(`/summarize?${queryString.stringify(params)}`);
@@ -165,8 +148,8 @@ const LandingPage: React.FC = () => {
 
   const demoWebContent = () => {
     const params: WebContentPageQueryParams = {
-      //url: t('landing.demo.web_content.url'),
-      url: 'https://ja.wikipedia.org/wiki/Suica%E3%81%AE%E3%83%9A%E3%83%B3%E3%82%AE%E3%83%B3',    // ESIO用サンプル
+      url: t('landing.demo.web_content.url'),
+      //url: 'https://ja.wikipedia.org/wiki/Suica%E3%81%AE%E3%83%9A%E3%83%B3%E3%82%AE%E3%83%B3',    // ESIO用サンプル
       context: '',
     };
     navigate(`/web-content?${queryString.stringify(params)}`);
@@ -174,10 +157,10 @@ const LandingPage: React.FC = () => {
 
   const demoGenerateImage = () => {
     const params: GenerateImagePageQueryParams = {
-      //content: t('landing.demo.image.content'),
+      content: t('landing.demo.image.content'),
             // ESIO用のサンプル
-      content: `鉄道電気設備技術者向けの広告デザイン案を作成してください。
-キーワード：先進技術、精密、安全、信頼性、鉄道電化、効率、産業、技術革新、エネルギー管理、プロフェッショナル`,
+      //content: `鉄道電気設備技術者向けの広告デザイン案を作成してください。
+//キーワード：先進技術、精密、安全、信頼性、鉄道電化、効率、産業、技術革新、エネルギー管理、プロフェッショナル`,
     };
     navigate(`/image?${queryString.stringify(params)}`);
   };
@@ -306,8 +289,7 @@ const LandingPage: React.FC = () => {
     <div className="pb-24">
       <div className="bg-aws-squid-ink flex flex-col items-center justify-center px-3 py-5 text-xl font-semibold text-white lg:flex-row">
         <AwsIcon className="mr-5 size-20" />
-        {/*t('landing.title')*/}
-        ではじめる生成 AI - (社内通称)SIO-AI
+        {t('landing.title')}
         <DxIcon className="ml-5 size-20" />
       </div>
 
@@ -327,8 +309,8 @@ const LandingPage: React.FC = () => {
           label={t('landing.use_cases.chat.title')}
           onClickDemo={demoChat}
           icon={<PiChatsCircle />}
-          //description={t('landing.use_cases.chat.description')}
-          description="ChatGPT, Copilot のように、生成AIとチャット形式で対話できます。初めての方はこちらからお試しください。"
+          description={t('landing.use_cases.chat.description')}
+          //description="ChatGPT, Copilot のように、生成AIとチャット形式で対話できます。初めての方はこちらからお試しください。"
         />
         {ragEnabled && (
           <CardDemo
@@ -336,14 +318,14 @@ const LandingPage: React.FC = () => {
             sub={t('landing.use_cases.rag_chat.sub_kendra')}
             onClickDemo={demoRag}
             icon={<PiChatCircleText />}
-            //description={t('landing.use_cases.rag_chat.description_kendra')}
-            description="「社内情報に対応した AI チャット」です。電気SIOが運用するデータベースを参照して、社内情報に基づいた回答を生成します。"
+            description={t('landing.use_cases.rag_chat.description_kendra')}
+            //description="「社内情報に対応した AI チャット」です。電気SIOが運用するデータベースを参照して、社内情報に基づいた回答を生成します。"
           />
         )}
         {ragKnowledgeBaseEnabled && (
           <CardDemo
-            //label={t('landing.use_cases.rag_chat.title')}
-            label="SIO-AI"
+            label={t('landing.use_cases.rag_chat.title')}
+            //label="SIO-AI"
             sub={t('landing.use_cases.rag_chat.sub_kb')}
             onClickDemo={demoRagKnowledgeBase}
             icon={<PiChatCircleText />}

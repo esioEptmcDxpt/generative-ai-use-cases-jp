@@ -584,6 +584,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ### MCP チャットユースケースの有効化
 
+> [!WARNING]
+> MCP チャットユースケースは Deprecated ステータスになりました。MCP の活用には AgentCore ユースケースをご利用ください。MCP チャットユースケースは v6 で完全削除予定です。
+
 [MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) とは、LLM モデルと外部データやツールを繋ぐプロトコルです。
 GenU では [Strands Agents](https://strandsagents.com/latest/) を活用して MCP に準拠したツールを実行するチャットユースケースを用意しています。
 MCP チャットユースケースを有効化するためには、`docker` コマンドが実行可能である必要があります。
@@ -693,6 +696,77 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### AgentCore ユースケースの有効化
+
+AgentCore で作成したエージェントと連携するユースケースです。(Experimental: 予告なく破壊的変更を行うことがあります)
+
+`createGenericAgentCoreRuntime` を有効化するとデフォルトの AgentCore Runtime がデプロイされます。
+デフォルトでは `modelRegion` にデプロイされますが、`agentCoreRegion` を指定し上書きすることが可能です。
+
+AgentCore で使用できるデフォルトのエージェントは、[mcp.json](https://github.com/aws-samples/generative-ai-use-cases/blob/main/packages/cdk/lambda-python/generic-agent-core-runtime/mcp.json) で定義する MCP サーバーを利用することができます。
+デフォルトで定義されている MCP サーバーは、AWS に関連する MCP サーバー及び、現在時刻に関連する MCP サーバーです。
+詳細は[こちら](https://awslabs.github.io/mcp/)のドキュメントをご参照ください。
+MCP サーバーを追加する場合は上述の `mcp.json` に追記してください。
+ただし、`uvx` 以外で起動する MCP サーバーは Dockefile の書き換え等開発が必要です。
+
+`agentCoreExternalRuntimes` で外部で作成した AgentCore Runtime を利用することが可能です。
+
+AgentCore ユースケースを有効化するためには、`docker` コマンドが実行可能である必要があります。
+
+> [!WARNING]
+> x86_64 系のCPU (Intel AMD など) を利用した Linux マシンでは、以下のコマンドを実行してからデプロイを行ってください。
+>
+> ```
+> docker run --privileged --rm tonistiigi/binfmt --install arm64
+> ```
+>
+> 上記コマンドを実行しない場合、以下のエラーが発生します。  
+> デプロイプロセスで、AgentCore Runtime で利用する ARM ベースのコンテナイメージをビルドします。この際に、x86_64 系の CPU で ARM コンテナイメージをビルドすると、CPU のアーキテクチャの違いによりエラーが発生します。
+>
+> ```
+> ERROR: failed to solve: process "/bin/sh -c apt-get update -y && apt-get install curl nodejs npm graphviz -y" did not complete successfully: exit code: 255
+> AgentCoreStack: fail: docker build --tag cdkasset-64ba68f71e3d29f5b84d8e8d062e841cb600c436bb68a540d6fce32fded36c08 --platform linux/arm64 . exited with error code 1: #0 building with "default" instance using docker driver
+> ```
+>
+> このコマンドを実行することで、ホスト側の Linux Kernel に一時的な設定変更を行います。Binary Format Miscellaneous (binfmt_misc) に QEMU のカスタムハンドラを登録することで、ARM コンテナイメージをビルドできます。再起動で設定が元に戻るので、再度デプロイする際には、再実行が必要です。
+
+**[parameter.ts](/packages/cdk/parameter.ts) を編集**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    createGenericAgentCoreRuntime: true,
+    agentCoreRegion: 'us-west-2',
+    agentCoreExternalRuntimes: [
+      {
+        name: 'AgentCore1',
+        arn: 'arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx',
+      },
+    ],
+  },
+};
+```
+
+**[packages/cdk/cdk.json](/packages/cdk/cdk.json) を編集**
+
+```json
+// cdk.json
+
+{
+  "context": {
+    "createGenericAgentCoreRuntime": true,
+    "agentCoreRegion": "us-west-2",
+    "agentCoreExternalRuntimes": [
+      {
+        "name": "AgentCore1",
+        "arn": "arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx"
+      }
+    ]
+  }
+}
+```
+
 ### 音声チャットユースケースの有効化
 
 > [!NOTE]
@@ -727,6 +801,12 @@ const envs: Record<string, Partial<StackInput>> = {
 "anthropic.claude-3-opus-20240229-v1:0",
 "anthropic.claude-3-sonnet-20240229-v1:0",
 "anthropic.claude-3-haiku-20240307-v1:0",
+"global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"global.anthropic.claude-haiku-4-5-20251001-v1:0"
+"global.anthropic.claude-sonnet-4-20250514-v1:0",
+"us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"us.anthropic.claude-haiku-4-5-20251001-v1:0"
+"us.anthropic.claude-opus-4-1-20250805-v1:0",
 "us.anthropic.claude-opus-4-20250514-v1:0",
 "us.anthropic.claude-sonnet-4-20250514-v1:0",
 "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
@@ -734,6 +814,8 @@ const envs: Record<string, Partial<StackInput>> = {
 "us.anthropic.claude-3-opus-20240229-v1:0",
 "us.anthropic.claude-3-sonnet-20240229-v1:0",
 "us.anthropic.claude-3-haiku-20240307-v1:0",
+"eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"eu.anthropic.claude-haiku-4-5-20251001-v1:0"
 "eu.anthropic.claude-sonnet-4-20250514-v1:0",
 "eu.anthropic.claude-3-7-sonnet-20250219-v1:0",
 "eu.anthropic.claude-3-5-sonnet-20240620-v1:0",
@@ -745,6 +827,8 @@ const envs: Record<string, Partial<StackInput>> = {
 "apac.anthropic.claude-3-sonnet-20240229-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
+"jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"jp.anthropic.claude-haiku-4-5-20251001-v1:0"
 "us.meta.llama4-maverick-17b-instruct-v1:0",
 "us.meta.llama4-scout-17b-instruct-v1:0",
 "us.meta.llama3-2-90b-instruct-v1:0",
@@ -891,6 +975,9 @@ const envs: Record<string, Partial<StackInput>> = {
 "anthropic.claude-3-opus-20240229-v1:0",
 "anthropic.claude-3-sonnet-20240229-v1:0",
 "anthropic.claude-3-haiku-20240307-v1:0",
+"global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"global.anthropic.claude-sonnet-4-20250514-v1:0",
+"us.anthropic.claude-opus-4-1-20250805-v1:0",
 "us.anthropic.claude-opus-4-20250514-v1:0",
 "us.anthropic.claude-sonnet-4-20250514-v1:0",
 "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
@@ -911,7 +998,12 @@ const envs: Record<string, Partial<StackInput>> = {
 "apac.anthropic.claude-3-sonnet-20240229-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
+"deepseek.v3-v1:0",
 "us.deepseek.r1-v1:0",
+"qwen.qwen3-235b-a22b-2507-v1:0",
+"qwen.qwen3-32b-v1:0",
+"qwen.qwen3-coder-480b-a35b-v1:0",
+"qwen.qwen3-coder-30b-a3b-v1:0",
 "us.writer.palmyra-x5-v1:0",
 "us.writer.palmyra-x4-v1:0",
 "amazon.titan-text-premier-v1:0",
@@ -934,9 +1026,6 @@ const envs: Record<string, Partial<StackInput>> = {
 "mistral.mistral-small-2402-v1:0",
 "us.mistral.pixtral-large-2502-v1:0",
 "eu.mistral.pixtral-large-2502-v1:0",
-"anthropic.claude-v2:1",
-"anthropic.claude-v2",
-"anthropic.claude-instant-v1",
 "mistral.mixtral-8x7b-instruct-v0:1",
 "mistral.mistral-7b-instruct-v0:2",
 "amazon.nova-pro-v1:0",
@@ -951,7 +1040,9 @@ const envs: Record<string, Partial<StackInput>> = {
 "eu.amazon.nova-micro-v1:0",
 "apac.amazon.nova-pro-v1:0",
 "apac.amazon.nova-lite-v1:0",
-"apac.amazon.nova-micro-v1:0"
+"apac.amazon.nova-micro-v1:0",
+"openai.gpt-oss-120b-1:0",
+"openai.gpt-oss-20b-1:0"
 ```
 
 このソリューションが対応している speech-to-speech モデルは以下です。
@@ -966,11 +1057,8 @@ amazon.nova-sonic-v1:0
 "amazon.nova-canvas-v1:0",
 "amazon.titan-image-generator-v2:0",
 "amazon.titan-image-generator-v1",
-"stability.sd3-large-v1:0",
 "stability.sd3-5-large-v1:0",
-"stability.stable-image-core-v1:0",
 "stability.stable-image-core-v1:1",
-"stability.stable-image-ultra-v1:0",
 "stability.stable-image-ultra-v1:1",
 "stability.stable-diffusion-xl-v1",
 ```
@@ -1208,11 +1296,8 @@ const envs: Record<string, Partial<StackInput>> = {
     imageGenerationModelIds: [
       'amazon.titan-image-generator-v2:0',
       'amazon.titan-image-generator-v1',
-      'stability.sd3-large-v1:0',
       'stability.sd3-5-large-v1:0',
-      'stability.stable-image-core-v1:0',
       'stability.stable-image-core-v1:1',
-      'stability.stable-image-ultra-v1:0',
       'stability.stable-image-ultra-v1:1',
       'stability.stable-diffusion-xl-v1',
     ],
@@ -1243,11 +1328,8 @@ const envs: Record<string, Partial<StackInput>> = {
     "imageGenerationModelIds": [
       "amazon.titan-image-generator-v2:0",
       "amazon.titan-image-generator-v1",
-      "stability.sd3-large-v1:0",
       "stability.sd3-5-large-v1:0"
-      "stability.stable-image-core-v1:0",
       "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:0",
       "stability.stable-image-ultra-v1:1",
       "stability.stable-diffusion-xl-v1",
     ],
@@ -1287,11 +1369,8 @@ const envs: Record<string, Partial<StackInput>> = {
     imageGenerationModelIds: [
       "amazon.titan-image-generator-v2:0",
       "amazon.titan-image-generator-v1",
-      "stability.sd3-large-v1:0",
       "stability.sd3-5-large-v1:0"
-      "stability.stable-image-core-v1:0",
       "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:0",
       "stability.stable-image-ultra-v1:1",
       "stability.stable-diffusion-xl-v1",
     ],
@@ -1329,11 +1408,8 @@ const envs: Record<string, Partial<StackInput>> = {
     "imageGenerationModelIds": [
       "amazon.titan-image-generator-v2:0",
       "amazon.titan-image-generator-v1",
-      "stability.sd3-large-v1:0",
       "stability.sd3-5-large-v1:0"
-      "stability.stable-image-core-v1:0",
       "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:0",
       "stability.stable-image-ultra-v1:1",
       "stability.stable-diffusion-xl-v1",
     ],
@@ -1379,30 +1455,19 @@ const envs: Record<string, StackInput> = {
 
 ## Amazon SageMaker のカスタムモデルを利用したい場合
 
-Amazon SageMaker エンドポイントにデプロイされた大規模言語モデルを利用することが可能です。[Text Generation Inference (TGI) の Hugging Face LLM 推論コンテナ](https://aws.amazon.com/blogs/machine-learning/announcing-the-launch-of-new-hugging-face-llm-inference-containers-on-amazon-sagemaker/) を使用した SageMaker Endpoint に対応しています。モデルはユーザーとアシスタントが交互に発言するチャット形式のプロンプトをサポートしているものが理想的です。現在、画像生成ユースケースは Amazon SageMaker エンドポイントに対応していないので、ご注意ください。
+Amazon SageMaker エンドポイントにデプロイされた大規模言語モデルを利用することが可能です。[Text Generation Inference (TGI) の Hugging Face LLM 推論コンテナ](https://aws.amazon.com/blogs/machine-learning/announcing-the-launch-of-new-hugging-face-llm-inference-containers-on-amazon-sagemaker/) を使用した SageMaker Endpoint に対応しています。TGI の [Message API](https://huggingface.co/docs/text-generation-inference/messages_api) を使用するため TGI は v1.4.0 以降、モデルはチャットテンプレートが Chat Template がサポートされている必要があります。(`tokenizer.config` に `chat_template` が定義) 現在はテキストモデルのみ対応しています。
 
 TGI コンテナを使用したモデルを SageMaker エンドポイントにデプロイする方法は現在2通りあります。
 
 **SageMaker JumpStart で AWS が事前に用意したモデルをデプロイ**
 
-SageMaker JumpStart では OSS の大規模言語モデルをワンクリックでデプロイできるようにパッケージングして提供しています。SageMaker Studio の JumpStart 画面からモデルを開き "デプロイ" ボタンをクリックしデプロイすることが可能です。提供している日本語モデルとしては例として以下のようなモデルを提供しています。
-
-- [SageMaker JumpStart Elyza Japanese Llama 2 7B Instructt](https://aws.amazon.com/jp/blogs/news/sagemaker-jumpstart-elyza-7b/)
-- [SageMaker JumpStart Elyza Japanese Llama 2 13B Instructt](https://aws.amazon.com/jp/blogs/news/sagemaker-jumpstart-elyza-7b/)
-- [SageMaker JumpStart CyberAgentLM2 7B Chat](https://aws.amazon.com/jp/blogs/news/cyberagentlm2-on-sagemaker-jumpstart/)
-- [SageMaker JumpStart Stable LM Instruct Alpha 7B v2](https://aws.amazon.com/jp/blogs/news/japanese-stable-lm-instruct-alpha-7b-v2-from-stability-ai-is-now-available-in-amazon-sagemaker-jumpstart/)
-- [SageMaker JumpStart Rinna 3.6B](https://aws.amazon.com/jp/blogs/news/generative-ai-rinna-japanese-llm-on-amazon-sagemaker-jumpstart/)
-- [SageMaker JumpStart Bilingual Rinna 4B](https://aws.amazon.com/jp/blogs/news/generative-ai-rinna-japanese-llm-on-amazon-sagemaker-jumpstart/)
+SageMaker JumpStart では OSS の大規模言語モデルをワンクリックでデプロイできるようにパッケージングして提供しています。SageMaker Studio の JumpStart 画面からモデルを開き "デプロイ" ボタンをクリックしデプロイすることが可能です。
 
 **SageMaker SDK を使用して数行のコードでデプロイ**
 
 [AWS と Hugging Face の提携](https://aws.amazon.com/jp/blogs/news/aws-and-hugging-face-collaborate-to-make-generative-ai-more-accessible-and-cost-efficient/)により、SageMaker SDK で Hugging Face に公開されているモデルの ID を指定するだけでモデルのデプロイが可能です。
 
 公開されている Hugging Face のモデルページから _Deploy_ > _Amazon SageMaker_ を選択するとモデルをデプロイするためのコードが表示されるため、こちらをコピーして実行すればモデルをデプロイすることが可能です。（モデルによりインスタンスサイズや `SM_NUM_GPUS` などのパラメータを変更する必要がある場合があります。デプロイに失敗した際は CloudWatch Logs からログを確認することが可能です）
-
-> [!NOTE]
-> デプロイする際、一箇所だけ修正点があります。エンドポイント名が GenU アプリケーションに表示されるほか、モデルのプロンプトテンプレート（次セクションにて説明）をエンドポイント名から判断しているためモデルを区別できるエンドポイント名を指定する必要があります。
-> そのため、デプロイする際に `huggingface_model.deploy()` の引数に `endpoint_name="<モデルを区別できるエンドポイント名>"` を追加してください。
 
 ![Hugging Face モデルページにて Deploy から Amazon SageMaker を選択](../assets/DEPLOY_OPTION/HF_Deploy.png)
 ![Hugging Face モデルページのデプロイスクリプトのガイド](../assets/DEPLOY_OPTION/HF_Deploy2.png)
@@ -1411,9 +1476,7 @@ SageMaker JumpStart では OSS の大規模言語モデルをワンクリック�
 
 デプロイした SageMaker エンドポイントをターゲットのソリューションをデプロイする際は、以下のように指定することができます。
 
-endpointNames は SageMaker エンドポイント名のリストです。（例：`["elyza-llama-2", "rinna"]`）
-
-バックエンドでプロンプトを構築する際のプロンプトテンプレートを指定するために便宜上エンドポイント名の中にプロンプトの種類を含める必要があります。（例：`llama-2`、`rinna` など）詳しくは `packages/cdk/lambda/utils/models.ts` を参照してください。必要に応じてプロンプトテンプレートを追加してご利用ください。
+endpointNames は SageMaker エンドポイント名のリストです。エンドポイントごとにリージョンを指定することも可能です。
 
 ```typescript
 // parameter.ts
@@ -1421,8 +1484,11 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-east-1',
     endpointNames: [
-      'jumpstart-dft-hf-llm-rinna-3-6b-instruction-ppo-bf16',
-      'jumpstart-dft-bilingual-rinna-4b-instruction-ppo-bf16',
+      '<SageMaker Endpoint Name>',
+      {
+        modelIds: '<SageMaker Endpoint Name>',
+        region: '<SageMaker Endpoint Region>',
+      },
     ],
   },
 };
@@ -1433,34 +1499,13 @@ const envs: Record<string, Partial<StackInput>> = {
 {
   "context": {
     "modelRegion": "<SageMaker Endpoint Region>",
-    "endpointNames": ["<SageMaker Endpoint Name>"]
-  }
-}
-```
-
-**Rinna 3.6B と Bilingual Rinna 4B を利用する例**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
     "endpointNames": [
-      "jumpstart-dft-hf-llm-rinna-3-6b-instruction-ppo-bf16",
-      "jumpstart-dft-bilingual-rinna-4b-instruction-ppo-bf16"
+      "<SageMaker Endpoint Name>",
+      {
+        "modelIds": "<SageMaker Endpoint Name>",
+        "region": "<SageMaker Endpoint Region>"
+      }
     ]
-  }
-}
-```
-
-**ELYZA-japanese-Llama-2-7b-instruct を利用する例**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
-    "endpointNames": ["elyza-japanese-llama-2-7b-inference"]
   }
 }
 ```
@@ -1768,6 +1813,42 @@ Kendraのインデックスが削除されても、RAG機能はオンのまま�
 > - 現状では、起動・停止のエラーを通知する機能はありません。
 > - インデックスを再作成するたびに、IndexIdやDataSourceIdが変わります。他のサービスなどから参照している場合は、その変更に対応する必要があります。
 
+### タグを設定する方法
+
+GenU ではコスト管理等に使うためのタグをサポートしています。デフォルトでは、タグのキー名に `GenU` が設定されますが、`tagKey` を指定することでカスタムのタグキーを使用できます。
+以下に設定例を示します。
+
+`cdk.json` での設定方法
+
+```json
+// cdk.json
+  ...
+  "context": {
+    "tagKey": "MyProject",  // カスタムのタグキー（省略可能、デフォルトは "GenU"）
+    "tagValue": "dev",
+    ...
+```
+
+`parameter.ts` での設定方法
+
+```typescript
+    ...
+    tagKey: "MyProject",   // カスタムのタグキー（省略可能、デフォルトは "GenU"）
+    tagValue: "dev",
+    ...
+```
+
+ただし、いくつかのリソースについてタグが利用できません。
+
+- クロスリージョン推論のモデル呼び出し
+- 音声チャットのモデル呼び出し
+
+タグによるコスト管理を行う際は、以下の手順で「コスト配分タグ」を有効化する必要があります。
+
+- 「Billing and Cost Management」コンソールを開く
+- 左のメニューの「コスト配分タグ」を開く
+- 「ユーザー定義のコスト配分タグ」からタグキーが "GenU" のタグを「有効化」する
+
 ## モニタリング用のダッシュボードの有効化
 
 入力/出力 Token 数や直近のプロンプト集などが集約されたダッシュボードを作成します。
@@ -2047,3 +2128,8 @@ npm run cdk:deploy -- -c env=<環境名>
   }
 }
 ```
+
+## 閉域環境から GenU を使う場合
+
+閉域環境から GenU を利用するには、閉域モードの GenU をデプロイする必要があります。
+閉域モードの GenU のデプロイ方法は [こちら](./CLOSED_NETWORK.md) をご参照ください。

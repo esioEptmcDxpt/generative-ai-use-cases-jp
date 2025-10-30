@@ -115,7 +115,7 @@ export const useSpeechToSpeech = () => {
           resetState();
           setErrorMessages([
             ...errorMessages,
-            'The microphone is not available. Please grant permission to use the microphone.',
+            'The microphone is not available. Please grant permission to use the microphone.' as string,
           ]);
         }
       }
