@@ -85,7 +85,8 @@ const LandingPage: React.FC = () => {
 
   const demoRagKnowledgeBase = () => {
     const params: RagPageQueryParams = {
-      content: t('landing.demo.rag.content'),
+      // content: t('landing.demo.rag.content'),
+      content: `鋼管ビームにやぐらを取り付けるとき、回転防止はどうしたらいい？`,    // ESIO用サンプル
     };
     navigate(`/rag-knowledge-base?${queryString.stringify(params)}`);
   };
@@ -94,7 +95,25 @@ const LandingPage: React.FC = () => {
     if (agentNames.includes('CodeInterpreter')) {
       const params: AgentPageQueryParams = {
         modelId: 'CodeInterpreter',
-        content: t('landing.demo.agent.content'),
+        // content: t('landing.demo.agent.content'),
+        content: `あなたはPythonコードを実行可能なAIエージェントです。以下のタスクに従い、視覚的にインパクトのある3Dグラフを生成し、出力結果とその解説を提示してください。
+
+【タスク】
+「サンプルデータを使用して、立体的な3Dグラフ（例：3Dサーフェスプロット）を描画するプログラムを作成せよ」
+
+【要件】
+1. サンプルデータとして、x, y軸のグリッドデータおよび対応するz値（例えば、z = sin(√(x²+y²)) など）を生成すること。
+2. 3Dグラフの描画には、matplotlibの\`mpl_toolkits.mplot3d\`などのライブラリを使用すること。
+3. グラフの見た目や色、角度などを調整し、視覚的なインパクトを高める工夫を盛り込むこと。
+4. コードは簡潔かつ明快に記述し、出力結果（3Dグラフの画像）がインパクトのあるものとなるようにすること。
+5. 生成したコードの各部分について、どのように3Dグラフを生成・調整しているかの解説を添えること。
+
+【出力形式】
+- 生成したPythonコード（コメントを含む）  
+- 実行結果（出力された3Dグラフの画像またはその説明）  
+- コードの動作や調整ポイントについての解説
+
+上記の手順に従い、立体的な3Dグラフを描画するインパクト重視のPythonプログラムを生成し、実行結果と解説を提示してください。`,    // ESIO用サンプル
       };
       navigate(`/agent?${queryString.stringify(params)}`);
     } else {

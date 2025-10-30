@@ -25,6 +25,7 @@ import { Option, SelectValue } from '../components/FilterSelect';
 import ModalDialog from '../components/ModalDialog';
 import Button from '../components/Button';
 import { useTranslation } from 'react-i18next';
+import ChatDisclaimer from '../components/ChatDisclaimer';
 
 type StateType = {
   sessionId: string | undefined;
@@ -304,6 +305,7 @@ const RagKnowledgeBasePage: React.FC = () => {
             }}
             canStop={writing}
           />
+          <ChatDisclaimer className="mb-1" />
         </div>
       </div>
 

@@ -604,7 +604,6 @@ const ChatPage: React.FC = () => {
             content={content}
             disabled={loading && !writing}
             onChangeContent={setContent}
-            resetDisabled={!!chatId}
             onSend={() => {
               if (!loading) {
                 onSend();

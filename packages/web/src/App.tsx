@@ -94,7 +94,7 @@ const App: React.FC = () => {
     },
     ragEnabled
       ? {
-          label: t('navigation.ragChat'),
+          label: 'SIO-AI',
           to: '/rag',
           icon: <PiLightning />,
           display: 'usecase' as const,
@@ -103,7 +103,7 @@ const App: React.FC = () => {
       : null,
     ragKnowledgeBaseEnabled
       ? {
-          label: t('navigation.ragChat'),
+          label: 'SIO-AI',
           to: '/rag-knowledge-base',
           icon: <PiChatCircleText />,
           display: 'none' as const,//非表示
