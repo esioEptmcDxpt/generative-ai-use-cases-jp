@@ -614,8 +614,6 @@ model:
   parameters:
     reasoning_budget: 深く考えるトークン数上限
 navigation:
-  sub: 🚅電気SIO ver.
-  search: 文書検索🔎
   agentChat: Agent チャット
   chat: チャット
   diagramGeneration: ダイアグラム生成
@@ -625,8 +623,10 @@ navigation:
   meetingMinutes: 議事録生成
   promptOptimization: プロンプト最適化
   ragChat: SIO-AI
+  search: 文書検索🔎
   settings: 設定
   speechRecognition: 音声認識
+  sub: 🚅電気SIO ver.
   summary: 要約
   textGeneration: 文章生成
   translation: 翻訳
