@@ -17,6 +17,7 @@ import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
 import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
+import ChatDisclaimer from '../components/ChatDisclaimer';
 
 const fileLimit: FileLimit = {
   accept: {

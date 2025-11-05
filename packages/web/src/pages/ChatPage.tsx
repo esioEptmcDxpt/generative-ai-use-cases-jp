@@ -458,7 +458,7 @@ const ChatPage: React.FC = () => {
     <>
       <div
         onDragOver={fileUpload ? handleDragOver : undefined}
-        className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
+        className={`${!isEmpty ? 'screen:pb-44' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
           {title}
         </div>
@@ -604,7 +604,6 @@ const ChatPage: React.FC = () => {
             content={content}
             disabled={loading && !writing}
             onChangeContent={setContent}
-            resetDisabled={!!chatId}
             onSend={() => {
               if (!loading) {
                 onSend();
