@@ -38,7 +38,7 @@ export const arrangeItems = (
   return Object.values(res);
 };
 
-const useRag = (id: string) => {
+const useRag = (id: string, isSearchOnly = false) => {
   const { t } = useTranslation();
 
   const {
@@ -117,6 +117,19 @@ const useRag = (id: string) => {
         return;
       }
 
+      // 検索のみモードの場合、検索結果だけを表示して終了
+      if (isSearchOnly) {
+        popMessage(); // 「検索中...」のメッセージを削除
+        // 検索結果のみを表示するメッセージを作成
+        // 型エラーを避けるため、追加プロパティを使わず、通常のメッセージとして表示
+        pushMessage('assistant', `検索結果:\n\n${items.map((item, idx) => 
+          `${idx + 1}. ${item.DocumentTitle || '無題のドキュメント'}\n${item.Content}\n`
+        ).join('\n')}`);
+        
+        setLoading(false);
+        return;
+      }
+      
       updateSystemContext(
         prompter.ragPrompt({
           promptType: 'SYSTEM_CONTEXT',

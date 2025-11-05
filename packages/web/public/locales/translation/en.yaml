@@ -309,6 +309,7 @@ diagram:
       exampleTitle: Sleep vs Work Hours Example
       title: XY Chart
 drawer:
+  sub: 🚅ESIO ver.
   ai_services: AI Services
   builder_mode: Builder Mode
   done: Done
@@ -737,6 +738,9 @@ model:
     reasoning_budget: Token budget for extended thinking
 navigation:
   agentChat: Agent Chat
+  ragChat: SIO-AI
+  sub: 🚅ESIO ver.
+  search: search🔎
   chat: Chat
   diagramGeneration: Diagram Generation
   flowChat: Flow Chat
@@ -744,7 +748,6 @@ navigation:
   imageGeneration: Image Generation
   meetingMinutes: Meeting Minutes
   promptOptimization: Prompt Optimization
-  ragChat: RAG Chat
   settings: Settings
   speechRecognition: Speech Recognition
   summary: Summary

@@ -231,6 +231,7 @@ diagram:
       exampleTitle: 睡眠-工作时间示例
       title: XY图表
 drawer:
+  sub: 🚅ESIO ver.
   ai_services: AI 服务
   builder_mode: 构建者模式
   generative_ai: (生成式 AI)
@@ -495,6 +496,9 @@ model:
   parameters:
     reasoning_budget: 推理预算
 navigation:
+  ragChat: SIO-AI
+  sub: 🚅ESIO ver.
+  search: 文档搜索🔎
   agentChat: Agent聊天
   chat: 聊天
   diagramGeneration: 图表生成
@@ -503,7 +507,6 @@ navigation:
   imageGeneration: 图像生成
   meetingMinutes: 会议纪要
   promptOptimization: 提示优化
-  ragChat: RAG聊天
   settings: 设置
   speechRecognition: 语音识别
   summary: 摘要
@@ -665,7 +668,7 @@ useCaseBuilder:
   enterTitle: 请输入标题
   error:
     duplicate_select_options: '{{select:{{label}}}} 包含重复选项。'
-    empty_select_options: '{{select:{{label}}}} 包含空选项。'
+    empty_select_options: '{{select:{{label}}}} 包含空选���。'
     missing_kb_text_form: 请在提示模板中包含用于输入Knowledge Base搜索查询的表单 {{text{{label}}}}。
     missing_select_options: '{{select}} 未设置选项。请按照 {{select:标签:选项1,选项2}} 格式设置。'
     missing_text_form: 请在提示模板中包含用于输入Amazon Kendra搜索查询的表单 {{text{{label}}}}。

@@ -23,6 +23,7 @@ import {
   PiTreeStructure,
   PiNotebook,
   PiGraph,
+  PiLightning,
 } from 'react-icons/pi';
 import { Outlet } from 'react-router-dom';
 import Drawer, { ItemProps } from './components/Drawer';
@@ -97,9 +98,9 @@ const App: React.FC = () => {
       ? {
           label: t('navigation.ragChat'),
           to: '/rag',
-          icon: <PiChatCircleText />,
+          icon: <PiLightning />,
           display: 'usecase' as const,
-          sub: 'Amazon Kendra',
+          sub: t('navigation.search'),
         }
       : null,
     ragKnowledgeBaseEnabled
@@ -107,7 +108,7 @@ const App: React.FC = () => {
           label: t('navigation.ragChat'),
           to: '/rag-knowledge-base',
           icon: <PiChatCircleText />,
-          display: 'usecase' as const,
+          display: 'none' as const,
           sub: 'Knowledge Base',
         }
       : null,

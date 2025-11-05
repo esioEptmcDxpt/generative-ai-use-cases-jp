@@ -21,6 +21,7 @@ import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
 import useUserSetting from '../hooks/useUserSetting';
 import Tooltip from './Tooltip';
+import ChatDisclaimer from './ChatDisclaimer';
 
 type Props = {
   content: string;
@@ -42,6 +43,8 @@ type Props = {
   reasoning?: boolean;
   onReasoningSwitched?: () => void;
   reasoningEnabled?: boolean;
+  showDisclaimer?: boolean;
+  disclaimerClassName?: string;
 } & (
   | {
       hideReset?: false;
@@ -295,6 +298,9 @@ const InputChatContent: React.FC<Props> = (props) => {
             ? t('chat.hint_cmd_enter')
             : t('chat.hint_ctrl_enter')}
         </div>
+      )}
+      {props.showDisclaimer && (
+        <ChatDisclaimer className={props.disclaimerClassName ?? 'mb-4 mt-2'} />
       )}
     </div>
   );

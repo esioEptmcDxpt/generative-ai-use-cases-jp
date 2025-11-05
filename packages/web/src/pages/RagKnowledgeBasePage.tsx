@@ -25,6 +25,7 @@ import { Option, SelectValue } from '../components/FilterSelect';
 import ModalDialog from '../components/ModalDialog';
 import Button from '../components/Button';
 import { useTranslation } from 'react-i18next';
+import ChatDisclaimer from '../components/ChatDisclaimer';
 
 type StateType = {
   sessionId: string | undefined;
@@ -240,7 +241,7 @@ const RagKnowledgeBasePage: React.FC = () => {
 
   return (
     <>
-      <div className={`${!isEmpty ? 'screen:pb-48' : ''} relative`}>
+      <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
           {t('rag.title')}
         </div>
@@ -304,6 +305,7 @@ const RagKnowledgeBasePage: React.FC = () => {
             }}
             canStop={writing}
           />
+          <ChatDisclaimer className="mb-1" />
         </div>
       </div>
 

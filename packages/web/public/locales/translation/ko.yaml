@@ -294,6 +294,7 @@ diagram:
       exampleTitle: 수면 vs 근무 시간 예시
       title: XY 차트
 drawer:
+  sub: 🚅ESIO ver.
   ai_services: AI 서비스
   builder_mode: 빌더 모드
   done: 완료
@@ -459,6 +460,9 @@ model:
     reasoning_budget: 추론 예산
 navigation:
   agentChat: 에이전트 채팅
+  ragChat: SIO-AI
+  sub: 🚅ESIO ver.
+  search: search🔎
   chat: 채팅
   diagramGeneration: 다이어그램 생성
   flowChat: 플로우 채팅
@@ -466,7 +470,6 @@ navigation:
   imageGeneration: 이미지 생성
   meetingMinutes: 회의록
   promptOptimization: 프롬프트 최적화
-  ragChat: RAG 채팅
   settings: 설정
   speechRecognition: 음성 인식
   summary: 요약
@@ -757,7 +760,7 @@ video:
     play: 재생 버튼을 누르세요
   preview_loading: 미리보기 로딩 중...
   prompt:
-    display: 프롬프트가 여기에 표시됩니다
+    display: 프롬프트가 여기에 표시됩니��
     placeholder: 아이들이 많은 공으로 놀고 있습니다
     title: 프롬프트
   resolution: 해상도

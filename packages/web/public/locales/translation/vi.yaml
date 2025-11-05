@@ -305,6 +305,7 @@ diagram:
       exampleTitle: Ví dụ thời gian ngủ・làm việc
       title: XY Chart
 drawer:
+  sub: 🚅ESIO ver.
   ai_services: Dịch vụ AI
   builder_mode: Chế độ builder
   done: Hoàn thành
@@ -591,6 +592,9 @@ model:
   parameters:
     reasoning_budget: Token budget for extended thinking
 navigation:
+  ragChat: SIO-AI
+  sub: 🚅ESIO ver.
+  search: ค้นหาเอกสาร🔎
   agentChat: Agent Chat
   chat: Chat
   diagramGeneration: Tạo sơ đồ
@@ -598,7 +602,6 @@ navigation:
   home: Trang chủ
   imageGeneration: Tạo hình ảnh
   promptOptimization: Tối ưu hóa prompt
-  ragChat: RAG Chat
   settings: Cài đặt
   speechRecognition: Nhận dạng giọng nói
   summary: Tóm tắt
