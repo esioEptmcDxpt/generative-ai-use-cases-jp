@@ -116,14 +116,14 @@ const useRag = (id: string, isSearchOnly = false) => {
         setLoading(false);
         return;
       }
-
-      // 検索のみモードの場合、検索結果だけを表示して終了
+      
+      // If search-only mode, display search results and exit
       if (isSearchOnly) {
-        popMessage(); // 「検索中...」のメッセージを削除
-        // 検索結果のみを表示するメッセージを作成
-        // 型エラーを避けるため、追加プロパティを使わず、通常のメッセージとして表示
-        pushMessage('assistant', `検索結果:\n\n${items.map((item, idx) => 
-          `${idx + 1}. ${item.DocumentTitle || '無題のドキュメント'}\n${item.Content}\n`
+        popMessage();
+        // Create message to display search results only
+        // Display as normal message to avoid type errors
+        pushMessage('assistant', `${t('rag.searchresult')}:\n\n${items.map((item, idx) => 
+          `${idx + 1}. ${item.DocumentTitle || t('rag.notiledoc')}\n${item.Content}\n`
         ).join('\n')}`);
         
         setLoading(false);

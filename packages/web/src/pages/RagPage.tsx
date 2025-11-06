@@ -96,20 +96,20 @@ const RagPage: React.FC = () => {
             <div>
               <Alert severity="info">
                 <div>
-                  <h2 className="mb-2">AIモデルの選択</h2>
-                  <p>セレクトボックスでAIモデルを選択できます</p>
+                  <h2 className="mb-2">{t('rag.modelselect')}</h2>
+                  <p>{t('rag.modelselectcan')}</p>
 
                   <section className="mt-3">
-                    <h3 className="font-medium">おすすめのモデル</h3>
+                    <h3 className="font-medium">{t('rag.recmodel')}</h3>
                     <ul className="mt-2 list-disc pl-5">
                       <li>
-                        <strong>万能型：</strong>
+                        <strong>{t('rag.strong')}：</strong>
                         <span>
                           Claude sonnet 4.5
                         </span>
                       </li>
                       <li>
-                        <strong>スピード型：</strong>
+                        <strong>{t('rag.speed')}：</strong>
                         <span>Claude 3.5 Haiku</span>
                       </li>
                     </ul>
@@ -117,26 +117,23 @@ const RagPage: React.FC = () => {
                 </div>
                 <footer className="mt-4 text-sm text-gray-600">
                   <p>
-                    ＜参考＞2025年4月から名称を変更しています。旧称：電力AIチャット
+                    {t('rag.tr')}
                   </p>
                 </footer>
               </Alert>
               <Alert severity="info">
                 <div>
-                  RAG (Retrieval Augmented Generation)
-                  手法のチャットを行うことができます。
+                  {t('rag.ragcan')}
                 </div>
                 <div>
-                  メッセージが入力されると Amazon Kendra
-                  でドキュメントを検索し、検索したドキュメントをもとに LLM
-                  が回答を生成します。
+                  {t('rag.kendrasearch')}
                 </div>
                 <div className="font-bold">
-                  Amazon Kendra の検索のみを実行する場合は
+                  {t('rag.kendraonly')}
                   <Link className="text-aws-smile" to="/rag?mode=search-only" target="_blank" rel="noopener noreferrer">
-                    こちら
+                    {t('rag.here')}
                   </Link>
-                  のページに遷移してください。
+                  {t('rag.please_refer')}
                 </div>
               </Alert>
             </div>
