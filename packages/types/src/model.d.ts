@@ -12,11 +12,21 @@ export type FeatureFlags = {
 
   embedding?: boolean;
   reranking?: boolean;
+
+  speechToSpeech?: boolean;
+
   // Additional Flags
   light?: boolean;
+  legacy?: boolean;
 };
 
 export type ModelConfiguration = {
   modelId: string;
   region: string;
+  inferenceProfileArn?: string;
+};
+
+export type ModelMetadata = {
+  flags: FeatureFlags;
+  displayName: string;
 };

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
-// Common Validator
-export const stackInputSchema = z.object({
+// Base schema without refine
+const baseStackInputSchema = z.object({
   account: z.string().default(process.env.CDK_DEFAULT_ACCOUNT ?? ''),
   region: z.string().default(process.env.CDK_DEFAULT_REGION ?? 'us-east-1'),
   env: z.string().default(''),
@@ -25,6 +25,8 @@ export const stackInputSchema = z.object({
       video: z.boolean().optional(),
       videoAnalyzer: z.boolean().optional(),
       diagram: z.boolean().optional(),
+      meetingMinutes: z.boolean().optional(),
+      voiceChat: z.boolean().optional(),
     })
     .default({}),
   // API
@@ -40,11 +42,15 @@ export const stackInputSchema = z.object({
       ])
     )
     .default([
-      'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
+      'us.anthropic.claude-sonnet-4-20250514-v1:0',
+      'us.anthropic.claude-opus-4-20250514-v1:0',
+      'us.anthropic.claude-3-7-sonnet-20250219-v1:0',
       'us.anthropic.claude-3-5-haiku-20241022-v1:0',
+      'us.amazon.nova-premier-v1:0',
       'us.amazon.nova-pro-v1:0',
       'us.amazon.nova-lite-v1:0',
       'us.amazon.nova-micro-v1:0',
+      'us.deepseek.r1-v1:0',
     ]),
   imageGenerationModelIds: z
     .array(
@@ -68,7 +74,28 @@ export const stackInputSchema = z.object({
       ])
     )
     .default(['amazon.nova-reel-v1:0']),
-  endpointNames: z.array(z.string()).default([]),
+  speechToSpeechModelIds: z
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          modelId: z.string(),
+          region: z.string(),
+        }),
+      ])
+    )
+    .default(['amazon.nova-sonic-v1:0']),
+  endpointNames: z
+    .array(
+      z.union([
+        z.string(),
+        z.object({
+          modelId: z.string(),
+          region: z.string(),
+        }),
+      ])
+    )
+    .default([]),
   crossAccountBedrockRoleArn: z.string().nullish(),
   // RAG
   ragEnabled: z.boolean().default(false),
@@ -108,6 +135,7 @@ export const stackInputSchema = z.object({
   agentEnabled: z.boolean().default(false),
   searchAgentEnabled: z.boolean().default(false),
   searchApiKey: z.string().nullish(),
+  searchEngine: z.enum(['Brave', 'Tavily']).default('Brave'),
   agents: z
     .array(
       z.object({
@@ -118,6 +146,19 @@ export const stackInputSchema = z.object({
     )
     .default([]),
   inlineAgents: z.boolean().default(false),
+  // Agent Core Runtime
+  createGenericAgentCoreRuntime: z.boolean().default(false),
+  agentCoreRegion: z.string().nullish(),
+  agentCoreExternalRuntimes: z
+    .array(
+      z.object({
+        name: z.string(),
+        arn: z.string(),
+      })
+    )
+    .default([]),
+  // MCP
+  mcpEnabled: z.boolean().default(false),
   // Guardrail
   guardrailEnabled: z.boolean().default(false),
   // Usecase builder
@@ -143,28 +184,73 @@ export const stackInputSchema = z.object({
   hostedZoneId: z.string().nullish(),
   // Dashboard
   dashboard: z.boolean().default(false),
+  // Tag
+  tagKey: z.string().nullish(),
+  tagValue: z.string().nullish(),
+  // Closed network
+  closedNetworkMode: z.boolean().default(false),
+  closedNetworkVpcIpv4Cidr: z.string().default('10.0.0.0/16'),
+  closedNetworkVpcId: z.string().nullish(),
+  closedNetworkSubnetIds: z.array(z.string()).nullish(),
+  closedNetworkCertificateArn: z.string().nullish(),
+  closedNetworkDomainName: z.string().nullish(),
+  closedNetworkCreateTestEnvironment: z.boolean().default(true),
+  closedNetworkCreateResolverEndpoint: z.boolean().default(true),
 });
 
+// Common Validator with refine
+export const stackInputSchema = baseStackInputSchema.refine(
+  (data) => {
+    // If searchApiKey is provided, searchEngine must also be provided
+    if (data.searchApiKey && !data.searchEngine) {
+      return false;
+    }
+    return true;
+  },
+  {
+    message: 'searchEngine is required when searchApiKey is provided',
+    path: ['searchEngine'],
+  }
+);
+
 // schema after conversion
-export const processedStackInputSchema = stackInputSchema.extend({
+export const processedStackInputSchema = baseStackInputSchema.extend({
   modelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
   imageGenerationModelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
   videoGenerationModelIds: z.array(
     z.object({
       modelId: z.string(),
       region: z.string(),
+      inferenceProfileArn: z.string().optional(),
     })
   ),
+  speechToSpeechModelIds: z.array(
+    z.object({
+      modelId: z.string(),
+      region: z.string(),
+      inferenceProfileArn: z.string().optional(),
+    })
+  ),
+  endpointNames: z.array(
+    z.object({
+      modelId: z.string(),
+      region: z.string(),
+    })
+  ),
+  // Processed agentCoreRegion (null -> modelRegion)
+  agentCoreRegion: z.string(),
 });
 
 export type StackInput = z.infer<typeof stackInputSchema>;

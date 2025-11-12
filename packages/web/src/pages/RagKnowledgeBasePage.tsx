@@ -68,15 +68,18 @@ const RagKnowledgeBasePage: React.FC = () => {
     getModelId,
     setModelId,
     loading,
+    writing,
     isEmpty,
     messages,
     clear,
     postChat,
+    editChat,
     updateSystemContextByModel,
     retryGeneration,
+    forceToStop,
   } = useChat(pathname);
   const { scrollableContainer, setFollowing } = useFollow();
-  const { modelIdsInModelRegion: availableModels } = MODELS;
+  const { modelIdsInModelRegion: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
@@ -213,6 +216,29 @@ const RagKnowledgeBasePage: React.FC = () => {
     setSessionId(undefined);
   }, [clear, setContent, setFilters, setSessionId]);
 
+  const onEdit = useCallback(
+    (modifiedPrompt: string) => {
+      const extraData: ExtraData[] = getExtraDataFromFilters();
+      editChat(
+        modifiedPrompt,
+        false,
+        undefined,
+        undefined,
+        sessionId,
+        undefined,
+        extraData,
+        'bedrockKb',
+        setSessionId
+      );
+    },
+    [sessionId, getExtraDataFromFilters, editChat, setSessionId]
+  );
+
+  const onStop = useCallback(() => {
+    forceToStop();
+    setSessionId(undefined);
+  }, [forceToStop, setSessionId]);
+
   return (
     <>
       <div className={`${!isEmpty ? 'screen:pb-44' : ''} relative`}>
@@ -225,7 +251,7 @@ const RagKnowledgeBasePage: React.FC = () => {
             value={modelId}
             onChange={setModelId}
             options={availableModels.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
         </div>
@@ -245,6 +271,10 @@ const RagKnowledgeBasePage: React.FC = () => {
                 loading={loading && idx === messages.length - 1}
                 allowRetry={idx === messages.length - 1}
                 retryGeneration={onRetry}
+                editable={idx === messages.length - 2 && !loading}
+                onCommitEdit={
+                  idx === messages.length - 2 && !loading ? onEdit : undefined
+                }
               />
               <div className="w-full border-b border-gray-300"></div>
             </div>
@@ -259,16 +289,21 @@ const RagKnowledgeBasePage: React.FC = () => {
           className={`fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden`}>
           <InputChatContent
             content={content}
-            disabled={loading}
+            disabled={loading && !writing}
             onChangeContent={setContent}
             onSend={() => {
-              onSend();
+              if (!loading) {
+                onSend();
+              } else {
+                onStop();
+              }
             }}
             onReset={onReset}
             setting={true}
             onSetting={() => {
               setShowSetting(true);
             }}
+            canStop={writing}
           />
           <ChatDisclaimer className="mb-1" />
         </div>

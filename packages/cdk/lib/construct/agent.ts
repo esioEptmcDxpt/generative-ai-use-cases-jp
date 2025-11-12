@@ -1,5 +1,4 @@
 import { Duration, Lazy, Names, RemovalPolicy } from 'aws-cdk-lib';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import {
@@ -17,11 +16,16 @@ import {
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { CfnAgent, CfnAgentAlias } from 'aws-cdk-lib/aws-bedrock';
 import { Agent as AgentType } from 'generative-ai-use-cases';
+import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+import { StackInput } from '../stack-input';
+import { IVpc } from 'aws-cdk-lib/aws-ec2';
 
 interface AgentProps {
   // Context Params
   readonly searchAgentEnabled: boolean;
   readonly searchApiKey?: string | null;
+  readonly searchEngine?: StackInput['searchEngine'];
+  readonly vpc?: IVpc;
 }
 
 export class Agent extends Construct {
@@ -32,7 +36,7 @@ export class Agent extends Construct {
 
     const suffix = Lazy.string({ produce: () => Names.uniqueId(this) });
 
-    const { searchAgentEnabled, searchApiKey } = props;
+    const { searchAgentEnabled, searchApiKey, searchEngine } = props;
 
     // Bucket to store schema and data for agents for bedrock
     const s3Bucket = new Bucket(this, 'Bucket', {
@@ -76,17 +80,19 @@ export class Agent extends Construct {
     });
 
     // Search Agent
-    if (searchAgentEnabled && searchApiKey) {
+    if (searchAgentEnabled && searchApiKey && searchEngine) {
       const bedrockAgentLambda = new NodejsFunction(
         this,
         'BedrockAgentLambda',
         {
-          runtime: Runtime.NODEJS_LATEST,
+          runtime: LAMBDA_RUNTIME_NODEJS,
           entry: './lambda/agent.ts',
           timeout: Duration.seconds(300),
           environment: {
             SEARCH_API_KEY: searchApiKey ?? '',
+            SEARCH_ENGINE: searchEngine,
           },
+          vpc: props.vpc,
         }
       );
       bedrockAgentLambda.grantInvoke(
@@ -118,7 +124,7 @@ export class Agent extends Construct {
         idleSessionTtlInSeconds: 3600,
         autoPrepare: true,
         description: 'Search Agent',
-        foundationModel: 'anthropic.claude-3-haiku-20240307-v1:0',
+        foundationModel: 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
         instruction: `You are an advanced assistant with the ability to search and retrieve information from the web to perform complex research tasks.
 Your main function is to solve problems and meet user requests by utilizing these capabilities.
 Your main characteristics and instructions are as follows.
@@ -159,7 +165,7 @@ Automatically detect the language of the user's request and think and answer in 
       idleSessionTtlInSeconds: 3600,
       autoPrepare: true,
       description: 'Code Interpreter',
-      foundationModel: 'anthropic.claude-3-sonnet-20240229-v1:0',
+      foundationModel: 'us.anthropic.claude-3-5-sonnet-20241022-v2:0',
       instruction: `You are an advanced AI agent with the ability to execute code, generate charts, and perform complex data analysis. 
 Your main function is to solve problems and meet user requests by utilizing these capabilities.
 Your main characteristics and instructions are as follows.

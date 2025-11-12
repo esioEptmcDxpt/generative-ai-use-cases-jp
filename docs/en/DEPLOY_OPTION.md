@@ -103,6 +103,9 @@ const envs: Record<string, Partial<StackInput>> = {
 
 After making changes, redeploy with `npm run cdk:deploy` to apply the changes. Data stored in `/packages/cdk/rag-docs/docs` will be automatically uploaded to the S3 bucket for Kendra data source. (Note that files starting with `logs` will not be synchronized.)
 
+> [!NOTE]
+> By default, the Amazon Bedrock User Guide (Japanese) and Amazon Nova User Guide (English) are stored in `/packages/cdk/rag-docs/docs` as sample data.
+
 Next, perform Kendra Data source Sync with the following steps:
 
 1. Open the [Amazon Kendra console](https://console.aws.amazon.com/kendra/home)
@@ -232,7 +235,12 @@ After making changes, redeploy with `npm run cdk:deploy` to apply the changes. T
 npx -w packages/cdk cdk bootstrap --region us-east-1
 ```
 
-During deployment, data stored in `/packages/cdk/rag-docs/docs` will be automatically uploaded to the S3 bucket for Knowledge Base data source. (Note that files starting with `logs` will not be synchronized.) After deployment is complete, follow these steps to sync the Knowledge Base Data source:
+During deployment, data stored in `/packages/cdk/rag-docs/docs` will be automatically uploaded to the S3 bucket for Knowledge Base data source. (Note that files starting with `logs` will not be synchronized.)
+
+> [!NOTE]
+> By default, the Amazon Bedrock User Guide (Japanese) and Amazon Nova User Guide (English) are stored in `/packages/cdk/rag-docs/docs` as sample data.
+
+After deployment is complete, follow these steps to sync the Knowledge Base Data source:
 
 1. Open the [Knowledge Base console](https://console.aws.amazon.com/bedrock/home#/knowledge-bases)
 2. Click on generative-ai-use-cases-jp
@@ -397,12 +405,15 @@ const envs: Record<string, Partial<StackInput>> = {
 
 Creates an Agent that connects to APIs to reference the latest information for responses. You can customize the Agent to add other actions and create multiple Agents to switch between.
 
-The default search agent uses [Brave Search API's Data for AI](https://brave.com/search/api/) due to its large free tier, request limit considerations, and cost factors, but you can customize it to use other APIs. Getting an API key requires credit card registration even for the free plan.
+The default search agents available are [Data for AI in Brave Search API] (https://brave.com/search/api/) or [Tavily's Tavily Search API] (https://docs.tavily.com/documentation/api-reference/endpoint/search). It is also possible to customise the API so that it can be used with other APIs. Please note that Brave Search API requires credit card setup, even for free plans.
 
 > [!NOTE]
-> When you enable the Agent Chat use case, it only sends data to external APIs in the Agent Chat use case. (By default, Brave Search API) Other use cases can continue to be used entirely within AWS. Please check your internal policies and API terms of service before enabling.
+> When you enable the Agent Chat use case, it only sends data to external APIs in the Agent Chat use case. (By default, Brave Search API or Tavily Search) Other use cases can continue to be used entirely within AWS. Please check your internal policies and API terms of service before enabling.
 
-Set `agentEnabled` and `searchAgentEnabled` to `true` (default is `false`), and specify the search engine API key in `searchApiKey`.
+Set `agentEnabled` and `searchAgentEnabled` to `true` (default is `false`), and then set the required fields.
+
+- `searchEngine` : Specify the search engine to use. You can use `Brave` or `Tavily`.
+- `searchApiKey` : Specify the API key of the search engine.
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
@@ -412,6 +423,7 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     agentEnabled: true,
     searchAgentEnabled: true,
+    searchEngine: 'Brave' or 'Tavily',
     searchApiKey: '<Search Engine API Key>',
   },
 };
@@ -425,6 +437,7 @@ const envs: Record<string, Partial<StackInput>> = {
   "context": {
     "agentEnabled": true,
     "searchAgentEnabled": true,
+    "searchEngine": "Brave" or "Tavily",
     "searchApiKey": "<Search Engine API Key>"
   }
 }
@@ -554,6 +567,63 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### Enabling MCP Chat Use Case
+
+> [!WARNING]
+> The MCP Chat use case has been deprecated. Please use the AgentCore use case for MCP utilization. The MCP chat use case is scheduled for complete removal in v6.
+
+[MCP (Model Context Protocol)](https://modelcontextprotocol.io/introduction) is a protocol that connects LLM models with external data and tools.
+In GenU, we provide chat use cases that execute MCP-compliant tools using [Strands Agents](https://strandsagents.com/latest/).
+To enable MCP chat use cases, the `docker` command must be executable.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    mcpEnabled: true,
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+{
+  "context": {
+    "mcpEnabled": true
+  }
+}
+```
+
+The MCP servers to be used are defined in [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json).
+If you want to add tools other than those defined by default, please modify mcp.json.
+
+**However, there are currently the following constraints on the MCP server and its configuration:**
+
+- The MCP server runs on AWS Lambda, so file writing is not possible. (Writing to `/tmp` is possible, but you cannot retrieve the files.)
+- The MCP server must be executable with `uvx` or `npx`.
+- The MCP client can only use stdio.
+- Currently, multimodal requests are not supported.
+- A mechanism to dynamically obtain API Keys and set them as environment variables has not yet been implemented.
+- A mechanism for users to select which MCP server to use has not yet been implemented. (Currently, all tools defined in mcp.json are used.)
+- In mcp.json, you can configure `command`, `args`, and `env`. Here's a specific example:
+
+```json
+{
+  "mcpServers": {
+    "SERVER_NAME": {
+      "command": "uvx",
+      "args": ["SERVER_ARG"]
+      "env": {
+        "YOUR_API_KEY": "xxx"
+      }
+    }
+  }
+}
+```
+
 ### Enabling Flow Chat Use Case
 
 In the Flow Chat use case, you can call created Flows.
@@ -611,6 +681,86 @@ const envs: Record<string, Partial<StackInput>> = {
 }
 ```
 
+### Enabling AgentCore Use Cases
+
+This is a use case for integrating with agents created in AgentCore. (Experimental: Breaking changes may be made without notice)
+
+Enabling `createGenericAgentCoreRuntime` will deploy the default AgentCore Runtime.
+By default, it is deployed to the `modelRegion`, but you can override this by specifying `agentCoreRegion`.
+
+The default agents available in AgentCore can utilize MCP servers defined in [mcp.json](https://github.com/aws-samples/generative-ai-use-cases/blob/main/packages/cdk/lambda-python/generic-agent-core-runtime/mcp.json).
+The MCP servers defined by default are AWS-related MCP servers and MCP servers related to current time.
+For details, please refer to the documentation [here](https://awslabs.github.io/mcp/).
+When adding MCP servers, please add them to the aforementioned `mcp.json`.
+However, MCP servers that start with methods other than `uvx` require development work such as rewriting the Dockerfile.
+
+With `agentCoreExternalRuntimes`, you can use externally created AgentCore Runtimes.
+
+To enable AgentCore use cases, the `docker` command must be executable.
+
+> [!WARNING]
+> On Linux machines using x86_64 CPUs (Intel, AMD, etc.), run the following command before cdk deployment:
+>
+> ```
+> docker run --privileged --rm tonistiigi/binfmt --install arm64
+> ```
+>
+> If you do not run the above command, the following error will occur:  
+> During the deployment process, ARM-based container images used by AgentCore Runtime are built. When building ARM container images on x86_64 CPUs, errors occur due to CPU architecture differences.
+>
+> ```
+> ERROR: failed to solve: process "/bin/sh -c apt-get update -y && apt-get install curl nodejs npm graphviz -y" did not complete successfully: exit code: 255
+> AgentCoreStack: fail: docker build --tag cdkasset-64ba68f71e3d29f5b84d8e8d062e841cb600c436bb68a540d6fce32fded36c08 --platform linux/arm64 . exited with error code 1: #0 building with "default" instance using docker driver
+> ```
+>
+> Running this command makes temporary configuration changes to the host Linux Kernel. It registers QEMU emulator custom handlers in Binary Format Miscellaneous (binfmt_misc), enabling ARM container image builds. The configuration returns to its original state after reboot, so the command must be re-executed before re-deployments.
+
+**Edit [parameter.ts](/packages/cdk/parameter.ts)**
+
+```typescript
+// parameter.ts
+const envs: Record<string, Partial<StackInput>> = {
+  dev: {
+    createGenericAgentCoreRuntime: true,
+    agentCoreRegion: 'us-west-2',
+    agentCoreExternalRuntimes: [
+      {
+        name: 'AgentCore1',
+        arn: 'arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx',
+      },
+    ],
+  },
+};
+```
+
+**Edit [packages/cdk/cdk.json](/packages/cdk/cdk.json)**
+
+```json
+// cdk.json
+
+{
+  "context": {
+    "createGenericAgentCoreRuntime": true,
+    "agentCoreRegion": "us-west-2",
+    "agentCoreExternalRuntimes": [
+      {
+        "name": "AgentCore1",
+        "arn": "arn:aws:bedrock-agentcore:us-west-2:<account>:runtime/agent-core1-xxxxxxxx"
+      }
+    ]
+  }
+}
+```
+
+### Enabling Voice Chat Use Case
+
+> [!NOTE]
+> The response speed of voice chat is greatly affected by the application's region (the region where GenerativeAiUseCasesStack is deployed). If there is a delay in response, please check if the user is physically located close to the application's region.
+
+This is enabled when you define one or more models in `speechToSpeechModelIds`.
+For `speechToSpeechModelIds`, please refer to [Changing Amazon Bedrock Models](#change-amazon-bedrock-models).
+For default values, please refer to [packages/cdk/lib/stack-input.ts](/packages/cdk/lib/stack-input.ts).
+
 ### Enabling Image Generation Use Case
 
 This is enabled when you define one or more models in `imageGenerationModelIds`.
@@ -636,23 +786,43 @@ As of 2025/03, the multimodal models are:
 "anthropic.claude-3-opus-20240229-v1:0",
 "anthropic.claude-3-sonnet-20240229-v1:0",
 "anthropic.claude-3-haiku-20240307-v1:0",
+"global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"global.anthropic.claude-haiku-4-5-20251001-v1:0"
+"global.anthropic.claude-sonnet-4-20250514-v1:0",
+"us.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"us.anthropic.claude-haiku-4-5-20251001-v1:0"
+"us.anthropic.claude-opus-4-1-20250805-v1:0",
+"us.anthropic.claude-opus-4-20250514-v1:0",
+"us.anthropic.claude-sonnet-4-20250514-v1:0",
+"us.anthropic.claude-3-7-sonnet-20250219-v1:0",
 "us.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "us.anthropic.claude-3-opus-20240229-v1:0",
 "us.anthropic.claude-3-sonnet-20240229-v1:0",
 "us.anthropic.claude-3-haiku-20240307-v1:0",
+"eu.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"eu.anthropic.claude-haiku-4-5-20251001-v1:0"
+"eu.anthropic.claude-sonnet-4-20250514-v1:0",
+"eu.anthropic.claude-3-7-sonnet-20250219-v1:0",
 "eu.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "eu.anthropic.claude-3-sonnet-20240229-v1:0",
 "eu.anthropic.claude-3-haiku-20240307-v1:0",
+"apac.anthropic.claude-sonnet-4-20250514-v1:0",
+"apac.anthropic.claude-3-7-sonnet-20250219-v1:0",
 "apac.anthropic.claude-3-haiku-20240307-v1:0",
 "apac.anthropic.claude-3-sonnet-20240229-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
+"jp.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"jp.anthropic.claude-haiku-4-5-20251001-v1:0"
+"us.meta.llama4-maverick-17b-instruct-v1:0",
+"us.meta.llama4-scout-17b-instruct-v1:0",
 "us.meta.llama3-2-90b-instruct-v1:0",
 "us.meta.llama3-2-11b-instruct-v1:0",
 "us.mistral.pixtral-large-2502-v1:0",
 "eu.mistral.pixtral-large-2502-v1:0",
 "amazon.nova-pro-v1:0",
 "amazon.nova-lite-v1:0",
+"us.amazon.nova-premier-v1:0",
 "us.amazon.nova-pro-v1:0",
 "us.amazon.nova-lite-v1:0",
 "eu.amazon.nova-pro-v1:0",
@@ -717,6 +887,8 @@ const envs: Record<string, Partial<StackInput>> = {
       video: true, // Hide video generation
       videoAnalyzer: true, // Hide video analysis
       diagram: true, // Hide diagram generation
+      meetingMinutes: true, // Hide meeting minutes generation
+      voiceChat: true, // Hide voice chat
     },
   },
 };
@@ -737,7 +909,9 @@ const envs: Record<string, Partial<StackInput>> = {
       "image": true,
       "video": true,
       "videoAnalyzer": true,
-      "diagram": true
+      "diagram": true,
+      "meetingMinutes": true,
+      "voiceChat": true
     }
   }
 }
@@ -771,7 +945,7 @@ const envs: Record<string, Partial<StackInput>> = {
 
 ## Change Amazon Bedrock Models
 
-Specify the model region and models in `parameter.ts` or `cdk.json` using `modelRegion`, `modelIds`, `imageGenerationModelIds`, and `videoGenerationModelIds`. For `modelIds`, `imageGenerationModelIds`, and `videoGenerationModelIds`, specify a list of models you want to use from those available in the specified region. AWS documentation provides a [list of models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html) and [model support by region](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html).
+Specify the model region and models in `parameter.ts` or `cdk.json` using `modelRegion`, `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, and `speechToSpeechModelIds`. For `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, and `speechToSpeechModelIds`, specify a list of models you want to use from those available in the specified region. AWS documentation provides a [list of models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-ids.html) and [model support by region](https://docs.aws.amazon.com/bedrock/latest/userguide/models-regions.html).
 
 The solution also supports [cross-region inference](https://docs.aws.amazon.com/bedrock/latest/userguide/cross-region-inference-support.html) models. Cross-region inference models are represented as `{us|eu|apac}.{model-provider}.{model-name}` and must match the `{us|eu|apac}` prefix with the region specified in modelRegion.
 
@@ -786,6 +960,11 @@ This solution supports the following text generation models:
 "anthropic.claude-3-opus-20240229-v1:0",
 "anthropic.claude-3-sonnet-20240229-v1:0",
 "anthropic.claude-3-haiku-20240307-v1:0",
+"global.anthropic.claude-sonnet-4-5-20250929-v1:0",
+"global.anthropic.claude-sonnet-4-20250514-v1:0",
+"us.anthropic.claude-opus-4-1-20250805-v1:0",
+"us.anthropic.claude-opus-4-20250514-v1:0",
+"us.anthropic.claude-sonnet-4-20250514-v1:0",
 "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
 "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
 "us.anthropic.claude-3-5-haiku-20241022-v1:0",
@@ -793,15 +972,28 @@ This solution supports the following text generation models:
 "us.anthropic.claude-3-opus-20240229-v1:0",
 "us.anthropic.claude-3-sonnet-20240229-v1:0",
 "us.anthropic.claude-3-haiku-20240307-v1:0",
+"eu.anthropic.claude-sonnet-4-20250514-v1:0",
+"eu.anthropic.claude-3-7-sonnet-20250219-v1:0",
 "eu.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "eu.anthropic.claude-3-sonnet-20240229-v1:0",
 "eu.anthropic.claude-3-haiku-20240307-v1:0",
+"apac.anthropic.claude-sonnet-4-20250514-v1:0",
+"apac.anthropic.claude-3-7-sonnet-20250219-v1:0",
 "apac.anthropic.claude-3-haiku-20240307-v1:0",
 "apac.anthropic.claude-3-sonnet-20240229-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20240620-v1:0",
 "apac.anthropic.claude-3-5-sonnet-20241022-v2:0",
+"deepseek.v3-v1:0",
 "us.deepseek.r1-v1:0",
+"qwen.qwen3-235b-a22b-2507-v1:0",
+"qwen.qwen3-32b-v1:0",
+"qwen.qwen3-coder-480b-a35b-v1:0",
+"qwen.qwen3-coder-30b-a3b-v1:0",
+"us.writer.palmyra-x5-v1:0",
+"us.writer.palmyra-x4-v1:0",
 "amazon.titan-text-premier-v1:0",
+"us.meta.llama4-maverick-17b-instruct-v1:0",
+"us.meta.llama4-scout-17b-instruct-v1:0",
 "us.meta.llama3-3-70b-instruct-v1:0",
 "us.meta.llama3-2-90b-instruct-v1:0",
 "us.meta.llama3-2-11b-instruct-v1:0",
@@ -819,14 +1011,12 @@ This solution supports the following text generation models:
 "mistral.mistral-small-2402-v1:0",
 "us.mistral.pixtral-large-2502-v1:0",
 "eu.mistral.pixtral-large-2502-v1:0",
-"anthropic.claude-v2:1",
-"anthropic.claude-v2",
-"anthropic.claude-instant-v1",
 "mistral.mixtral-8x7b-instruct-v0:1",
 "mistral.mistral-7b-instruct-v0:2",
 "amazon.nova-pro-v1:0",
 "amazon.nova-lite-v1:0",
 "amazon.nova-micro-v1:0",
+"us.amazon.nova-premier-v1:0",
 "us.amazon.nova-pro-v1:0",
 "us.amazon.nova-lite-v1:0",
 "us.amazon.nova-micro-v1:0",
@@ -835,7 +1025,15 @@ This solution supports the following text generation models:
 "eu.amazon.nova-micro-v1:0",
 "apac.amazon.nova-pro-v1:0",
 "apac.amazon.nova-lite-v1:0",
-"apac.amazon.nova-micro-v1:0"
+"apac.amazon.nova-micro-v1:0",
+"openai.gpt-oss-120b-1:0",
+"openai.gpt-oss-20b-1:0"
+```
+
+This solution supports the following speech-to-speech models:
+
+```
+amazon.nova-sonic-v1:0
 ```
 
 This solution supports the following image generation models:
@@ -844,11 +1042,8 @@ This solution supports the following image generation models:
 "amazon.nova-canvas-v1:0",
 "amazon.titan-image-generator-v2:0",
 "amazon.titan-image-generator-v1",
-"stability.sd3-large-v1:0",
 "stability.sd3-5-large-v1:0",
-"stability.stable-image-core-v1:0",
 "stability.stable-image-core-v1:1",
-"stability.stable-image-ultra-v1:0",
 "stability.stable-image-ultra-v1:1",
 "stability.stable-diffusion-xl-v1",
 ```
@@ -865,7 +1060,7 @@ This solution supports the following video generation models:
 
 ### Using Models from Multiple Regions Simultaneously
 
-By default, GenU uses models from the `modelRegion`. If you want to use the latest models that are only available in certain regions, you can specify `{modelId: '<model name>', region: '<region code>'}` in `modelIds`, `imageGenerationModelIds`, or `videoGenerationModelIds` to call that specific model from the specified region.
+By default, GenU uses models from the `modelRegion`. If you want to use the latest models that are only available in certain regions, you can specify `{modelId: '<model name>', region: '<region code>'}` in `modelIds`, `imageGenerationModelIds`, `videoGenerationModelIds`, or `speechToSpeechModelIds` to call that specific model from the specified region.
 
 > [!NOTE]
 > When using both the [monitoring dashboard](#enabling-monitoring-dashboard) and models from multiple regions, the default dashboard settings will not display prompt logs for models outside the primary region (`modelRegion`).
@@ -899,8 +1094,15 @@ const envs: Record<string, Partial<StackInput>> = {
       'apac.amazon.nova-lite-v1:0',
       'apac.amazon.nova-micro-v1:0',
       { modelId: 'us.deepseek.r1-v1:0', region: 'us-east-1' },
-      { modelId: 'us.meta.llama3-3-70b-instruct-v1:0', region: 'us-east-1' },
-      { modelId: 'us.meta.llama3-2-90b-instruct-v1:0', region: 'us-east-1' },
+      { modelId: 'us.writer.palmyra-x5-v1:0', region: 'us-west-2' },
+      {
+        modelId: 'us.meta.llama4-maverick-17b-instruct-v1:0',
+        region: 'us-east-1',
+      },
+      {
+        modelId: 'us.meta.llama4-scout-17b-instruct-v1:0',
+        region: 'us-east-1',
+      },
       { modelId: 'us.mistral.pixtral-large-2502-v1:0', region: 'us-east-1' },
     ],
     imageGenerationModelIds: [
@@ -912,6 +1114,9 @@ const envs: Record<string, Partial<StackInput>> = {
     videoGenerationModelIds: [
       'amazon.nova-reel-v1:0',
       { modelId: 'luma.ray-v2:0', region: 'us-west-2' },
+    ],
+    speechToSpeechModelIds: [
+      { modelId: 'amazon.nova-sonic-v1:0', region: 'us-east-1' },
     ],
   },
 };
@@ -942,11 +1147,15 @@ const envs: Record<string, Partial<StackInput>> = {
         "region": "us-east-1"
       },
       {
-        "modelId": "us.meta.llama3-3-70b-instruct-v1:0",
+        "modelId": "us.writer.palmyra-x5-v1:0",
+        "region": "us-west-2"
+      },
+      {
+        "modelId": "us.meta.llama4-maverick-17b-instruct-v1:0",
         "region": "us-east-1"
       },
       {
-        "modelId": "us.meta.llama3-2-90b-instruct-v1:0",
+        "modelId": "us.meta.llama4-scout-17b-instruct-v1:0",
         "region": "us-east-1"
       },
       {
@@ -974,6 +1183,12 @@ const envs: Record<string, Partial<StackInput>> = {
       {
         "modelId": "luma.ray-v2:0",
         "region": "us-west-2"
+      }
+    ]
+    "speechToSpeechModelIds": [
+      {
+        "modelId": "amazon.nova-sonic-v1:0",
+        "region": "us-east-1"
       }
     ]
   }
@@ -1011,6 +1226,7 @@ const envs: Record<string, Partial<StackInput>> = {
       'stability.stable-diffusion-xl-v1',
     ],
     videoGenerationModelIds: ['amazon.nova-reel-v1:1'],
+    speechToSpeechModelIds: ['amazon.nova-sonic-v1:0'],
   },
 };
 ```
@@ -1042,7 +1258,8 @@ const envs: Record<string, Partial<StackInput>> = {
       "amazon.titan-image-generator-v1",
       "stability.stable-diffusion-xl-v1"
     ],
-    "videoGenerationModelIds": ["amazon.nova-reel-v1:1"]
+    "videoGenerationModelIds": ["amazon.nova-reel-v1:1"],
+    "speechToSpeechModelIds": ["amazon.nova-sonic-v1:0"]
   }
 }
 ```
@@ -1072,11 +1289,8 @@ const envs: Record<string, Partial<StackInput>> = {
     imageGenerationModelIds: [
       'amazon.titan-image-generator-v2:0',
       'amazon.titan-image-generator-v1',
-      'stability.sd3-large-v1:0',
       'stability.sd3-5-large-v1:0',
-      'stability.stable-image-core-v1:0',
       'stability.stable-image-core-v1:1',
-      'stability.stable-image-ultra-v1:0',
       'stability.stable-image-ultra-v1:1',
       'stability.stable-diffusion-xl-v1',
     ],
@@ -1107,11 +1321,8 @@ const envs: Record<string, Partial<StackInput>> = {
     "imageGenerationModelIds": [
       "amazon.titan-image-generator-v2:0",
       "amazon.titan-image-generator-v1",
-      "stability.sd3-large-v1:0",
       "stability.sd3-5-large-v1:0"
-      "stability.stable-image-core-v1:0",
       "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:0",
       "stability.stable-image-ultra-v1:1",
       "stability.stable-diffusion-xl-v1",
     ],
@@ -1127,21 +1338,20 @@ const envs: Record<string, Partial<StackInput>> = {
 // parameter.ts
 const envs: Record<string, Partial<StackInput>> = {
   dev: {
-    modelRegion: 'us-east-2',
+    modelRegion: 'us-west-2',
     modelIds: [
       "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
       "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "us.anthropic.claude-3-opus-20240229-v1:0",
-      "us.anthropic.claude-3-sonnet-20240229-v1:0",
       "us.anthropic.claude-3-haiku-20240307-v1:0",
       "us.deepseek.r1-v1:0",
-      "us.meta.llama3-3-70b-instruct-v1:0",
-      "us.meta.llama3-2-90b-instruct-v1:0",
+      "us.writer.palmyra-x5-v1:0",
+      "us.writer.palmyra-x4-v1:0",
+      "us.meta.llama4-maverick-17b-instruct-v1:0",
+      "us.meta.llama4-scout-17b-instruct-v1:0",
       "us.meta.llama3-2-11b-instruct-v1:0",
       "us.meta.llama3-2-3b-instruct-v1:0",
       "us.meta.llama3-2-1b-instruct-v1:0",
+      "us.amazon.nova-premier-v1:0",
       "us.amazon.nova-pro-v1:0",
       "us.amazon.nova-lite-v1:0",
       "us.amazon.nova-micro-v1:0",
@@ -1152,11 +1362,8 @@ const envs: Record<string, Partial<StackInput>> = {
     imageGenerationModelIds: [
       "amazon.titan-image-generator-v2:0",
       "amazon.titan-image-generator-v1",
-      "stability.sd3-large-v1:0",
       "stability.sd3-5-large-v1:0"
-      "stability.stable-image-core-v1:0",
       "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:0",
       "stability.stable-image-ultra-v1:1",
       "stability.stable-diffusion-xl-v1",
     ],
@@ -1173,18 +1380,17 @@ const envs: Record<string, Partial<StackInput>> = {
     "modelRegion": "us-west-2",
     "modelIds": [
       "us.anthropic.claude-3-7-sonnet-20250219-v1:0",
-      "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
       "us.anthropic.claude-3-5-haiku-20241022-v1:0",
-      "us.anthropic.claude-3-5-sonnet-20240620-v1:0",
-      "us.anthropic.claude-3-opus-20240229-v1:0",
-      "us.anthropic.claude-3-sonnet-20240229-v1:0",
       "us.anthropic.claude-3-haiku-20240307-v1:0",
       "us.deepseek.r1-v1:0",
-      "us.meta.llama3-3-70b-instruct-v1:0",
-      "us.meta.llama3-2-90b-instruct-v1:0",
+      "us.writer.palmyra-x5-v1:0",
+      "us.writer.palmyra-x4-v1:0",
+      "us.meta.llama4-maverick-17b-instruct-v1:0",
+      "us.meta.llama4-scout-17b-instruct-v1:0",
       "us.meta.llama3-2-11b-instruct-v1:0",
       "us.meta.llama3-2-3b-instruct-v1:0",
       "us.meta.llama3-2-1b-instruct-v1:0",
+      "us.amazon.nova-premier-v1:0",
       "us.amazon.nova-pro-v1:0",
       "us.amazon.nova-lite-v1:0",
       "us.amazon.nova-micro-v1:0",
@@ -1195,11 +1401,8 @@ const envs: Record<string, Partial<StackInput>> = {
     "imageGenerationModelIds": [
       "amazon.titan-image-generator-v2:0",
       "amazon.titan-image-generator-v1",
-      "stability.sd3-large-v1:0",
       "stability.sd3-5-large-v1:0"
-      "stability.stable-image-core-v1:0",
       "stability.stable-image-core-v1:1",
-      "stability.stable-image-ultra-v1:0",
       "stability.stable-image-ultra-v1:1",
       "stability.stable-diffusion-xl-v1",
     ],
@@ -1243,32 +1446,21 @@ const envs: Record<string, StackInput> = {
 }
 ```
 
-## Using Custom Models with Amazon SageMaker
+## When you want to use Amazon SageMaker custom models
 
-You can use large language models deployed to Amazon SageMaker endpoints. This solution supports SageMaker endpoints using [Hugging Face's Text Generation Inference (TGI) LLM inference containers](https://aws.amazon.com/blogs/machine-learning/announcing-the-launch-of-new-hugging-face-llm-inference-containers-on-amazon-sagemaker/). Ideally, the models should support chat-formatted prompts where user and assistant take turns speaking. Currently, image generation use cases are not supported with Amazon SageMaker endpoints.
+It is possible to use large language models deployed to Amazon SageMaker endpoints. It supports SageMaker Endpoints using [Text Generation Inference (TGI) Hugging Face LLM inference containers](https://aws.amazon.com/blogs/machine-learning/announcing-the-launch-of-new-hugging-face-llm-inference-containers-on-amazon-sagemaker/). Since it uses TGI's [Message API](https://huggingface.co/docs/text-generation-inference/messages_api), TGI must be version 1.4.0 or later, and the model must support Chat Template (`chat_template` defined in `tokenizer.config`). Currently, only text models are supported.
 
-There are two ways to deploy models using TGI containers to SageMaker endpoints:
+There are currently two ways to deploy models using TGI containers to SageMaker endpoints.
 
-**Deploy pre-packaged models from SageMaker JumpStart**
+**Deploy pre-prepared models by AWS with SageMaker JumpStart**
 
-SageMaker JumpStart offers one-click deployment of packaged open-source large language models. You can deploy these models by opening them in the JumpStart screen in SageMaker Studio and clicking the "Deploy" button. Examples of Japanese models provided include:
-
-- [SageMaker JumpStart Elyza Japanese Llama 2 7B Instruct](https://aws.amazon.com/jp/blogs/news/sagemaker-jumpstart-elyza-7b/)
-- [SageMaker JumpStart Elyza Japanese Llama 2 13B Instruct](https://aws.amazon.com/jp/blogs/news/sagemaker-jumpstart-elyza-7b/)
-- [SageMaker JumpStart CyberAgentLM2 7B Chat](https://aws.amazon.com/jp/blogs/news/cyberagentlm2-on-sagemaker-jumpstart/)
-- [SageMaker JumpStart Stable LM Instruct Alpha 7B v2](https://aws.amazon.com/jp/blogs/news/japanese-stable-lm-instruct-alpha-7b-v2-from-stability-ai-is-now-available-in-amazon-sagemaker-jumpstart/)
-- [SageMaker JumpStart Rinna 3.6B](https://aws.amazon.com/jp/blogs/news/generative-ai-rinna-japanese-llm-on-amazon-sagemaker-jumpstart/)
-- [SageMaker JumpStart Bilingual Rinna 4B](https://aws.amazon.com/jp/blogs/news/generative-ai-rinna-japanese-llm-on-amazon-sagemaker-jumpstart/)
+SageMaker JumpStart provides OSS large language models packaged for one-click deployment. You can open a model from the JumpStart screen in SageMaker Studio and deploy it by clicking the "Deploy" button.
 
 **Deploy with a few lines of code using SageMaker SDK**
 
-Thanks to [AWS's partnership with Hugging Face](https://aws.amazon.com/jp/blogs/news/aws-and-hugging-face-collaborate-to-make-generative-ai-more-accessible-and-cost-efficient/), you can deploy models by simply specifying the model ID from Hugging Face using the SageMaker SDK.
+Through the [partnership between AWS and Hugging Face](https://aws.amazon.com/jp/blogs/news/aws-and-hugging-face-collaborate-to-make-generative-ai-more-accessible-and-cost-efficient/), you can deploy models by simply specifying the ID of models published on Hugging Face with the SageMaker SDK.
 
-From a model's Hugging Face page, select _Deploy_ > _Amazon SageMaker_ to see the code for deploying the model. Copy and run this code to deploy the model. (You may need to adjust parameters like instance size or `SM_NUM_GPUS` depending on the model. If deployment fails, you can check the logs in CloudWatch Logs.)
-
-> [!NOTE]
-> There's one modification needed when deploying: The endpoint name will be displayed in the GenU application and is used to determine the model's prompt template (explained in the next section). Therefore, you need to specify a distinguishable endpoint name.
-> Add `endpoint_name="<distinguishable endpoint name>"` as an argument to `huggingface_model.deploy()` when deploying.
+From a published Hugging Face model page, select _Deploy_ > _Amazon SageMaker_ to display the code for deploying the model. You can deploy the model by copying and executing this code. (Depending on the model, you may need to change parameters such as instance size or `SM_NUM_GPUS`. If deployment fails, you can check the logs from CloudWatch Logs)
 
 ![Select Amazon SageMaker from Deploy on Hugging Face model page](../assets/DEPLOY_OPTION/HF_Deploy.png)
 ![Deployment script guide on Hugging Face model page](../assets/DEPLOY_OPTION/HF_Deploy2.png)
@@ -1277,9 +1469,7 @@ From a model's Hugging Face page, select _Deploy_ > _Amazon SageMaker_ to see th
 
 To use deployed SageMaker endpoints with the target solution, specify them as follows:
 
-endpointNames is a list of SageMaker endpoint names. (Example: `["elyza-llama-2", "rinna"]`)
-
-To specify the prompt template used when constructing prompts in the backend, you need to include the prompt type in the endpoint name. (Example: `llama-2`, `rinna`, etc.) See `packages/cdk/lambda/utils/models.ts` for details. Add prompt templates as needed.
+`endpointNames` is a list of SageMaker endpoint names. Optionally you can specify region for each endpoint.
 
 ```typescript
 // parameter.ts
@@ -1287,8 +1477,11 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     modelRegion: 'us-east-1',
     endpointNames: [
-      'jumpstart-dft-hf-llm-rinna-3-6b-instruction-ppo-bf16',
-      'jumpstart-dft-bilingual-rinna-4b-instruction-ppo-bf16',
+      '<SageMaker Endpoint Name>',
+      {
+        modelIds: '<SageMaker Endpoint Name>',
+        region: '<SageMaker Endpoint Region>',
+      },
     ],
   },
 };
@@ -1299,34 +1492,13 @@ const envs: Record<string, Partial<StackInput>> = {
 {
   "context": {
     "modelRegion": "<SageMaker Endpoint Region>",
-    "endpointNames": ["<SageMaker Endpoint Name>"]
-  }
-}
-```
-
-**Example: Using Rinna 3.6B and Bilingual Rinna 4B**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
     "endpointNames": [
-      "jumpstart-dft-hf-llm-rinna-3-6b-instruction-ppo-bf16",
-      "jumpstart-dft-bilingual-rinna-4b-instruction-ppo-bf16"
+      "<SageMaker Endpoint Name>",
+      {
+        "modelIds": "<SageMaker Endpoint Name>",
+        "region": "<SageMaker Endpoint Region>"
+      }
     ]
-  }
-}
-```
-
-**Example: Using ELYZA-japanese-Llama-2-7b-instruct**
-
-```json
-// cdk.json
-{
-  "context": {
-    "modelRegion": "us-west-2",
-    "endpointNames": ["elyza-japanese-llama-2-7b-inference"]
   }
 }
 ```
@@ -1634,6 +1806,41 @@ EventBridge rules are used for scheduling, and Step Functions for process contro
 > - Currently, there's no feature to notify of startup/shutdown errors.
 > - Each time the index is recreated, the IndexId and DataSourceId change. If other services reference these, you'll need to adapt to these changes.
 
+### How to Set Tags
+
+GenU supports tags for cost management and other purposes. By default, the key name of the tag is set to `GenU`, but you can use a custom tag key by specifying `tagKey`. Here are examples of how to set them:
+
+Setting in `cdk.json`:
+
+```json
+// cdk.json
+  ...
+  "context": {
+    "tagKey": "MyProject",  // Custom tag key (optional, default is "GenU")
+    "tagValue": "dev",
+    ...
+```
+
+Setting in `parameter.ts`:
+
+```typescript
+    ...
+    tagKey: "MyProject",   // Custom tag key (optional, default is "GenU")
+    tagValue: "dev",
+    ...
+```
+
+However, tags cannot be used with some resources:
+
+- Cross-region inference model calls
+- Voice chat model calls
+
+When managing costs using tags, you need to enable “Cost allocation tags” by following these steps.
+
+- Open the “Billing and Cost Management” console.
+- Open “Cost Allocation Tags” in the left menu.
+- Activate the tag with the tag key “GenU” from “User-defined cost allocation tags.”
+
 ## Enabling Monitoring Dashboard
 
 Create a dashboard that aggregates input/output token counts and recent prompts.
@@ -1715,7 +1922,7 @@ const envs: Record<string, Partial<StackInput>> = {
 ## Using Bedrock from a Different AWS Account
 
 > [!NOTE]
-> Agent-related tasks (Agent, Flow, Prompt Optimization Tool) do not support using a different AWS account and may result in errors during execution.
+> Flow Chat use case and Prompt Optimization Tool do not support using a different AWS account and may result in errors during execution.
 
 You can use Bedrock from a different AWS account. As a prerequisite, the initial deployment of GenU must be completed.
 
@@ -1725,10 +1932,16 @@ To use Bedrock from a different AWS account, you need to create one IAM role in 
 - `GenerativeAiUseCasesStack-APIPredictService`
 - `GenerativeAiUseCasesStack-APIPredictStreamService`
 - `GenerativeAiUseCasesStack-APIGenerateImageService`
+- `GenerativeAiUseCasesStack-APIGenerateVideoService`
+- `GenerativeAiUseCasesStack-APIListVideoJobsService`
+- `GenerativeAiUseCasesStack-SpeechToSpeechTaskService`
+- `GenerativeAiUseCasesStack-RagKnowledgeBaseRetrieve` (Only when using Knowledge Base)
+- `GenerativeAiUseCasesStack-APIGetFileDownloadSigned` (Only when using Knowledge Base)
 
 For details on how to specify Principals, refer to: [AWS JSON Policy Elements: Principal](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html)
 
-Principal configuration example (set in the different account)
+<details>
+  <summary>Principal configuration example (set in the different account)</summary>
 
 ```json
 {
@@ -1741,19 +1954,85 @@ Principal configuration example (set in the different account)
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIPredictTitleServiceXXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIPredictServiceXXXXXXXX-XXXXXXXXXXXX",
           "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIPredictStreamServiceXX-XXXXXXXXXXXX",
-          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateImageServiceXX-XXXXXXXXXXXX"
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateImageServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGenerateVideoServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIListVideoJobsServiceXX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-SpeechToSpeechTaskService-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-RagKnowledgeBaseRetrieveX-XXXXXXXXXXXX",
+          "arn:aws:iam::111111111111:role/GenerativeAiUseCasesStack-APIGetFileDownloadSignedU-XXXXXXXXXXXX"
         ]
       },
-      "Action": "sts:AssumeRole",
-      "Condition": {}
+      "Action": "sts:AssumeRole"
     }
   ]
 }
 ```
 
+</details>
+
+<details>
+  <summary>Policy configuration example (set in the different account)</summary>
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowBedrockInvokeModel",
+      "Effect": "Allow",
+      "Action": [
+        "bedrock:Invoke*",
+        "bedrock:Rerank",
+        "bedrock:GetInferenceProfile",
+        "bedrock:GetAsyncInvoke",
+        "bedrock:ListAsyncInvokes",
+        "bedrock:GetAgent*",
+        "bedrock:ListAgent*"
+      ],
+      "Resource": ["*"]
+    },
+    {
+      "Sid": "AllowS3PutObjectToVideoTempBucket",
+      "Effect": "Allow",
+      "Action": ["s3:PutObject"],
+      "Resource": ["arn:aws:s3:::<video-temp-bucket-name>/*"]
+    },
+    {
+      "Sid": "AllowBedrockRetrieveFromKnowledgeBase",
+      "Effect": "Allow",
+      "Action": ["bedrock:RetrieveAndGenerate*", "bedrock:Retrieve*"],
+      "Resource": [
+        "arn:aws:bedrock:<region>:<account-id>:knowledge-base/<knowledge-base-id>"
+      ]
+    },
+    {
+      "Sid": "AllowS3GetPresignedUrl",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject*"],
+      "Resource": ["arn:aws:s3:::<knowledge-base-datasource-bucket-name>/*"]
+    }
+  ]
+}
+```
+
+</details>
+
 Set the following parameter:
 
 - `crossAccountBedrockRoleArn` ... The ARN of the IAM role created in advance in the different account
+
+When using Knowledge Base, you'll need to include these additional parameters:
+
+- `ragKnowledgeBaseEnabled` ... Set to `true` to enable Knowledge Base
+- `ragKnowledgeBaseId` ... Knowledge Base ID created in advance in the different account
+  - Knowledge Base must exist in the `modelRegion`
+
+When using Agent Chat use case, you'll need to include these additional parameters:
+
+- `agents` ... a list of Bedrock Agent configurations, which has following properties:
+  - `displayName` ... Display name of the agent
+  - `agentId` ... Agent ID created in advance in the different account
+  - `aliasId` ... Agent Alias ID created in advance in the different account
 
 **Edit [parameter.ts](/packages/cdk/parameter.ts)**
 
@@ -1763,6 +2042,17 @@ const envs: Record<string, Partial<StackInput>> = {
   dev: {
     crossAccountBedrockRoleArn:
       'arn:aws:iam::AccountID:role/PreCreatedRoleName',
+    // Only when using Knowledge Base
+    ragKnowledgeBaseEnabled: true,
+    ragKnowledgeBaseId: 'YOUR_KNOWLEDGE_BASE_ID',
+    // Only when using agents
+    agents: [
+      {
+        displayName: 'YOUR AGENT NAME',
+        agentId: 'YOUR_AGENT_ID',
+        aliasId: 'YOUR_AGENT_ALIAS_ID',
+      },
+    ],
   },
 };
 ```
@@ -1773,7 +2063,18 @@ const envs: Record<string, Partial<StackInput>> = {
 // cdk.json
 {
   "context": {
-    "crossAccountBedrockRoleArn": "arn:aws:iam::AccountID:role/PreCreatedRoleName"
+    "crossAccountBedrockRoleArn": "arn:aws:iam::AccountID:role/PreCreatedRoleName",
+    // Only when using Knowledge Base
+    "ragKnowledgeBaseEnabled": true,
+    "ragKnowledgeBaseId": "YOUR_KNOWLEDGE_BASE_ID",
+    // Only when using agents
+    "agents": [
+      {
+        "displayName": "YOUR AGENT NAME",
+        "agentId": "YOUR_AGENT_ID",
+        "aliasId": "YOUR_AGENT_ALIAS_ID"
+      }
+    ]
   }
 }
 ```
@@ -1819,3 +2120,8 @@ Configuration example
   }
 }
 ```
+
+## Using GenU from a Closed Network Environment
+
+To use GenU from a closed network environment, you need to deploy GenU in closed network mode.
+Please refer to [here](./CLOSED_NETWORK.md) for instructions on how to deploy GenU in closed network mode.

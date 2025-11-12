@@ -1,3 +1,4 @@
+import { SupportedMimeType } from '@generative-ai-use-cases/common';
 import { PrimaryKey } from './base';
 import { AdditionalModelRequestFields } from './text';
 
@@ -9,6 +10,7 @@ export type Model = {
   modelParameters?: AdditionalModelRequestFields;
   sessionId?: string;
   region?: string;
+  inferenceProfileArn?: string;
 };
 
 export type Agent = {
@@ -41,6 +43,7 @@ export type UnrecordedMessage = {
   trace?: string;
   extraData?: ExtraData[];
   llmType?: string;
+  metadata?: Metadata;
 };
 
 export type ExtraData = {
@@ -53,11 +56,22 @@ export type ExtraData = {
   };
 };
 
+export type Metadata = {
+  usage: {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    cacheReadInputTokens?: number;
+    cacheWriteInputTokens?: number;
+  };
+};
+
 export type UploadedFileType = {
   id: string;
   file: File;
   name: string;
   type: 'image' | 'video' | 'file';
+  mimeType: SupportedMimeType;
   base64EncodedData?: string;
   s3Url?: string;
   uploading: boolean;
@@ -92,7 +106,9 @@ export type ToBeRecordedMessage = UnrecordedMessage & {
 
 export type ShownMessage = Partial<PrimaryKey> &
   Partial<MessageAttributes> &
-  UnrecordedMessage;
+  UnrecordedMessage & {
+    traceInlineMessage?: string;
+  };
 
 export type DocumentComment = {
   excerpt: string;

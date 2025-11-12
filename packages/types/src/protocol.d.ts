@@ -3,6 +3,7 @@ import {
   RecordedMessage,
   ToBeRecordedMessage,
   UnrecordedMessage,
+  Metadata,
 } from './message';
 import { Chat } from './chat';
 import { SystemContext } from './systemContext';
@@ -22,6 +23,7 @@ import { ShareId, UserIdAndChatId } from './share';
 export type StreamingChunk = {
   text: string;
   trace?: string;
+  metadata?: Metadata;
   stopReason?: StopReason | 'error';
   sessionId?: string;
 };
@@ -131,11 +133,19 @@ export type RetrieveKnowledgeBaseRequest = {
 
 export type RetrieveKnowledgeBaseResponse = RetrieveCommandOutputKnowledgeBase;
 
+export type S3Type = 'default' | 'knowledgeBase' | 'agentcore';
+
+export type BucketInfo = {
+  bucketName: string;
+  region: string;
+};
+
 export type GetFileDownloadSignedUrlRequest = {
   bucketName: string;
   filePrefix: string;
   region?: string;
   contentType?: string;
+  s3Type?: S3Type;
 };
 
 export type GetFileDownloadSignedUrlResponse = string;
@@ -164,6 +174,7 @@ export type StartTranscriptionRequest = {
   audioUrl: string;
   speakerLabel: boolean;
   maxSpeakers: number;
+  languageCode?: string;
 };
 
 export type StartTranscriptionResponse = {

@@ -26,7 +26,14 @@ const pcmEncodeChunk = (chunk: Buffer) => {
 };
 
 const region = import.meta.env.VITE_APP_REGION;
-const cognito = new CognitoIdentityClient({ region });
+const cognitoIdentityPoolProxyEndpoint = import.meta.env
+  .VITE_APP_COGNITO_IDENTITY_POOL_PROXY_ENDPOINT;
+const cognito = new CognitoIdentityClient({
+  region,
+  ...(cognitoIdentityPoolProxyEndpoint
+    ? { endpoint: cognitoIdentityPoolProxyEndpoint }
+    : {}),
+});
 const userPoolId = import.meta.env.VITE_APP_USER_POOL_ID;
 const idPoolId = import.meta.env.VITE_APP_IDENTITY_POOL_ID;
 const providerName = `cognito-idp.${region}.amazonaws.com/${userPoolId}`;
@@ -36,8 +43,12 @@ const useMicrophone = () => {
   const [recording, setRecording] = useState(false);
   const [rawTranscripts, setRawTranscripts] = useState<
     {
+      resultId: string;
+      startTime: number;
+      endTime: number;
       isPartial: boolean;
       transcripts: Transcript[];
+      languageCode?: string;
     }[]
   >([]);
   const [language, setLanguage] = useState<string>('ja-JP');
@@ -101,7 +112,9 @@ const useMicrophone = () => {
   const startStream = async (
     mic: MicrophoneStream,
     languageCode?: LanguageCode,
-    speakerLabel: boolean = false
+    speakerLabel: boolean = false,
+    languageOptions?: string[],
+    enableMultiLanguage: boolean = false
   ) => {
     if (!transcribeClient) return;
 
@@ -121,10 +134,40 @@ const useMicrophone = () => {
     };
 
     // Best Practice: https://docs.aws.amazon.com/transcribe/latest/dg/streaming.html
+    let commandParams;
+
+    if (enableMultiLanguage) {
+      // Multi-language identification mode (bidirectional translation)
+      commandParams = {
+        LanguageCode: undefined,
+        IdentifyLanguage: false,
+        IdentifyMultipleLanguages: true,
+        LanguageOptions: languageOptions
+          ? languageOptions.join(',')
+          : 'en-US,ja-JP',
+      };
+    } else if (languageCode) {
+      // Specific language mode
+      commandParams = {
+        LanguageCode: languageCode,
+        IdentifyLanguage: false,
+        IdentifyMultipleLanguages: false,
+        LanguageOptions: undefined,
+      };
+    } else {
+      // Auto language identification mode
+      commandParams = {
+        LanguageCode: undefined,
+        IdentifyLanguage: true,
+        IdentifyMultipleLanguages: false,
+        LanguageOptions: languageOptions
+          ? languageOptions.join(',')
+          : 'en-US,ja-JP',
+      };
+    }
+
     const command = new StartStreamTranscriptionCommand({
-      LanguageCode: languageCode,
-      IdentifyLanguage: languageCode ? false : true,
-      LanguageOptions: languageCode ? undefined : 'en-US,ja-JP',
+      ...commandParams,
       MediaEncoding: 'pcm',
       MediaSampleRateHertz: 48000,
       AudioStream: audioStream(),
@@ -181,8 +224,13 @@ const useMicrophone = () => {
                 const tmp = update(prev, {
                   $push: [
                     {
+                      resultId:
+                        result.ResultId ?? `mic-${Date.now()}-${Math.random()}`,
+                      startTime: result.StartTime ?? 0,
+                      endTime: result.EndTime ?? 0,
                       isPartial: result.IsPartial ?? false,
                       transcripts,
+                      languageCode: result.LanguageCode,
                     },
                   ],
                 });
@@ -195,8 +243,14 @@ const useMicrophone = () => {
                       prev.length - 1,
                       1,
                       {
+                        resultId:
+                          result.ResultId ??
+                          `mic-${Date.now()}-${Math.random()}`,
+                        startTime: result.StartTime ?? 0,
+                        endTime: result.EndTime ?? 0,
                         isPartial: result.IsPartial ?? false,
                         transcripts,
+                        languageCode: result.LanguageCode,
                       },
                     ],
                   ],
@@ -218,7 +272,9 @@ const useMicrophone = () => {
 
   const startTranscription = async (
     languageCode?: LanguageCode,
-    speakerLabel?: boolean
+    speakerLabel?: boolean,
+    languageOptions?: string[],
+    enableMultiLanguage?: boolean
   ) => {
     const mic = new MicrophoneStream();
     try {
@@ -231,7 +287,13 @@ const useMicrophone = () => {
       );
 
       setRecording(true);
-      await startStream(mic, languageCode, speakerLabel);
+      await startStream(
+        mic,
+        languageCode,
+        speakerLabel,
+        languageOptions,
+        enableMultiLanguage
+      );
     } catch (e) {
       console.log(e);
     } finally {
@@ -259,6 +321,7 @@ const useMicrophone = () => {
     recording,
     transcriptMic,
     clearTranscripts,
+    rawTranscripts,
   };
 };
 

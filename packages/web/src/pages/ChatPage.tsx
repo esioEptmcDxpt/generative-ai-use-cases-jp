@@ -30,26 +30,12 @@ import {
   SystemContext,
 } from 'generative-ai-use-cases';
 import ModelParameters from '../components/ModelParameters';
+import { AcceptedDotExtensions } from '../utils/MediaUtils';
 import { useTranslation } from 'react-i18next';
 import ChatDisclaimer from '../components/ChatDisclaimer';
 
 const fileLimit: FileLimit = {
-  accept: {
-    doc: [
-      '.csv',
-      '.doc',
-      '.docx',
-      '.html',
-      '.md',
-      '.pdf',
-      '.txt',
-      '.xls',
-      '.xlsx',
-      '.gif',
-    ],
-    image: ['.jpg', '.jpeg', '.png', '.webp'],
-    video: ['.mkv', '.mov', '.mp4', '.webm'],
-  },
+  accept: AcceptedDotExtensions,
   maxFileCount: 5,
   maxFileSizeMB: 4.5,
   maxImageFileCount: 20,
@@ -98,6 +84,8 @@ const useChatPageState = create<StateType>((set) => {
   };
 });
 
+const DEFAULT_REASONING_BUDGET = 4096; // Claude 3.7 Sonnet recommended minimum value
+
 const ChatPage: React.FC = () => {
   const {
     content,
@@ -132,32 +120,42 @@ const ChatPage: React.FC = () => {
     getModelId,
     setModelId,
     loading,
+    writing,
     loadingMessages,
     isEmpty,
     messages,
     rawMessages,
     clear,
     postChat,
+    editChat,
     updateSystemContext,
     updateSystemContextByModel,
     getCurrentSystemContext,
     retryGeneration,
+    forceToStop,
   } = useChat(pathname, chatId);
   const { createShareId, findShareId, deleteShareId } = useChatApi();
   const { createSystemContext } = useSystemContextApi();
   const { scrollableContainer, setFollowing } = useFollow();
   const { getChatTitle } = useChatList();
-  const { modelIds: availableModels } = MODELS;
+  const { allModelIds: availableModels, modelDisplayName } = MODELS;
   const { data: share, mutate: reloadShare } = findShareId(chatId);
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
   }, [modelId]);
-  const [overrideModelParameters, setOverrideModelParameters] = useState<
-    AdditionalModelRequestFields | undefined
-  >(undefined);
+  const [overrideModelParameters, setOverrideModelParameters] =
+    useState<AdditionalModelRequestFields>({
+      reasoningConfig: {
+        type: 'disabled',
+        budgetTokens: DEFAULT_REASONING_BUDGET,
+      },
+    });
   const [showSetting, setShowSetting] = useState(false);
   const { t } = useTranslation();
+  const [forceExpandPromptList, setForceExpandPromptList] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     // On the conversation history page, do not change the system prompt even if the model is changed
@@ -177,19 +175,26 @@ const ChatPage: React.FC = () => {
 
   const accept = useMemo(() => {
     if (!modelId) return [];
-    const feature = MODELS.modelFeatureFlags[modelId];
+    const feature = MODELS.getModelMetadata(modelId);
     return [
-      ...(feature.doc ? fileLimit.accept.doc : []),
-      ...(feature.image ? fileLimit.accept.image : []),
-      ...(feature.video ? fileLimit.accept.video : []),
+      ...(feature.flags.doc ? fileLimit.accept.doc : []),
+      ...(feature.flags.image ? fileLimit.accept.image : []),
+      ...(feature.flags.video ? fileLimit.accept.video : []),
     ];
   }, [modelId]);
   const fileUpload = useMemo(() => {
     return accept.length > 0;
   }, [accept]);
-  const setting = useMemo(() => {
-    return MODELS.modelFeatureFlags[modelId]?.reasoning ?? false;
+  const reasoning = useMemo(() => {
+    return MODELS.getModelMetadata(modelId).flags.reasoning ?? false;
   }, [modelId]);
+  const reasoningEnabled = useMemo(() => {
+    return overrideModelParameters.reasoningConfig.type === 'enabled';
+  }, [overrideModelParameters]);
+  // Currently, the settings modal is only used with the reasoning option
+  const setting = useMemo(() => {
+    return reasoning;
+  }, [reasoning]);
 
   useEffect(() => {
     const _modelId = !modelId ? availableModels[0] : modelId;
@@ -232,7 +237,14 @@ const ChatPage: React.FC = () => {
     setContent('');
     clearFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, base64Cache, fileUpload, setFollowing, overrideModelParameters]);
+  }, [
+    content,
+    base64Cache,
+    fileUpload,
+    setFollowing,
+    overrideModelParameters,
+    uploadedFiles,
+  ]);
 
   const onRetry = useCallback(() => {
     retryGeneration(
@@ -253,6 +265,30 @@ const ChatPage: React.FC = () => {
     clear();
     setContent('');
   }, [clear, setContent]);
+
+  const onStop = useCallback(() => {
+    forceToStop();
+  }, [forceToStop]);
+
+  const onEdit = useCallback(
+    (modifiedPrompt: string) => {
+      setFollowing(true);
+      editChat(
+        modifiedPrompt,
+        false,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        base64Cache,
+        overrideModelParameters
+      );
+    },
+    [editChat, base64Cache, setFollowing, overrideModelParameters]
+  );
 
   const [creatingShareId, setCreatingShareId] = useState(false);
   const [deletingShareId, setDeletingShareId] = useState(false);
@@ -381,6 +417,16 @@ const ChatPage: React.FC = () => {
     }
   };
 
+  const onReasoningSwitched = useCallback(() => {
+    setOverrideModelParameters({
+      ...overrideModelParameters,
+      reasoningConfig: {
+        type: reasoningEnabled ? 'disabled' : 'enabled',
+        budgetTokens: overrideModelParameters.reasoningConfig.budgetTokens,
+      },
+    });
+  }, [reasoningEnabled, overrideModelParameters, setOverrideModelParameters]);
+
   const handleDragOver = (event: React.DragEvent) => {
     // When a file is dragged, display the overlay
     event.preventDefault();
@@ -402,6 +448,11 @@ const ChatPage: React.FC = () => {
       uploadFiles(Array.from(event.dataTransfer.files), fileLimit, accept);
     }
   };
+
+  // Initialize forceExpandPromptList to null when the path changes
+  useEffect(() => {
+    setForceExpandPromptList(null);
+  }, [pathname, setForceExpandPromptList]);
 
   return (
     <>
@@ -428,18 +479,29 @@ const ChatPage: React.FC = () => {
             value={modelId}
             onChange={setModelId}
             options={availableModels.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
         </div>
 
         {((isEmpty && !loadingMessages) || loadingMessages) && (
-          <div className="relative flex h-[calc(100vh-13rem)] flex-col items-center justify-center">
+          <div className="relative flex h-[calc(100vh-13rem)] flex-col items-center justify-center gap-y-4">
             <BedrockIcon
               className={`fill-gray-400 ${
                 loadingMessages ? 'animate-pulse' : ''
               }`}
             />
+
+            {!loadingMessages && (
+              <Button
+                className="text-sm"
+                outlined
+                onClick={() => {
+                  setForceExpandPromptList(Math.random());
+                }}>
+                {t('chat.view_prompt_examples')}
+              </Button>
+            )}
           </div>
         )}
 
@@ -478,6 +540,12 @@ const ChatPage: React.FC = () => {
                   setSaveSystemContext={setSaveSystemContext}
                   setShowSystemContextModal={setShowSystemContextModal}
                   allowRetry={idx === showingMessages.length - 1}
+                  editable={idx === showingMessages.length - 2 && !loading}
+                  onCommitEdit={
+                    idx === showingMessages.length - 2 && !loading
+                      ? onEdit
+                      : undefined
+                  }
                   retryGeneration={onRetry}
                 />
                 <div className="w-full border-b border-gray-300"></div>
@@ -534,19 +602,27 @@ const ChatPage: React.FC = () => {
           )}
           <InputChatContent
             content={content}
-            disabled={loading}
+            disabled={loading && !writing}
             onChangeContent={setContent}
             onSend={() => {
-              onSend();
+              if (!loading) {
+                onSend();
+              } else {
+                onStop();
+              }
             }}
             onReset={onReset}
             fileUpload={fileUpload}
             fileLimit={fileLimit}
             accept={accept}
+            reasoning={reasoning}
+            onReasoningSwitched={onReasoningSwitched}
+            reasoningEnabled={reasoningEnabled}
             setting={setting}
             onSetting={() => {
               setShowSetting(true);
             }}
+            canStop={writing}
           />
           <ChatDisclaimer className="mb-1" />
         </div>
@@ -558,6 +634,7 @@ const ChatPage: React.FC = () => {
           systemContextList={systemContextList as SystemContext[]}
           onClickDeleteSystemContext={onClickDeleteSystemContext}
           onClickUpdateSystemContext={onClickUpdateSystemContext}
+          forceExpand={forceExpandPromptList}
         />
       )}
 
@@ -623,18 +700,13 @@ const ChatPage: React.FC = () => {
         }}
         title={t('chat.advanced_options')}>
         {setting && (
-          <ExpandableField
-            label={t('chat.model_parameters')}
-            className="relative w-full"
-            defaultOpened={true}>
-            <div className="">
-              <ModelParameters
-                modelFeatureFlags={MODELS.modelFeatureFlags[modelId]}
-                overrideModelParameters={overrideModelParameters}
-                setOverrideModelParameters={setOverrideModelParameters}
-              />
-            </div>
-          </ExpandableField>
+          <div className="">
+            <ModelParameters
+              modelFeatureFlags={MODELS.getModelMetadata(modelId).flags}
+              overrideModelParameters={overrideModelParameters}
+              setOverrideModelParameters={setOverrideModelParameters}
+            />
+          </div>
         )}
         <div className="mt-4 flex justify-end">
           <Button

@@ -1,7 +1,7 @@
 {
   "name": "generative-ai-use-cases",
   "private": true,
-  "version": "4.1.0",
+  "version": "5.3.0",
   "scripts": {
     "lint": "run-s custom-lint:build root:lint web:lint:fix cdk:lint cdk:lambda-build-dryrun",
     "test": "run-s web:test",
@@ -17,7 +17,7 @@
     "cdk:deploy": "npm -w packages/cdk run cdk deploy -- --all",
     "cdk:deploy:quick": "npm -w packages/cdk run cdk deploy -- --all --asset-parallelism --asset-prebuild=false --concurrency 3 --method=direct --require-approval never --force",
     "cdk:deploy:quick:hotswap": "npm -w packages/cdk run cdk deploy -- --all --asset-parallelism --asset-prebuild=false --concurrency 3 --method=direct --require-approval never --force --hotswap",
-    "cdk:destroy": "npm -w packages/cdk run cdk destroy --",
+    "cdk:destroy": "npm -w packages/cdk run cdk destroy -- --all",
     "cdk:lint": "npm -w packages/cdk run lint",
     "cdk:lambda-build-dryrun": "npm -w packages/cdk run lambda-build-dryrun",
     "cdk:test": "npm -w packages/cdk run test",
@@ -27,17 +27,25 @@
     "extension:devw": "source ./setup-env.sh && cd browser-extension && npm run dev",
     "extension:build": "cd browser-extension && npm run build",
     "extension:buildw": "source ./setup-env.sh && cd browser-extension && npm run build",
-    "extension:lint": "npx prettier --write browser-extension/. && cd browser-extension && npm run lint",
+    "extension:lint": "npx prettier --write browser-extension/. && cd browser-extension",
     "custom-lint:build": "npm -w packages/eslint-plugin-i18nhelper run build",
     "docs:dev": "mkdocs serve",
     "docs:build": "mkdocs build",
-    "docs:gh-deploy": "mkdocs gh-deploy --"
+    "docs:gh-deploy": "mkdocs gh-deploy --",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.1",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.2.5"
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "lint-staged": {
+    "**/*": [
+      "sh -c 'npm run lint'"
+    ]
+  }
 }

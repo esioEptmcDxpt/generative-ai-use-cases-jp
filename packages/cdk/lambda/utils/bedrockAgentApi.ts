@@ -1,11 +1,10 @@
 import {
-  BedrockAgentClient,
   GetAgentAliasCommand,
   ListAgentActionGroupsCommand,
 } from '@aws-sdk/client-bedrock-agent';
 import {
-  BedrockAgentRuntimeClient,
   DependencyFailedException,
+  InputFile,
   InvokeAgentCommand,
   Parameter,
   ServiceQuotaExceededException,
@@ -22,13 +21,13 @@ import {
   BraveSearchResult,
 } from 'generative-ai-use-cases';
 import { streamingChunk } from './streamingChunk';
+import { convertToSafeFilename } from './fileNameUtils';
+import {
+  initBedrockAgentClient,
+  initBedrockAgentRuntimeClient,
+} from './bedrockClient';
 
-const agentClient = new BedrockAgentClient({
-  region: process.env.MODEL_REGION,
-});
-const agentRuntimeClient = new BedrockAgentRuntimeClient({
-  region: process.env.MODEL_REGION,
-});
+const MODEL_REGION = process.env.MODEL_REGION as string;
 const s3Client = new S3Client({});
 
 // Agent information
@@ -64,8 +63,11 @@ const encodeUrlString = (str: string): string => {
 const getAgentInfo = async (agentId: string, agentAliasId: string) => {
   // Get Agent Info if not cached
   if (!agentInfoMap[agentAliasId]) {
+    const bedrockAgentClient = await initBedrockAgentClient({
+      region: MODEL_REGION,
+    });
     // Get Agent Version
-    const agentAliasInfoRes = await agentClient.send(
+    const agentAliasInfoRes = await bedrockAgentClient.send(
       new GetAgentAliasCommand({
         agentId: agentId,
         agentAliasId: agentAliasId,
@@ -75,7 +77,7 @@ const getAgentInfo = async (agentId: string, agentAliasId: string) => {
       agentAliasInfoRes.agentAlias?.routingConfiguration?.pop()?.agentVersion ??
       '1';
     // List Action Group
-    const actionGroups = await agentClient.send(
+    const actionGroups = await bedrockAgentClient.send(
       new ListAgentActionGroupsCommand({
         agentId: agentId,
         agentVersion: agentVersion,
@@ -108,20 +110,38 @@ const bedrockAgentApi: ApiInterface = {
       // Invoke Agent
       const command = new InvokeAgentCommand({
         sessionState: {
-          files:
-            messages[messages.length - 1].extraData?.map((file) => ({
-              name: file.name.replace(/[^a-zA-Z0-9\s\-()[\].]/g, 'X'), // If the file name contains Japanese, it is not recognized, so replace it
-              source: {
-                sourceType: 'BYTE_CONTENT',
-                byteContent: {
-                  mediaType: file.source.mediaType,
-                  data: Buffer.from(file.source.data, 'base64'),
+          conversationHistory: {
+            // slice: remove system prompt and lastest user messagee
+            messages: messages
+              .slice(1, messages.length - 1)
+              .map((m: UnrecordedMessage) => {
+                return {
+                  role: m.role as 'user' | 'assistant',
+                  content: [
+                    {
+                      text: m.content,
+                    },
+                  ],
+                };
+              }),
+          },
+          files: messages
+            .flatMap((m: UnrecordedMessage) => {
+              return m.extraData?.map((file) => ({
+                name: convertToSafeFilename(file.name),
+                source: {
+                  sourceType: 'BYTE_CONTENT',
+                  byteContent: {
+                    mediaType: file.source.mediaType,
+                    data: Buffer.from(file.source.data, 'base64'),
+                  },
                 },
-              },
-              useCase: agentInfo.codeInterpreterEnabled
-                ? 'CODE_INTERPRETER'
-                : 'CHAT',
-            })) || [],
+                useCase: agentInfo.codeInterpreterEnabled
+                  ? 'CODE_INTERPRETER'
+                  : 'CHAT',
+              })) as InputFile[] | undefined;
+            })
+            .filter((f): f is InputFile => f !== undefined),
         },
         agentId: agentId,
         agentAliasId: agentAliasId,
@@ -129,7 +149,11 @@ const bedrockAgentApi: ApiInterface = {
         enableTrace: true,
         inputText: messages[messages.length - 1].content,
       });
-      const res = await agentRuntimeClient.send(command);
+
+      const bedrockAgentRuntimeClient = await initBedrockAgentRuntimeClient({
+        region: MODEL_REGION,
+      });
+      const res = await bedrockAgentRuntimeClient.send(command);
 
       if (!res.completion) {
         return;

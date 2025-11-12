@@ -19,8 +19,11 @@ import {
   PiVideoCamera,
   PiFlowArrow,
   PiMagicWand,
+  PiMicrophoneBold,
   PiTreeStructure,
-  PiLightningFill,
+  PiNotebook,
+  PiGraph,
+  PiLightning,
 } from 'react-icons/pi';
 import { Outlet } from 'react-router-dom';
 import Drawer, { ItemProps } from './components/Drawer';
@@ -41,10 +44,14 @@ const ragKnowledgeBaseEnabled: boolean =
   import.meta.env.VITE_APP_RAG_KNOWLEDGE_BASE_ENABLED === 'true';
 const agentEnabled: boolean = import.meta.env.VITE_APP_AGENT_ENABLED === 'true';
 const inlineAgents: boolean = import.meta.env.VITE_APP_INLINE_AGENTS === 'true';
+const mcpEnabled: boolean = import.meta.env.VITE_APP_MCP_ENABLED === 'true';
+const agentCoreEnabled: boolean =
+  import.meta.env.VITE_APP_AGENT_CORE_ENABLED === 'true';
 const {
   visionEnabled,
   imageGenModelIds,
   videoGenModelIds,
+  speechToSpeechModelIds,
   agentNames,
   flowChatEnabled,
 } = MODELS;
@@ -89,20 +96,20 @@ const App: React.FC = () => {
     },
     ragEnabled
       ? {
-          label: 'SIO-AI',
+          label: t('navigation.ragChat'),
           to: '/rag',
-          icon: <PiLightningFill />,
+          icon: <PiLightning />,
           display: 'usecase' as const,
-          sub: '文書検索🔎',
+          sub: t('navigation.search'),
         }
       : null,
     ragKnowledgeBaseEnabled
       ? {
-          label: 'SIO-AI',
+          label: t('navigation.ragChat'),
           to: '/rag-knowledge-base',
           icon: <PiChatCircleText />,
-          display: 'usecase' as const,
-          sub: '文書検索🔎',
+          display: 'none' as const,
+          sub: 'Knowledge Base',
         }
       : null,
     agentEnabled && !inlineAgents
@@ -124,11 +131,37 @@ const App: React.FC = () => {
           };
         })
       : []),
+    mcpEnabled
+      ? {
+          label: t('mcp_chat.title'),
+          to: '/mcp',
+          icon: <PiGraph />,
+          display: 'usecase' as const,
+          sub: 'Deprecated',
+        }
+      : null,
+    agentCoreEnabled
+      ? {
+          label: t('agent_core.title'),
+          to: '/agent-core',
+          icon: <PiRobot />,
+          display: 'usecase' as const,
+          sub: 'Experimental',
+        }
+      : null,
     flowChatEnabled
       ? {
           label: t('navigation.flowChat'),
           to: '/flow-chat',
           icon: <PiFlowArrow />,
+          display: 'usecase' as const,
+        }
+      : null,
+    speechToSpeechModelIds.length > 0 && enabled('voiceChat')
+      ? {
+          label: t('navigation.voiceChat'),
+          to: '/voice-chat',
+          icon: <PiMicrophoneBold />,
           display: 'usecase' as const,
         }
       : null,
@@ -145,6 +178,14 @@ const App: React.FC = () => {
           label: t('navigation.summary'),
           to: '/summarize',
           icon: <PiNote />,
+          display: 'usecase' as const,
+        }
+      : null,
+    enabled('meetingMinutes')
+      ? {
+          label: t('navigation.meetingMinutes'),
+          to: '/meeting-minutes',
+          icon: <PiNotebook />,
           display: 'usecase' as const,
         }
       : null,

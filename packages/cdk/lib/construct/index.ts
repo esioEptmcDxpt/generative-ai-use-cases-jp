@@ -8,3 +8,8 @@ export * from './common-web-acl';
 export * from './agent';
 export * from './rag-knowledge-base';
 export * from './guardrail';
+export * from './speech-to-speech';
+export * from './mcp-api';
+export * from './closedNetwork';
+export * from './agent-core';
+export * from './generic-agent-core';

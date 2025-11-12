@@ -41,10 +41,7 @@ const AMAZON_MODELS = {
 };
 const STABILITY_AI_MODELS = {
   STABLE_DIFFUSION_XL: 'stability.stable-diffusion-xl-v1',
-  SD3_LARGE: 'stability.sd3-large-v1:0',
-  STABLE_IMAGE_CORE1_0: 'stability.stable-image-core-v1:0',
   STABLE_IMAGE_CORE1_1: 'stability.stable-image-core-v1:1',
-  STABLE_IMAGE_ULTRA1_0: 'stability.stable-image-ultra-v1:0',
   STABLE_IMAGE_ULTRA1_1: 'stability.stable-image-ultra-v1:1',
   SD3_5: 'stability.sd3-5-large-v1:0',
 };
@@ -100,22 +97,7 @@ const modelInfo: Record<string, ModelInfo<'base' | 'advanced'>> = {
     ],
     resolutionPresets: defaultModelPresets,
   },
-  [STABILITY_AI_MODELS.SD3_LARGE]: {
-    supportedModes: [
-      GENERATION_MODES.TEXT_IMAGE,
-      GENERATION_MODES.IMAGE_VARIATION,
-    ],
-    resolutionPresets: stabilityAi2024ModelPresets,
-  },
-  [STABILITY_AI_MODELS.STABLE_IMAGE_CORE1_0]: {
-    supportedModes: [GENERATION_MODES.TEXT_IMAGE],
-    resolutionPresets: stabilityAi2024ModelPresets,
-  },
   [STABILITY_AI_MODELS.STABLE_IMAGE_CORE1_1]: {
-    supportedModes: [GENERATION_MODES.TEXT_IMAGE],
-    resolutionPresets: stabilityAi2024ModelPresets,
-  },
-  [STABILITY_AI_MODELS.STABLE_IMAGE_ULTRA1_0]: {
     supportedModes: [GENERATION_MODES.TEXT_IMAGE],
     resolutionPresets: stabilityAi2024ModelPresets,
   },
@@ -565,7 +547,8 @@ const GenerateImagePage: React.FC = () => {
   const [previousImageSample, setPreviousImageSample] = useState(3);
   const [previousGenerationMode, setPreviousGenerationMode] =
     useState<AmazonUIImageGenerationMode>('TEXT_IMAGE');
-  const { modelIds, imageGenModelIds, imageGenModels } = MODELS;
+  const { modelIds, imageGenModelIds, imageGenModels, modelDisplayName } =
+    MODELS;
   const modelId = getModelId();
   const prompter = useMemo(() => {
     return getPrompter(modelId);
@@ -865,6 +848,10 @@ const GenerateImagePage: React.FC = () => {
     clearChat();
   }, [clear, clearChat]);
 
+  const downloadFileName = useMemo(() => {
+    return prompt.toLowerCase().replace(/ /g, '-').replace(/,/g, '_');
+  }, [prompt]);
+
   return (
     <div className="grid h-screen grid-cols-12 gap-4 p-4">
       <ModalDialog
@@ -942,6 +929,7 @@ const GenerateImagePage: React.FC = () => {
               loading={generating}
               error={image[selectedImageIndex].error}
               errorMessage={image[selectedImageIndex].errorMessage}
+              downloadFileName={downloadFileName}
             />
           </div>
 
@@ -1002,7 +990,7 @@ const GenerateImagePage: React.FC = () => {
               value={imageGenModelId}
               onChange={setImageGenModelId}
               options={imageGenModelIds.map((m) => {
-                return { value: m, label: m };
+                return { value: m, label: modelDisplayName(m) };
               })}
               fullWidth
             />

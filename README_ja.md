@@ -75,6 +75,14 @@ GenU は生成 AI を活用した多様なユースケースを標準で提供�
         <td>ダイアグラム生成</td>
         <td>ダイアグラム生成は、あらゆるトピックに関する文章や内容を最適な図を用いて視覚化します。 テキストベースで簡単に図を生成でき、プログラマーやデザイナーでなくても効率的にフローチャートなどの図を作成できます。</td>
       </tr>
+      <tr>
+        <td>議事録生成</td>
+        <td>音声録音またはリアルタイム文字起こしから議事録を自動生成します。プロンプトを書く必要はなく、原文に近い文字起こし、新聞記事、FAQ形式から選択できます。</td>
+      </tr>
+      <tr>
+        <td>音声チャット</td>
+        <td>音声チャットでは生成 AI と双方向の音声によるチャットが可能です。自然な会話と同様、AI の発言中に割り込んで話すこともできます。また、システムプロンプトを設定することで、特定の役割を持った AI と音声で会話することもできます。</td>
+      </tr>
     </tbody>
   </table>
 </details>
@@ -93,10 +101,12 @@ Knowledge Base を利用する場合は、[Advanced Parsing](docs/ja/DEPLOY_OPTI
 また Knowledge Base では、[メタデータフィルターの設定](docs/ja/DEPLOY_OPTION.md#メタデータフィルターの設定) も可能です。
 例えば「組織ごとにアクセス可能なデータソースを切り替えたい」や「UI からユーザーがフィルタを設定したい」といった要件を満たすことが可能です。
 
+また、[MCP チャットを有効化](docs/ja/DEPLOY_OPTION.md#mcp-チャットユースケースの有効化) して外部サービスの MCP サーバーを [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json) に追加することで、AWS 外のデータを参照する RAG を構築することも可能です。
+
 </details>
 
 <details markdown="1">
-  <summary><strong><ins>独自に作成した AI エージェントや Bedrock Flows などを社内で利用したい</ins></strong></summary>
+  <summary><strong><ins>独自に作成した Bedrock Agents や AgentCore や Bedrock Flows などを社内で利用したい。</ins></strong></summary>
 
 GenU で [エージェントを有効化](docs/ja/DEPLOY_OPTION.md#agent-チャットユースケースの有効化)すると Web 検索エージェントと Code Interpreter エージェントが作成されます。
 Web 検索エージェントは、ユーザーの質問に回答するための情報を Web で検索し、回答します。例えば「AWS の GenU ってなに？」という質問に回答できます。
@@ -108,7 +118,11 @@ GenU では手動で作成したエージェントや別のアセットで作成
 GenU をエージェント活用のプラットフォームとして利用することで、GenU が提供する [豊富なセキュリティオプション](docs/ja/DEPLOY_OPTION.md#セキュリティ関連設定) や [SAML認証](docs/ja/DEPLOY_OPTION.md#saml-認証) などを活用し、実践的なエージェントを社内に普及させることができます。
 また、オプションで [不要な標準ユースケースを非表示](docs/ja/DEPLOY_OPTION.md#特定のユースケースを非表示にする) にしたり、[エージェントをインライン表示](docs/ja/DEPLOY_OPTION.md#agent-をインライン表示にする) することで、よりエージェントに特化したプラットフォームとして GenU をご利用いただくことが可能です。
 
+AgentCore Runtime に関しても同様に [インポート機能](docs/ja/DEPLOY_OPTION.md#agentcore-ユースケースの有効化) がございますので、ぜひご活用ください。
+
 Bedrock Flows に関しても同様に [インポート機能](docs/ja/DEPLOY_OPTION.md#flow-チャットユースケースの有効化) がございますので、ぜひご活用ください。
+
+また、[MCP チャットを有効化](docs/ja/DEPLOY_OPTION.md#mcp-チャットユースケースの有効化) して外部サービスの MCP サーバーを [packages/cdk/mcp-api/mcp.json](/packages/cdk/mcp-api/mcp.json) に追加することで、AWS 外のサービスにも何らかのアクションを起こすエージェントを作成することも可能です。
 
 </details>
 
@@ -119,6 +133,7 @@ GenU はプロンプトテンプレートを自然言語で記述することで
 プロンプトテンプレートだけで独自のユースケース画面が自動生成されるため、GenU 本体のコード変更は一切不要です。
 作成したユースケースは、個人利用だけではなく、アプリケーションにログインできる全ユーザーに共有することもできます。
 ユースケースビルダーは不要であれば[無効化](docs/ja/DEPLOY_OPTION.md#ユースケースビルダーの設定)することも可能です。
+また、ユースケースは.jsonファイルとしてエクスポートし、第三者と共有することも可能です。ユースケースを共有する際には、機密情報等をプロンプトや使用例に含めないよう十分にご注意ください。第三者から共有されたユースケースは、ユースケースの新規作成画面から.jsonファイルをアップロードすることでインポートすることが可能です。
 ユースケースビルダーについての詳細は、ぜひ<a href="https://aws.amazon.com/jp/blogs/news/genu-use-cases-builder/">こちらのブログ</a>をご覧ください。
 <br/>
 <br/>
@@ -142,7 +157,7 @@ GenU は OSS ですので、カスタマイズして独自のユースケース�
 GenU のデプロイには [AWS Cloud Development Kit](https://aws.amazon.com/jp/cdk/)（以降 CDK）を利用します。CDK の実行環境が用意できない場合は、以下のデプロイ方法を参照してください。
 
 - [AWS CloudShell を利用したデプロイ方法 (手元の環境を用意することが難しい場合)](docs/ja/DEPLOY_ON_CLOUDSHELL.md)
-- [Workshop](https://catalog.workshops.aws/generative-ai-use-cases-jp)
+- Workshop ([日本語](https://catalog.workshops.aws/generative-ai-use-cases-jp) / [英語](https://catalog.workshops.aws/generative-ai-use-cases))
 
 まず、以下のコマンドを実行してください。全てのコマンドはリポジトリのルートで実行してください。
 
@@ -203,6 +218,8 @@ GenU をご利用いただく際の、構成と料金試算例を公開してお
 | <a href="https://www.st-grp.co.jp/" target="_blank"><img src="./docs/assets/images/cases/st-grp_logo.jpg"></a>                    | **三協立山株式会社** <br/> _社内に埋もれていた情報が Amazon Kendra の活用で素早く探せるようになりました。GenU を参考にすることで求めていた議事録生成などの機能を迅速に提供できました。_ <br/> ・[事例の詳細を見る](./docs/assets/images/cases/st-grp_case.png)                                                                                                                                                                                          |
 | <a href="https://www.oisixradaichi.co.jp/" target="_blank"><img src="./docs/assets/images/cases/oisixradaichi_logo.png"></a>      | **オイシックス・ラ・大地株式会社** <br/> _GenU を活用したユースケースの開発プロジェクトを通して、必要なリソース、プロジェクト体制、外部からの支援、人材育成などを把握するきっかけとなり、生成 AI の社内展開に向けたイメージを明確につかむことができました。_ <br/> ・[事例のページを見る](https://aws.amazon.com/jp/solutions/case-studies/oisix/)                                                                                                      |
 | <a href="https://www.san-a.co.jp/" target="_blank"><img src="./docs/assets/images/cases/san-a_logo.png"></a>                      | **株式会社サンエー** <br/> _Amazon Bedrock を活用することでエンジニアの生産性が劇的に向上し、内製で構築してきた当社特有の環境のクラウドへの移行を加速できました。_ <br/> ・[事例の詳細を見る](./docs/assets/images/cases/san-a_case.png)<br/> ・[事例のページを見る](https://aws.amazon.com/jp/solutions/case-studies/san-a/)                                                                                                                           |
+| <a href="https://onecompath.com/" target="_blank"><img src="./docs/assets/images/cases/onecompath_logo.png"></a>                  | **株式会社ONE COMPATH** <br/> _GenU を活用することで全社生成 AI 基盤構築を短期間で実現できました。企画部門での PoC 開発も可能になりビジネス創出サイクルを高速化、開発部門もより重要なビジネスにリソースを集中させることが可能になりました。_ <br/> ・[事例の詳細を見る](./docs/assets/images/cases/onecompath_case.png)<br/>                                                                                                                            |
+| <a href="https://www.mee.co.jp/" target="_blank"><img src="./docs/assets/images/cases/mee_logo.jpg"></a>                          | **三菱電機エンジニアリング株式会社** <br/> _生成AIの開発未経験のメンバーがサーバーワークスの伴走支援によってGenUを活用し、わずか3カ月でRAGシステムを開発。GenUを参考にしたアーキテクチャ構築により、ヘルプデスク業務のマニュアル検索効率化を実現し、開発の内製化を達成しました。_ <br/> ・[事例の詳細を見る](https://www.serverworks.co.jp/case/mee.html?utm_source=github&utm_medium=external-media&utm_campaign=github_external-media_GenU)<br/>      |
 
 活用事例を掲載させて頂ける場合は、[Issue](https://github.com/aws-samples/generative-ai-use-cases/issues)よりご連絡ください。
 
@@ -217,6 +234,8 @@ GenU をご利用いただく際の、構成と料金試算例を公開してお
 - [ブログ: Generative AI Use Cases JP ~ はじめての Contribution ガイド](https://aws.amazon.com/jp/builders-flash/202504/genu-development-guide/)
 - [ブログ: 無茶振りは生成 AI に断ってもらおう ~ ブラウザに生成 AI を組み込んでみた ~](https://aws.amazon.com/jp/builders-flash/202405/genai-sorry-message/)
 - [ブログ: Amazon Bedrock で Interpreter を開発!](https://aws.amazon.com/jp/builders-flash/202311/bedrock-interpreter/)
+- [ブログ: GenU の メタデータフィルターで部署ごとのフィルターを行う](https://qiita.com/sugimount-a/items/f08c1a7a777d5dece386)
+- [ブログ: GenU で Bedorck を別 AWS アカウントで推論する](https://qiita.com/sugimount-a/items/e7d2fb94abacebec40d1)
 - [動画: 生成 AI ユースケースを考え倒すための Generative AI Use Cases JP (GenU) の魅力と使い方](https://www.youtube.com/live/s1P5A2SIWgc?si=PBQ4ZHQXU4pDhL8A)
 
 ## Security

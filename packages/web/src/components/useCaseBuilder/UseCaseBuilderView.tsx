@@ -19,6 +19,7 @@ import { produce } from 'immer';
 import ButtonFavorite from './ButtonFavorite';
 import ButtonShare from './ButtonShare';
 import ButtonUseCaseEdit from './ButtonUseCaseEdit';
+import ButtonUseCaseExport from './ButtonUseCaseExport';
 import Skeleton from '../Skeleton';
 import useMyUseCases from '../../hooks/useCaseBuilder/useMyUseCases';
 import { UseCaseInputExample, FileLimit } from 'generative-ai-use-cases';
@@ -35,6 +36,7 @@ import useFiles from '../../hooks/useFiles';
 import ZoomUpImage from '../ZoomUpImage';
 import ZoomUpVideo from '../ZoomUpVideo';
 import FileCard from '../FileCard';
+import { AcceptedDotExtensions } from '../../utils/MediaUtils';
 import { PiPaperclip, PiSpinnerGap } from 'react-icons/pi';
 import { useTranslation } from 'react-i18next';
 
@@ -45,22 +47,7 @@ const ragKnowledgeBaseEnabled: boolean =
 // Match pages/ChatPage.tsx
 // If a difference occurs, update it
 const fileLimit: FileLimit = {
-  accept: {
-    doc: [
-      '.csv',
-      '.doc',
-      '.docx',
-      '.html',
-      '.md',
-      '.pdf',
-      '.txt',
-      '.xls',
-      '.xlsx',
-      '.gif',
-    ],
-    image: ['.jpg', '.jpeg', '.png', '.webp'],
-    video: ['.mkv', '.mov', '.mp4', '.webm'],
-  },
+  accept: AcceptedDotExtensions,
   maxFileCount: 5,
   maxFileSizeMB: 4.5,
   maxImageFileCount: 20,
@@ -156,7 +143,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
       return getModelId();
     }
   }, [getModelId, props.fixedModelId]);
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const { setTypingTextInput, typingTextOutput } = useTyping(loading);
   const { updateRecentUseUseCase } = useMyUseCases();
   const { retrieve: retrieveKendra } = useRagApi();
@@ -430,11 +417,11 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
 
   const accept = useMemo(() => {
     if (!modelId) return [];
-    const feature = MODELS.modelFeatureFlags[modelId];
+    const feature = MODELS.getModelMetadata(modelId);
     return [
-      ...(feature.doc ? fileLimit.accept.doc : []),
-      ...(feature.image ? fileLimit.accept.image : []),
-      ...(feature.video ? fileLimit.accept.video : []),
+      ...(feature.flags.doc ? fileLimit.accept.doc : []),
+      ...(feature.flags.image ? fileLimit.accept.image : []),
+      ...(feature.flags.video ? fileLimit.accept.video : []),
     ];
   }, [modelId]);
 
@@ -467,13 +454,18 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
   const handleDragOver = (event: React.DragEvent) => {
     // When a file is dragged, display the overlay
     event.preventDefault();
+    event.stopPropagation();
     setIsOver(true);
   };
 
   const handleDragLeave = (event: React.DragEvent) => {
     // When a file is dragged, hide the overlay
+    event.stopPropagation();
     event.preventDefault();
-    setIsOver(false);
+
+    if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+      setIsOver(false);
+    }
   };
 
   const handleDrop = (event: React.DragEvent) => {
@@ -536,7 +528,14 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
 
               {props.canEdit && (
                 <>
-                  <ButtonUseCaseEdit useCaseId={props.useCaseId} />
+                  <ButtonUseCaseEdit
+                    useCaseId={props.useCaseId}
+                    className="ml-2"
+                  />
+                  <ButtonUseCaseExport
+                    useCaseId={props.useCaseId}
+                    className="ml-2"
+                  />
                   <ButtonShare
                     className="ml-2"
                     isShared={props.isShared}
@@ -569,7 +568,7 @@ const UseCaseBuilderView: React.FC<Props> = (props) => {
             value={modelId}
             onChange={setModelId}
             options={availableModels.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
         </div>

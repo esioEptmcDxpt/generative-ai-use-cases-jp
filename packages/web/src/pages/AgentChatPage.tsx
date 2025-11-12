@@ -1,3 +1,4 @@
+import ChatDisclaimer from '../components/ChatDisclaimer';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import InputChatContent from '../components/InputChatContent';
@@ -16,7 +17,7 @@ import queryString from 'query-string';
 import useFiles from '../hooks/useFiles';
 import { FileLimit } from 'generative-ai-use-cases';
 import { useTranslation } from 'react-i18next';
-import ChatDisclaimer from '../components/ChatDisclaimer';
+
 
 const fileLimit: FileLimit = {
   accept: {
@@ -78,13 +79,16 @@ const AgentChatPage: React.FC = () => {
     getModelId,
     setModelId,
     loading,
+    writing,
     loadingMessages,
     isEmpty,
     messages,
     clear,
     postChat,
+    editChat,
     updateSystemContextByModel,
     retryGeneration,
+    forceToStop,
   } = useChat(pathname);
   const { scrollableContainer, setFollowing } = useFollow();
   const { agentNames: availableModels } = MODELS;
@@ -151,7 +155,7 @@ const AgentChatPage: React.FC = () => {
     setContent('');
     clearFiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [content, setFollowing]);
+  }, [content, setFollowing, uploadedFiles]);
 
   const onRetry = useCallback(() => {
     retryGeneration(
@@ -173,6 +177,30 @@ const AgentChatPage: React.FC = () => {
     setSessionId(uuidv4());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clear]);
+
+  const onStop = useCallback(() => {
+    forceToStop();
+    setSessionId(uuidv4());
+  }, [forceToStop, setSessionId]);
+
+  const onEdit = useCallback(
+    (modifiedPrompt: string) => {
+      setFollowing(true);
+      editChat(
+        modifiedPrompt,
+        false,
+        undefined,
+        undefined,
+        sessionId,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        base64Cache
+      );
+    },
+    [editChat, sessionId, base64Cache, setFollowing]
+  );
 
   const showingMessages = useMemo(() => {
     return messages;
@@ -259,6 +287,12 @@ const AgentChatPage: React.FC = () => {
                   loading={loading && idx === showingMessages.length - 1}
                   allowRetry={idx === showingMessages.length - 1}
                   retryGeneration={onRetry}
+                  editable={idx === showingMessages.length - 2 && !loading}
+                  onCommitEdit={
+                    idx === showingMessages.length - 2 && !loading
+                      ? onEdit
+                      : undefined
+                  }
                 />
                 <div className="w-full border-b border-gray-300"></div>
               </div>
@@ -272,16 +306,21 @@ const AgentChatPage: React.FC = () => {
         <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
           <InputChatContent
             content={content}
-            disabled={loading}
+            disabled={loading && !writing}
             onChangeContent={setContent}
             resetDisabled={false}
             onSend={() => {
-              onSend();
+              if (!loading) {
+                onSend();
+              } else {
+                onStop();
+              }
             }}
             onReset={onReset}
             fileUpload={true}
             fileLimit={fileLimit}
             accept={fileLimit.accept.doc}
+            canStop={writing}
           />
           <ChatDisclaimer className="mb-1" />
         </div>

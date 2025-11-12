@@ -3,18 +3,15 @@ import InputChatContent from '../components/InputChatContent';
 import { create } from 'zustand';
 import useChat from '../hooks/useChat';
 import useRag from '../hooks/useRag';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import ChatMessage from '../components/ChatMessage';
 import Select from '../components/Select';
 import ScrollTopBottom from '../components/ScrollTopBottom';
 import useFollow from '../hooks/useFollow';
-import BedrockIcon from '../assets/bedrock.svg?react';
-import KendraIcon from '../assets/kendra.svg?react';
-import { PiPlus } from 'react-icons/pi';
 import { RagPageQueryParams } from '../@types/navigate';
 import { MODELS } from '../hooks/useModel';
 import queryString from 'query-string';
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import Alert from '../components/Alert';
 import ChatDisclaimer from '../components/ChatDisclaimer';
 
@@ -35,13 +32,14 @@ const useRagPageState = create<StateType>((set) => {
 });
 
 const RagPage: React.FC = () => {
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const { content, setContent } = useRagPageState();
   const { pathname, search } = useLocation();
-  const { getModelId, setModelId } = useChat(pathname);
-  const { postMessage, clear, loading, messages, isEmpty } = useRag(pathname);
+  const { getModelId, setModelId, forceToStop } = useChat(pathname);
+  const { postMessage, clear, loading, writing, messages, isEmpty } =
+    useRag(pathname);
   const { scrollableContainer, setFollowing } = useFollow();
-  const { modelIds: availableModels } = MODELS;
+  const { modelIds: availableModels, modelDisplayName } = MODELS;
   const modelId = getModelId();
 
   useEffect(() => {
@@ -71,12 +69,15 @@ const RagPage: React.FC = () => {
     setContent('');
   }, [clear, setContent]);
 
+  const onStop = useCallback(() => {
+    forceToStop();
+  }, [forceToStop]);
+
   return (
     <>
-      <div className={`${!isEmpty ? 'screen:pb-44' : ''} relative`}>
+      <div className={`${!isEmpty ? 'screen:pb-36' : ''} relative`}>
         <div className="invisible my-0 flex h-0 items-center justify-center text-xl font-semibold lg:visible lg:my-5 lg:h-min print:visible print:my-5 print:h-min">
-          {/* {t('rag.title')} */}
-          SIO-AI (AI文書検索システム)
+          {t('rag.title')}
         </div>
 
         <div className="mt-2 flex w-full items-end justify-center lg:mt-0">
@@ -84,68 +85,55 @@ const RagPage: React.FC = () => {
             value={modelId}
             onChange={setModelId}
             options={availableModels.map((m) => {
-              return { value: m, label: m };
+              return { value: m, label: modelDisplayName(m) };
             })}
           />
         </div>
 
-        {isEmpty && (
-          <div className="relative flex h-[calc(100vh-9rem)] flex-col items-center justify-center">
-            <div className="flex items-center gap-x-3">
-              <KendraIcon className="size-[64px] fill-gray-400" />
-              <PiPlus className="text-2xl text-gray-400" />
-              <BedrockIcon className="fill-gray-400" />
-            </div>
-          </div>
-        )}
-
-        {isEmpty && (
+{isEmpty && (
           <div
             className={`absolute inset-x-0 top-28 m-auto flex justify-center`}>
             <div>
               <Alert severity="info">
                 <div>
-                  <h2 className="mb-2">AIモデルの選択</h2>
-                  <p>セレクトボックスでAIモデルを選択できます</p>
+                  <h2 className="mb-2">{t('rag.modelselect')}</h2>
+                  <p>{t('rag.modelselectcan')}</p>
 
                   <section className="mt-3">
-                    <h3 className="font-medium">おすすめのモデル</h3>
+                    <h3 className="font-medium">{t('rag.recmodel')}</h3>
                     <ul className="mt-2 list-disc pl-5">
                       <li>
-                        <strong>万能型：</strong>
+                        <strong>{t('rag.strong')}：</strong>
                         <span>
-                          us.anthropic.claude-3-7-sonnet-20250219-v1:0
+                          Claude sonnet 4.5
                         </span>
                       </li>
                       <li>
-                        <strong>スピード型：</strong>
-                        <span>anthropic.claude-3-5-haiku-20241022-v1:0</span>
+                        <strong>{t('rag.speed')}：</strong>
+                        <span>Claude 3.5 Haiku</span>
                       </li>
                     </ul>
                   </section>
                 </div>
                 <footer className="mt-4 text-sm text-gray-600">
                   <p>
-                    ＜参考＞2025年4月から名称を変更しています。旧称：電力AIチャット
+                    {t('rag.tr')}
                   </p>
                 </footer>
               </Alert>
               <Alert severity="info">
                 <div>
-                  RAG (Retrieval Augmented Generation)
-                  手法のチャットを行うことができます。
+                  {t('rag.ragcan')}
                 </div>
                 <div>
-                  メッセージが入力されると Amazon Kendra
-                  でドキュメントを検索し、検索したドキュメントをもとに LLM
-                  が回答を生成します。
+                  {t('rag.kendrasearch')}
                 </div>
                 <div className="font-bold">
-                  Amazon Kendra の検索のみを実行する場合は
-                  <Link className="text-aws-smile" to="/kendra">
-                    こちら
+                  {t('rag.kendraonly')}
+                  <Link className="text-aws-smile" to="/rag?mode=search-only" target="_blank" rel="noopener noreferrer">
+                    {t('rag.here')}
                   </Link>
-                  のページに遷移してください。
+                  {t('rag.please_refer')}
                 </div>
               </Alert>
             </div>
@@ -172,12 +160,17 @@ const RagPage: React.FC = () => {
         <div className="fixed bottom-0 z-0 flex w-full flex-col items-center justify-center lg:pr-64 print:hidden">
           <InputChatContent
             content={content}
-            disabled={loading}
+            disabled={loading && !writing}
             onChangeContent={setContent}
             onSend={() => {
-              onSend();
+              if (!loading) {
+                onSend();
+              } else {
+                onStop();
+              }
             }}
             onReset={onReset}
+            canStop={writing}
           />
           <ChatDisclaimer className="mb-1" />
         </div>

@@ -38,7 +38,7 @@ export const arrangeItems = (
   return Object.values(res);
 };
 
-const useRag = (id: string) => {
+const useRag = (id: string, isSearchOnly = false) => {
   const { t } = useTranslation();
 
   const {
@@ -47,6 +47,7 @@ const useRag = (id: string) => {
     postChat,
     clear,
     loading,
+    writing,
     setLoading,
     updateSystemContext,
     popMessage,
@@ -65,6 +66,7 @@ const useRag = (id: string) => {
     isEmpty,
     clear,
     loading,
+    writing,
     messages,
     postMessage: async (content: string) => {
       const model = findModelByModelId(modelId);
@@ -114,7 +116,20 @@ const useRag = (id: string) => {
         setLoading(false);
         return;
       }
-
+      
+      // If search-only mode, display search results and exit
+      if (isSearchOnly) {
+        popMessage();
+        // Create message to display search results only
+        // Display as normal message to avoid type errors
+        pushMessage('assistant', `${t('rag.searchresult')}:\n\n${items.map((item, idx) => 
+          `${idx + 1}. ${item.DocumentTitle || t('rag.notiledoc')}\n${item.Content}\n`
+        ).join('\n')}`);
+        
+        setLoading(false);
+        return;
+      }
+      
       updateSystemContext(
         prompter.ragPrompt({
           promptType: 'SYSTEM_CONTEXT',

@@ -1,0 +1,1200 @@
+agent:
+  drop_files: Thả file để tải lên
+  title: Chat Agent
+auth:
+  loading: Đang tải...
+  login: Đăng nhập
+  title: Generative AI Use Cases on AWS
+chat:
+  advanced_options: Tùy chọn nâng cao
+  create_link: Tạo liên kết
+  create_link_message: Bằng cách tạo liên kết, bạn sẽ công khai lịch sử cuộc trò chuyện cho tất cả người dùng có thể đăng nhập vào ứng dụng này.
+  create_system_prompt: Tạo system prompt
+  delete_chat_confirmation: 'Bạn có muốn xóa cuộc trò chuyện "{{title}}" không?'
+  delete_confirmation: Xác nhận xóa
+  delete_link: Xóa liên kết
+  delete_link_message: Bằng cách xóa liên kết, bạn có thể ngừng công khai lịch sử cuộc trò chuyện.
+  disclaimer: Câu trả lời của AI chat không phải lúc nào cũng chính xác. Vui lòng xác minh thông tin quan trọng.
+  drop_files: Vui lòng thả file
+  hint_cmd_enter: ⌘ + Enter để gửi
+  hint_ctrl_enter: Ctrl + Enter để gửi
+  history: Lịch sử cuộc trò chuyện
+  initialize: Khởi tạo
+  open_link: Mở liên kết
+  prompt_examples: Ví dụ prompt
+  save: Lưu
+  saved_system_prompts: System prompt đã lưu
+  search_by_title: Tìm kiếm theo tiêu đề
+  settings: Cài đặt
+  share: Chia sẻ
+  share_conversation: Chia sẻ lịch sử cuộc trò chuyện
+  sharing: Đang chia sẻ
+  show_system_prompt: Hiển thị system prompt
+  system_prompt: System prompt
+  title: Chat
+  view_prompt_examples: Xem ví dụ prompt
+claude:
+  SIO:
+    prompt: |-
+      # Hướng dẫn
+      Bạn là người viết biên bản cuộc họp có kinh nghiệm. Vui lòng tạo biên bản cuộc họp Teams bằng cách sử dụng bản ghi trong <transcript>. Vì cuộc họp này không có chương trình nghị sự được cung cấp, bạn cần suy luận cấu trúc cuộc họp từ nội dung bản ghi.
+      ## Đầu vào
+      Bản ghi: Văn bản được cung cấp trong <transcript>
+      ## Nhiệm vụ
+      1. Đọc bản ghi được cung cấp trong <transcript> và xác định các chủ đề chính và điểm thảo luận của cuộc họp.
+      2. Tạo biên bản cuộc họp với cấu trúc logic dựa trên các chủ đề đã xác định.
+      3. Đối với mỗi chủ đề, cố gắng bao gồm các thông tin sau:
+      - Các điểm thảo luận chính
+      - Quyết định quan trọng (nếu có)
+      - Các mục hành động tiếp theo (nếu có)
+      4. Về người phát biểu:
+      - Liệt kê tên và đơn vị của mỗi người phát biểu, và tóm tắt phát biểu của họ. (nếu biết)
+      5. Trong suốt biên bản cuộc họp, chú ý đến các điểm sau:
+      - Sử dụng câu văn ngắn gọn và rõ ràng
+      - Nhấn mạnh các điểm quan trọng
+      - Tóm tắt để thể hiện dòng chảy của cuộc thảo luận
+      6. Xuất ở định dạng Markdown, sử dụng các cấp độ tiêu đề và dấu đầu dòng phù hợp để định dạng dễ đọc.
+      7. Ở cuối biên bản, liệt kê các quyết định chính (nếu có) và các mục hành động cho lần sau (nếu có).
+      ## Định dạng đầu ra
+      Tạo biên bản cuộc họp ở định dạng Markdown theo cấu trúc sau:
+      # Biên bản cuộc họp [Tên cuộc họp được suy luận]
+      Ngày giờ: [Ngày được suy luận từ bản ghi]
+      Địa điểm: Cuộc họp Teams
+      ## 1. [Chủ đề đã xác định 1]
+      [Tóm tắt nội dung]
+      ## 2. [Chủ đề đã xác định 2]
+      [Tóm tắt nội dung]
+      ...
+      ## Các quyết định chính
+      - [Quyết định 1]
+      - [Quyết định 2]
+      ...
+      ## Các mục hành động cho lần sau
+      - [Mục hành động 1]
+      - [Mục hành động 2]
+      ...
+      <transcript>
+      ～Sao chép và dán văn bản phiên âm vào đây～
+      </transcript>
+    systemContext: Bạn là chuyên gia tạo biên bản cuộc họp từ văn bản phiên âm âm thanh hội nghị trực tuyến.
+    teams: Phiên âm Teams → Tạo biên bản cuộc họp
+    title: Mẫu đề xuất SIO điện
+common:
+  cancel: Hủy
+  clear: Xóa
+  close: Đóng
+  collapse: Thu gọn
+  colon: ':'
+  complete: Hoàn thành
+  create: Tạo
+  delete: Xóa
+  enter_text: Vui lòng nhập
+  error: Lỗi
+  errorNoSuggestions: Không tìm thấy gợi ý.
+  execute: Thực hiện
+  expand: Mở rộng
+  feedback_received: Đã nhận phản hồi. Cảm ơn bạn.
+  here: Tại đây
+  load_more: Tải thêm
+  loading: Đang tải...
+  next: Tiếp theo
+  no_options_found: Không tìm thấy tùy chọn
+  none: Không có
+  notAuthenticated: Chưa được xác thực.
+  not_available: Không thể lấy được
+  not_selected: Chưa được chọn
+  optional: Tùy chọn
+  other: Khác
+  previous: Trước
+  required: Bắt buộc
+  reviewComplete: Hoàn thành đánh giá
+  save: Lưu
+  selectUseCase: Chọn use case
+  start_over: Bắt đầu lại từ đầu
+  submit: Gửi
+  title: Tiêu đề
+  trace: Trace
+  try: Thử
+demo:
+  inter_use_cases: Liên kết use case
+diagram:
+  answer: Trả lời
+  chart: Biểu đồ
+  clear: Xóa
+  diagram_type: Chọn loại sơ đồ
+  diagram_will_appear: Sơ đồ sẽ hiển thị tại đây
+  download_as_png: Tải xuống dưới dạng PNG
+  download_as_svg: Tải xuống dưới dạng SVG
+  generate: Tạo
+  input_example: Ví dụ đầu vào
+  input_label: Văn bản nguồn để tạo sơ đồ
+  input_placeholder: Vui lòng nhập văn bản nguồn
+  invalid_syntax: Cú pháp không hợp lệ
+  markdown_edit: Chỉnh sửa markdown
+  mermaid_syntax: Cú pháp Mermaid có thể xem tại đây
+  model: Mô hình
+  other_diagram_types: Xem các loại sơ đồ khác
+  png_error: 'Lỗi xuất PNG: '
+  result: Kết quả tạo
+  serverBusy: Server đang bận. Vui lòng thử lại sau.
+  show_code: Hiển thị code
+  show_diagram: Hiển thị sơ đồ
+  step1_complete: 'Bước 1: Hoàn thành'
+  step1_loading: 'Bước 1: Đang chọn sơ đồ tối ưu'
+  step1_selected: đã được chọn
+  step2_loading: 'Bước 2: Đang tạo sơ đồ'
+  svg_error: 'Lỗi xuất SVG: '
+  title: Tạo sơ đồ
+  types:
+    AI:
+      content: Vui lòng vẽ sơ đồ quy trình chi phí chung của công ty có màu sắc.
+      description: Để AI chọn loại sơ đồ tối ưu
+      exampleTitle: Ví dụ quy trình chi phí
+    architecture:
+      content: >-
+        Vui lòng hiển thị kiến trúc của ứng dụng Web dựa trên cloud.
+
+        Bao gồm các thành phần sau:
+        Frontend
+        Backend
+        Database
+        Cache
+        Load balancer
+        CDN, v.v.
+      desc: Sơ đồ kiến trúc thể hiện cấu trúc tổng thể của hệ thống
+      exampleTitle: Ví dụ cấu hình ứng dụng Web
+      title: Sơ đồ kiến trúc
+    blockdiagram:
+      content: >-
+        Vui lòng tạo sơ đồ khối hiển thị các thành phần phần cứng của smartphone.
+
+        Bao gồm các yếu tố sau:
+        Processor
+        Memory
+        Storage
+        Display
+        Camera
+        Các sensor khác nhau, v.v.
+      desc: Sơ đồ khối thể hiện các thành phần chính của hệ thống
+      exampleTitle: Ví dụ cấu trúc smartphone
+      title: Sơ đồ khối
+    classdiagram:
+      content: >-
+        Vui lòng tạo domain model cho trang web thương mại điện tử.
+
+        Các class sau tồn tại: 
+        User (người dùng)
+        Product（sản phẩm）
+        Order（đơn hàng）
+        CartItem（sản phẩm trong giỏ hàng）
+
+        Vui lòng bao gồm các thuộc tính và phương thức phù hợp cho mỗi class.
+      desc: Sơ đồ class thể hiện cấu trúc class của thiết kế hướng đối tượng
+      exampleTitle: Ví dụ model trang web thương mại điện tử
+      title: Sơ đồ class
+    erdiagram:
+      content: >-
+        Vui lòng hiển thị thiết kế database của hệ thống blog.
+
+        Có các bảng sau và mỗi bảng được thiết lập mối quan hệ phù hợp:
+        Bài viết (posts)
+        Người dùng（users）
+        Bình luận（comments）
+        Danh mục（categories）
+        Tag （tags）
+      desc: Sơ đồ ER thể hiện entity và mối quan hệ của database
+      exampleTitle: Ví dụ thiết kế DB blog
+      title: Sơ đồ ER
+    flowchart:
+      content: >-
+        Tôi muốn thể hiện quy trình chuẩn bị buổi sáng bằng flowchart. Vui lòng bao gồm các bước sau: 
+        Thức dậy, ra khỏi giường, rửa mặt, đánh răng, ăn sáng, thay quần áo, ra khỏi nhà,
+
+        Ở giữa mỗi bước, vui lòng thêm điểm quyết định "Có thời gian rảnh không?" và nếu có thời gian rảnh thì thêm bước "Uống cà phê".
+        Nếu không có thời gian rảnh thì tiến thẳng đến "ra khỏi nhà".
+
+        Vui lòng làm sơ đồ thiết kế ngắn gọn và dễ nhìn.
+      desc: Flowchart trực quan hóa quy trình và workflow
+      exampleTitle: Ví dụ quy trình chuẩn bị buổi sáng
+      title: Flowchart
+    ganttchart:
+      content: >-
+        Vui lòng hiển thị lịch trình dự án phát triển ứng dụng Web.
+        Bao gồm các giai đoạn: định nghĩa yêu cầu, thiết kế, phát triển, kiểm thử, triển khai.
+      desc: Gantt chart trực quan hóa lịch trình dự án
+      exampleTitle: Ví dụ lịch trình phát triển
+      title: Gantt chart
+    gitgraph:
+      content: >-
+        Vui lòng thể hiện quy trình phát triển có 2 feature branch (tính năng đăng nhập và chỉnh sửa profile) phân nhánh từ main branch.
+
+        Trong việc phát triển tính năng đăng nhập, thực hiện nhiều commit như implement form, thêm validation, v.v., 
+        và cuối cùng merge vào main branch bằng Pull Request.
+
+        Mặt khác, trong quá trình phát triển tính năng chỉnh sửa profile, cần phải lấy những thay đổi mới nhất được thêm vào main branch.
+
+        Tại mỗi merge point, vui lòng bao gồm commit message thực tế như "Reviewed and merged login feature 
+        #123" sau khi trải qua code review.
+      desc: Git graph trực quan hóa lịch sử branch và merge
+      exampleTitle: Ví dụ quy trình phát triển
+      title: Git graph
+    mindmap:
+      content: Vui lòng suy nghĩ về các use case khác nhau của Generative AI và vẽ sơ đồ tư duy.
+      desc: Mind map thể hiện các khái niệm và ý tưởng liên quan theo cấu trúc phân cấp
+      exampleTitle: Ví dụ use case Generative AI
+      title: Mind map
+    networkpacket:
+      content: >-
+        Vui lòng tạo sơ đồ hiển thị cấu trúc của HTTP request packet.
+        Bao gồm các yếu tố chính của header và body.
+      desc: Sơ đồ network packet thể hiện cấu trúc dữ liệu
+      exampleTitle: Ví dụ HTTP packet
+      title: Sơ đồ network packet
+    piechart:
+      content: >-
+        Tôi muốn tạo biểu đồ tròn hiển thị tỷ lệ phương tiện đi lại làm việc/đi học của người 20-30 tuổi ở Tokyo.
+
+        Vui lòng thiết lập tỷ lệ phù hợp cho 5 phương tiện: tàu điện, xe đạp, đi bộ, ô tô, xe buýt.
+        Tiêu đề biểu đồ là "Phương tiện đi lại làm việc/đi học của người 20-30 tuổi ở Tokyo".
+      desc: Biểu đồ tròn thể hiện tỷ lệ so với tổng thể
+      exampleTitle: Ví dụ tỷ lệ phương tiện đi lại
+      title: Biểu đồ tròn
+    quadrantchart:
+      content: >-
+        Vui lòng tạo biểu đồ Four-Quadrant so sánh đặc tính của các nền tảng mạng xã hội.
+        Tiêu đề là "Phân tích nền tảng mạng xã hội". 
+        Trục X thay đổi từ "tập trung vào văn bản" đến "tập trung vào hình ảnh",
+        Trục Y thay đổi từ "chuyên nghiệp" đến "thông thường".
+
+        Vui lòng gắn nhãn cho mỗi góc phần tư như sau:
+        Góc phần tư trên bên phải: "Hình ảnh thông thường"
+        Góc phần tư trên bên trái: "Văn bản thông thường"
+        Góc phần tư dưới bên trái: "Văn bản chuyên nghiệp"
+        Góc phần tư dưới bên phải: "Hình ảnh chuyên nghiệp"
+
+        Vui lòng vẽ các nền tảng mạng xã hội sau trên biểu đồ:
+        Twitter: thiên về văn bản và hơi thông thường、
+        Instagram: rất tập trung vào hình ảnh và khá thông thường、
+        LinkedIn: thiên về văn bản và rất chuyên nghiệp,
+        TikTok: rất tập trung vào hình ảnh và thông thường nhất,
+        Facebook: xung quanh điểm giữa của trục X và trục Y. 
+
+        ếu có thể, vui lòng hiển thị mỗi nền tảng bằng màu khác nhau.
+      desc: Biểu đồ Four-Quadrant phân loại các mục theo 2 trục
+      exampleTitle: Ví dụ phân tích mạng xã hội
+      title: Biểu đồ Four-Quadrant
+    requirementdiagram:
+      content: >-
+        Vui lòng hiển thị các yêu cầu chức năng chính của hệ thống smart home.
+        Bao gồm các yêu cầu như điều khiển ánh sáng, quản lý nhiệt độ, bảo mật, tối ưu hóa năng lượng.
+      desc: Sơ đồ yêu cầu thể hiện các yêu cầu hệ thống và mối quan hệ
+      exampleTitle: Ví dụ yêu cầu smart home
+      title: Sơ đồ yêu cầu
+    sankeychart:
+      content: >-
+        Vui lòng tạo Sankey chart hiển thị user flow của website.
+        Bắt đầu từ landing page, hiển thị việc chuyển trang và tỷ lệ rời trang của mỗi trang.
+      desc: Sankey chart thể hiện flow và lượng thay đổi bằng độ rộng
+      exampleTitle: Ví dụ user flow
+      title: Sankey chart
+    sequencediagram:
+      content: >-
+        Trong ứng dụng Web, vui lòng hiển thị quy trình từ khi người dùng nhấn nút đăng nhập đến khi hoàn thành xác thực.
+
+        3 thành phần liên quan: Frontend, Authentication server, Database.
+      desc: Sơ đồ sequence thể hiện tương tác giữa các thành phần theo thời gian
+      exampleTitle: Ví dụ quy trình đăng nhập
+      title: Sơ đồ sequence
+    statediagram:
+      content: >-
+        Vui lòng hiển thị sự chuyển đổi trạng thái của giỏ hàng mua sắm online.
+        Bao gồm các trạng thái như "trống", "đã thêm sản phẩm", "đang checkout", "hoàn thành thanh toán".
+      desc: Sơ đồ chuyển đổi trạng thái thể hiện sự thay đổi trạng thái của hệ thống
+      exampleTitle: Ví dụ trạng thái giỏ hàng
+      title: Sơ đồ chuyển đổi trạng thái
+    timeline:
+      content: >-
+        Vui lòng thể hiện sự phát triển chính và điểm chuyển mình của mạng xã hội từ năm 2000 đến 2020 bằng timeline.
+                
+        Vui lòng bao gồm các yếu tố sau: 
+        Thời kỳ phổ biến của blog
+        Sự nổi lên của nền tảng chia sẻ ảnh
+        Sự xuất hiện của microblog
+        Sự phát triển của dịch vụ chia sẻ video
+        Sự lan rộng của SNS hướng mobile-first
+        Sự nổi lên của nền tảng video ngắn
+
+        Đối với mỗi điểm chuyển mình, vui lòng thêm 1-2 đổi mới công nghệ quan trọng hoặc thay đổi xã hội xảy ra trong thời kỳ đó (ví dụ: 
+        sự phổ biến của smartphone, thực hiện internet mobile tốc độ cao, v.v.).
+      desc: Timeline hiển thị các sự kiện theo thứ tự thời gian
+      exampleTitle: Ví dụ sự phát triển mạng xã hội
+      title: Timeline
+    userjourney:
+      content: >-
+        Vui lòng hiển thị trải nghiệm mua hàng của khách hàng trên trang web mua sắm online.
+
+        Bao gồm quy trình sau:
+        Tìm kiếm sản phẩm
+        Xem sản phẩm
+        Thêm vào giỏ hàng
+        Thanh toán
+        Xử lý thanh toán
+        Theo dõi giao hàng
+      desc: User journey thể hiện quy trình trải nghiệm khách hàng
+      exampleTitle: Ví dụ trải nghiệm mua hàng
+      title: User journey
+    xychart:
+      content: >-
+        Vui lòng tạo XY chart hiển thị mối quan hệ giữa thời gian ngủ trung bình và thời gian làm việc của Nhật Bản trong 10 năm qua.
+
+        Với trục X là thời gian làm việc trung bình trong ngày, trục Y là thời gian ngủ trung bình trong ngày, vui lòng vẽ điểm dữ liệu của mỗi năm.
+      desc: XY chart thể hiện mối quan hệ giữa hai biến
+      exampleTitle: Ví dụ thời gian ngủ・làm việc
+      title: XY Chart
+drawer:
+  sub: 🚅ESIO ver.
+  ai_services: Dịch vụ AI
+  builder_mode: Chế độ builder
+  done: Hoàn thành
+  generative_ai: (Generative AI)
+  tools: Công cụ
+  use_cases: Use case
+feedback:
+  additional_feedback: Nếu bạn có phản hồi khác, vui lòng nhập. (tùy chọn)
+  reason_error: Vui lòng chọn lý do.
+  reason_title: Vui lòng cho chúng tôi biết lý do bạn đánh giá câu trả lời này.
+  reasons:
+    harmful: Có hại hoặc tấn công
+    inaccurate: Không chính xác
+    other: Khác
+    outdated: Thông tin cũ
+files:
+  error:
+    fileCountExceeded: Số lượng file phải không quá {{maxCount}} file.
+    fileSizeExceeded: Kích thước file phải không quá {{maxSize}} MB.
+    imageCountExceeded: Số lượng ảnh phải không quá {{maxCount}} ảnh.
+    invalidExtension: '{{fileName}} có đuôi file không được phép. Các đuôi file được phép là {{acceptedExtensions}}.'
+    invalidImageDimension: Kích thước file ảnh có thể chỉ định là {{allowedDimensions}} (kích thước ảnh đã tải lên {{uploadedDimension}})
+    mimeMismatch: 'Định dạng file của {{fileName}} không đúng.'
+    modelNotSupported: Mô hình không hỗ trợ.
+    videoCountExceeded: Số lượng video phải không quá {{maxCount}} video.
+flow:
+  title: Flow Chat
+generateImage:
+  add_color: Thêm màu
+  assistant:
+    error_message: Tạo prompt thất bại. Vui lòng thử lại.
+    error_title: Đã xảy ra lỗi
+    generating_image: Đang tạo ảnh...
+    generating_prompt: Đang tạo prompt...
+    help: Tạo prompt cho việc tạo ảnh. Khi bạn nói với assistant về mong muốn của mình, AI sẽ tạo prompt và negative prompt để tạo ảnh.
+    hint_1: Hãy bắt đầu từ những chỉ dẫn đơn giản như "tạo ảnh mèo dễ thương".
+    hint_2: Chỉ định style như "phong cách màu nước" hoặc "thực tế" sẽ hiệu quả.
+    hint_3: Hãy mô tả chi tiết các yếu tố muốn bao gồm như "núi ở background" hoặc "bầu trời xanh".
+    hint_4: Những chỉ dẫn về chất lượng như "độ phân giải cao" hoặc "mô tả chi tiết" cũng hiệu quả.
+    hint_5: Bạn cũng có thể chỉ định style nghệ thuật cụ thể như "phong cách anime" hoặc "phong cách tranh sơn dầu".
+    hint_6: Đối với scene phức tạp, hãy chỉ dẫn cụ thể về bố cục, phối màu, v.v.
+    hint_title: Gợi ý
+    input_placeholder: Bạn muốn tạo ảnh như thế nào?
+    no_style: Không có style
+    prompt_completed: Hoàn thành tạo prompt
+    recommended_style: Style được đề xuất
+    retry: Thử lại
+    title: Assistant tạo ảnh
+  cfg_scale: CFG Scale
+  clear: Xóa
+  colors: Màu sắc
+  control_mode: Tùy chỉnh Mode
+  control_strength: Tùy chỉnh Strength
+  custom_colors: Màu tùy chỉnh
+  detail_parameters: Tham số chi tiết
+  generate: Tạo
+  generation_mode: Chế độ tạo
+  help:
+    cfg_scale: Giá trị này càng cao thì tạo ảnh càng trung thành với prompt.
+    colors: Có thể chọn từ color palette có sẵn
+    control_mode: >-
+      CANNY_EDGE:Trích xuất edge của ảnh tham khảo. Tối ưu khi muốn phản ánh pattern chi tiết. SEGMENTATION: Chia ảnh tham khảo thành các vùng. Tối ưu khi muốn phản ánh mối quan hệ vị trí của nhiều đối tượng.
+    control_strength: Càng gần 1 thì tạo ảnh dựa trên bố cục của "ảnh tham khảo", càng gần 0 thì tạo ảnh khác với bố cục của "ảnh tham khảo".
+    generation_mode: >-
+      TEXT_IMAGE:Tạo ảnh từ văn bản.
+      IMAGE_VARIATION:Tạo ảnh tương tự từ ảnh tham khảo.
+      INPAINTING:Chỉnh sửa một phần của ảnh.
+      OUTPAINTING:Mở rộng ảnh.
+      IMAGE_CONDITIONING:Phản ánh bố cục.
+      COLOR_GUIDED_GENERATION:Tạo với chỉ định phối màu.
+      BACKGROUND_REMOVAL:Loại bỏ nền.
+    image_samples: Tạo đồng thời số lượng ảnh chỉ định với việc thiết lập Seed ngẫu nhiên.
+    image_strength: Càng gần 1 thì tạo ảnh gần với "ảnh ban đầu", càng gần 0 thì tạo ảnh khác với "ảnh ban đầu".
+    init_image: Có thể thiết lập ảnh làm trạng thái ban đầu cho việc tạo ảnh. Bằng cách thiết lập ảnh ban đầu, có thể hướng dẫn tạo ảnh gần với ảnh ban đầu.
+    mask_image: >-
+      Có thể thiết lập mask của ảnh. Bằng cách thiết lập mask image, có thể tạo vùng được mask (Inpaint) hoặc vùng bên ngoài (Outpaint). Không thể sử dụng cùng với mask prompt.
+    mask_prompt: >-
+      Vui lòng ghi các yếu tố muốn mask/loại trừ (Inpaint), các yếu tố không muốn mask/muốn giữ lại (Outpaint). Ghi dưới dạng liệt kê từ, không phải câu văn. Không thể sử dụng cùng với mask image.
+    negative_prompt: Vui lòng ghi các yếu tố không muốn tạo, yếu tố muốn loại trừ. Ghi dưới dạng liệt kê từ, không phải câu văn.
+    prompt: Vui lòng ghi mô tả ảnh muốn tạo. Ghi dưới dạng liệt kê từ, không phải câu văn.
+    seed: Giá trị seed của số ngẫu nhiên. Chỉ định cùng giá trị seed sẽ tạo ra cùng ảnh.
+    steps: Số lần lặp tạo ảnh. Số Step càng nhiều thì ảnh càng tinh tế nhưng mất nhiều thời gian tạo.
+  image_samples: Số lượng mẫu ảnh
+  image_strength: Độ Strength ảnh
+  init_image: Ảnh ban đầu
+  mask_image: Mask image
+  mask_prompt: Mask prompt
+  model: Mô hình
+  negative_prompt: Negative prompt
+  prompt: Prompt
+  resolution: Độ phân giải
+  seed: Seed
+  set: Thiết lập
+  steps: Số step
+  style_preset: Style preset
+  title: Tạo ảnh
+generateText:
+  clear: Xóa
+  continue_output: Xuất tiếp
+  execute: Thực hiện
+  format_placeholder: Vui lòng chỉ dẫn định dạng văn bản. (markdown, blog, email kinh doanh, v.v.)
+  input_placeholder: Vui lòng nhập
+  result_placeholder: Văn bản được tạo sẽ hiển thị tại đây
+  source_info: Thông tin nguồn của văn bản
+  title: Tạo văn bản
+landing:
+  demo:
+    agent:
+      content: Vui lòng vẽ scatter plot bằng dữ liệu dummy.
+    chat:
+      content: >-
+        Vui lòng viết hàm Python trả về số Fibonacci. Ngoài ra, vui lòng giải thích implementation.
+        Tham số là số thứ tự, xử lý viết bằng đệ quy. Đầu ra định dạng markdown.
+    diagram:
+      content: Vui lòng vẽ sơ đồ quy trình sản xuất chi phí chung của công ty có màu sắc.
+    generate:
+      context: >-
+        Amazon Bedrock là dịch vụ được quản lý hoàn toàn cho phép lựa chọn các mô hình nền tảng (FM) hiệu suất cao được cung cấp bởi các công ty AI hàng đầu như AI21 Labs, Anthropic, Cohere, Meta, Stability AI, Amazon thông qua API duy nhất.
+        Ngoài ra, còn được trang bị nhiều tính năng cần thiết để xây dựng ứng dụng Generative AI, do đó có thể đơn giản hóa việc phát triển trong khi duy trì quyền riêng tư và bảo mật.
+        Sử dụng các tính năng toàn diện của Amazon Bedrock, bạn có thể dễ dàng thử nghiệm các FM hàng đầu khác nhau, tùy chỉnh riêng tư bằng dữ liệu của mình sử dụng các kỹ thuật như fine-tuning và retrieval augmented generation (RAG), hoặc tạo các agent được quản lý thực hiện các tác vụ kinh doanh phức tạp từ đặt chỗ du lịch và xử lý bồi thường bảo hiểm đến tạo chiến dịch quảng cáo và quản lý tồn kho.
+        Tất cả những điều này có thể thực hiện mà không cần viết code. Amazon Bedrock là serverless nên không cần quản lý hạ tầng.
+        Ngoài ra, bạn có thể tích hợp và triển khai an toàn các tính năng Generative AI vào ứng dụng bằng cách sử dụng các dịch vụ AWS quen thuộc.
+      information: Để thuyết trình, định dạng markdown với cấu trúc chương và giải thích ngắn gọn từng phần
+    image:
+      content: >-
+        Vui lòng xuất thiết kế quảng cáo smartphone.
+        Dễ thương, thời trang, dễ sử dụng, pop culture, thân thiện, hướng đến giới trẻ, âm nhạc, ảnh, smartphone thịnh hành, background là thành phố
+    rag:
+      content: Vui lòng giải thích tham số của Claude và cách thiết lập.
+    summarize:
+      sentence: >-
+        Amazon Bedrock là dịch vụ được quản lý hoàn toàn giúp có thể sử dụng các mô hình nền tảng (FM) được cung cấp bởi Amazon và các startup AI hàng đầu thông qua API.
+        Do đó, bạn có thể lựa chọn từ nhiều FM khác nhau để tìm mô hình phù hợp nhất với use case của mình.
+        Trải nghiệm serverless của Amazon Bedrock cho phép bạn ngay lập tức bắt đầu với FM, dễ dàng thử nghiệm FM, tùy chỉnh riêng tư FM bằng dữ liệu của riêng mình, hoặc tích hợp và triển khai liền mạch FM vào ứng dụng bằng cách sử dụng các công cụ và tính năng của AWS.
+        Agent của Amazon Bedrock là tính năng được quản lý hoàn toàn giúp các nhà phát triển dễ dàng tạo ra các ứng dụng AI tạo sinh có thể cung cấp câu trả lời mới nhất dựa trên nguồn kiến thức riêng và hoàn thành các tác vụ cho nhiều use case khác nhau.
+        Trải nghiệm serverless của Bedrock cho phép bạn ngay lập tức bắt đầu sử dụng mà không cần quản lý hạ tầng, tùy chỉnh riêng tư FM bằng dữ liệu riêng, và dễ dàng tích hợp triển khai chúng vào ứng dụng bằng các công cụ và tính năng AWS quen thuộc (bao gồm tích hợp với các tính năng ML của Amazon SageMaker như thử nghiệm để test các mô hình khác nhau và pipeline để quản lý FM quy mô lớn).
+    translate:
+      language: vi
+      sentence: Xin chào. Tôi là AI assistant hỗ trợ dịch thuật. Vui lòng nhập văn bản bạn muốn.
+    video:
+      content: Vui lòng mô tả những gì đang xuất hiện. Nếu có chữ viết trên những gì đang xuất hiện, vui lòng đọc nó.
+    web_content:
+      url: https://aws.amazon.com/jp/bedrock/
+  title: Bắt đầu với Generative AI
+  try: Thử
+  try_message: Bằng cách nhấp vào, bạn có thể trải nghiệm từng use case.
+  use_cases:
+    agent_chat:
+      description: >-
+        Use case Agent chat sử dụng Agents for Amazon Bedrock để thực hiện các action hoặc có thể tham khảo vector database của Knowledge
+        Bases for Amazon Bedrock.
+      title: Agent Chat
+    chat:
+      description: >-
+        Có thể đối thoại với LLM dưới dạng chat. Có thể nhanh chóng đối phó với các use case chi tiết và use case mới. Cũng hiệu quả như môi trường kiểm chứng prompt engineering.
+      title: Chat
+    diagram:
+      description: >-
+        Từ mô tả bằng ngôn ngữ tự nhiên, tài liệu hoặc code, có thể tự động tạo ra các loại sơ đồ khác nhau như flowchart, sequence diagram, mind map. Thể hiện trực quan các mối quan hệ phức tạp như thiết kế hệ thống, business flow, kế hoạch dự án và tăng hiệu quả hiểu biết.
+      title: Tạo sơ đồ
+    flow_chat:
+      description: >-
+        Sử dụng Flow để tạo chat flow tương tác có nhiều bước. Dựa trên đầu vào của người dùng, xác định động bước tiếp theo và thực hiện các kịch bản đối thoại phức tạp hơn.
+      title: Flow Chat
+    generate_text:
+      description: >-
+        Tạo văn bản trong mọi context là một trong những tác vụ LLM giỏi nhất.
+        Đối phó với mọi context như bài viết, báo cáo, email.
+      title: Tạo văn bản
+    image:
+      description: >-
+        AI tạo ảnh có thể tạo ảnh mới dựa trên văn bản hoặc ảnh. Có thể trực quan hóa ý tưởng ngay lập tức và kỳ vọng tăng hiệu quả công việc thiết kế. 
+        Tính năng này có thể nhận hỗ trợ từ LLM trong việc tạo prompt.
+      title: Tạo ảnh
+    rag_chat:
+      description_kb: >-
+        RAG (Retrieval Augmented Generation) là kỹ thuật kết hợp tìm kiếm thông tin và tạo văn bản của LLM, có thể thực hiện truy cập thông tin hiệu quả.
+        Sử dụng Hybrid Search của Knowledge Base để lấy tài liệu tham khảo và LLM tạo câu trả lời.
+      description_kendra: >-
+        RAG (Retrieval Augmented Generation) là kỹ thuật kết hợp tìm kiếm thông tin và tạo văn bản của LLM, có thể thực hiện truy cập thông tin hiệu quả.
+        Dựa trên tài liệu tham khảo lấy từ Amazon Kendra, LLM tạo câu trả lời nên có thể dễ dàng thực hiện "LLM chat tương ứng với thông tin nội bộ".
+      sub_kb: Knowledge Base
+      sub_kendra: Amazon Kendra
+      title: RAG Chat
+    summarize:
+      description: >-
+        LLM giỏi trong việc tóm tắt lượng lớn văn bản. Khi tóm tắt, có thể đưa ra context như "trong 1 dòng" hoặc "bằng từ ngữ trẻ em có thể hiểu".
+      title: Tóm tắt
+    translate:
+      description: >-
+        LLM được học tập đa ngôn ngữ cũng có thể thực hiện dịch thuật. Ngoài ra, không chỉ dịch thuật đơn thuần mà còn có thể phản ánh các thông tin context được chỉ định khác nhau như tính thân mật, đối tượng mục tiêu vào bản dịch.
+      title: Dịch thuật
+    video-analysis:
+      description: >-
+        Nhờ có mô hình đa phương thức, giờ đây có thể nhập không chỉ văn bản mà còn cả hình ảnh. Chức năng này yêu cầu LLM phân tích bằng cách sử dụng khung hình ảnh video và văn bản làm đầu vào.
+      title: Phân tích video
+    video-generation:
+      description: >-
+        AI tạo video sinh ra video ngắn từ văn bản. Video được tạo có thể được sử dụng làm tài liệu trong nhiều tình huống khác nhau.
+      title: Tạo video
+    voice_chat:
+      description: >-
+        Với chức năng Voice chat, bạn có thể trò chuyện hai chiều bằng giọng nói với Generative AI.
+        Giống như cuộc hội thoại thực tế, bạn có thể ngắt lời và nói chuyện ngay cả khi AI đang phát biểu.
+        Bên cạnh đó, thông qua việc cài đặt system prompt, bạn có thể trò chuyện bằng giọng nói với AI được thiết lập với những vai trò riêng biệt.
+      title: Voice chat
+    web_content:
+      description: >-
+        Trích xuất nội dung Web như blog và tài liệu. LLM
+        loại bỏ thông tin không cần thiết và định dạng thành văn bản hoàn chình. Nội dung được trích xuất có thể được sử dụng trong các trường hợp sử dụng khác như tóm tắt, dịch thuật.
+      title: Trích xuất nội dung Web
+    writer:
+      description: >-
+        LLM được đào tạo bằng nhiều ngôn ngữ
+        cũng có thể thực hiện dịch thuật. Ngoài ra, không chỉ dịch đơn thuần mà còn có thể phản ánh các thông tin ngữ cảnh được chỉ định khác nhau như tính thân mật, đối tượng mục tiêu vào bản dịch.
+      title: Viết văn
+  use_cases_integration:
+    blog:
+      description: >-
+        Kết hợp nhiều trường hợp sử dụng để tạo bài viết blog. Bằng cách tự động tạo tóm tắt bài viết và hình ảnh thumbnail, việc thiết lập OGP
+        cũng trở nên dễ dàng. Ví dụ, tạo bài viết blog giới thiệu AI tạo sinh dựa trên thông tin từ trang web chính thức của AWS.
+      title: Tạo bài viết blog
+    meeting:
+      description: >-
+        Kết hợp nhiều trường hợp sử dụng để tự động tạo biên bản cuộc họp từ dữ liệu ghi âm cuộc họp. Có thể thực hiện chuyển đổi giọng nói thành văn bản của dữ liệu ghi âm, định dạng kết quả chuyển đổi và tạo biên bản mà không tốn chi phí nhân lực.
+      title: Tạo biên bản cuộc họp
+    title: Liên kết trường hợp sử dụng
+  use_cases_title: Danh sách trường hợp sử dụng
+language:
+  de: Tiếng Đức
+  en: Tiếng Anh
+  es: Tiếng Tây Ban Nha
+  fr: Tiếng Pháp
+  ja: Tiếng Nhật
+  ko: Tiếng Hàn
+  th: tiếng Thái
+  zh: Tiếng Trung
+meetingMinutes:
+  auto_generate: Tự động tạo
+  clear_minutes: Xóa biên bản
+  custom_prompt: Lời nhắc tùy chỉnh
+  custom_prompt_placeholder: Nhập lời nhắc tùy chỉnh để tạo biên bản cuộc họp...
+  frequency: Tần suất tạo
+  frequency_10min: Mỗi 10 phút
+  frequency_1min: Mỗi phút
+  frequency_3min: Mỗi 3 phút
+  frequency_5min: Mỗi 5 phút
+  generate: Tạo
+  generate_minutes_header: Tạo biên bản
+  generated_minutes: Biên bản đã được tạo
+  generating: Đang tạo biên bản...
+  generation_error: Không thể tạo biên bản cuộc họp. Vui lòng thử lại.
+  generation_frequency: Tần suất tạo
+  generation_success: Tạo biên bản cuộc họp thành công
+  language: Ngôn ngữ phiên âm
+  language_auto: Tự động phát hiện
+  language_chinese: Tiếng Trung
+  language_english: Tiếng Anh
+  language_japanese: Tiếng Nhật
+  language_korean: Tiếng Hàn
+  language_thai: Tiếng Thái
+  language_vietnamese: Tiếng Việt
+  last_generated: Tạo lần cuối {{time}}
+  minutes_placeholder: Biên bản sẽ xuất hiện ở đây sau khi tạo
+  model: Mô hình tạo biên bản cuộc họp
+  new_recording_session: Phiên ghi âm mới
+  next_generation: Tạo tiếp theo
+  next_generation_in: 'Tạo tiếp theo trong : '
+  no_transcript: Không có bản chuyển đổi
+  partial_indicator: (...)
+  record_transcribe: Ghi âm và chuyển đổi
+  screen_audio_error: Lỗi âm thanh màn hình
+  speech_recognition: Nhận dạng giọng nói
+  style: Kiểu biên bản
+  style_custom: Tùy chỉnh
+  style_detail: Chi tiết
+  style_faq: FAQ
+  style_newspaper: Báo chí
+  style_summary: Tóm tắt
+  style_transcription: Chuyển đổi
+  title: Trình tạo biên bản cuộc họp
+  transcript: Bản chuyển đổi
+model:
+  parameters:
+    reasoning_budget: Token budget for extended thinking
+navigation:
+  ragChat: SIO-AI
+  sub: 🚅ESIO ver.
+  search: ค้นหาเอกสาร🔎
+  agentChat: Agent Chat
+  chat: Chat
+  diagramGeneration: Tạo sơ đồ
+  flowChat: Flow Chat
+  home: Trang chủ
+  imageGeneration: Tạo hình ảnh
+  promptOptimization: Tối ưu hóa prompt
+  settings: Cài đặt
+  speechRecognition: Nhận dạng giọng nói
+  summary: Tóm tắt
+  textGeneration: Tạo văn bản
+  translation: Dịch thuật
+  videoAnalysis: Phân tích video
+  videoGeneration: Tạo video
+  voiceChat: Voice chat
+  webContentExtraction: Trích xuất nội dung Web
+  writing: Viết văn
+notfound:
+  title: Không tìm thấy trang
+optimizePrompt:
+  clear: Xóa
+  execute: Thực thi
+  input_placeholder: Vui lòng nhập prompt hiện tại đang sử dụng nguyên trạng. Nếu kết quả được xuất ra bằng tiếng Anh, hãy thêm hướng dẫn "Vui lòng xuất ra bằng tiếng Nhật".
+  result_placeholder: Kết quả sẽ được hiển thị ở đây
+  title: Tối ưu hóa prompt
+rag:
+  can_add_filters: có thể thêm bộ lọc bằng cách tùy chỉnh.
+  errorRetrieval: >-
+    Không thể lấy tài liệu tham khảo từ Kendra. Vui lòng kiểm tra các điều sau:
+    - Đã hết thời gian lên lịch tạo chỉ mục Amazon Kendra và đã có đủ thời gian để tạo chỉ mục
+    - Thời gian lên lịch xóa chỉ mục Amazon Kendra chưa qua
+  filter: Bộ lọc
+  filter_settings: Về cài đặt bộ lọc, vui lòng tham khảo
+  here: Tại đây
+  kendraonly: Để chỉ thực hiện tìm kiếm Amazon Kendra
+  kendrasearch: Khi nhập tin nhắn, Amazon Kendra sẽ tìm kiếm tài liệu và LLM tạo câu trả lời dựa trên các tài liệu đã tìm thấy.
+  knowledgeBase:
+    noDocuments: >-
+      Không tìm thấy tài liệu tham khảo. Vui lòng kiểm tra các điều sau:
+      - Tài liệu mục tiêu đã được thêm vào nguồn dữ liệu của Knowledge Base chưa
+      - Nguồn dữ liệu của Knowledge Base đã được đồng bộ chưa
+      - Hãy thử thay đổi cách diễn đạt đầu vào
+    retrieveError: >-
+      Xảy ra lỗi trong quá trình lấy dữ liệu. Vui lòng kiểm tra các điều sau:
+
+      - embeddingModelId được chỉ định trong cdk.json có được kích hoạt trong 
+      Amazon Bedrock ({{region}}) không
+    retrieving: Đang lấy tài liệu tham khảo từ Knowledge Base...
+  noDocuments: >-
+    Không tìm thấy tài liệu tham khảo. Vui lòng kiểm tra các điều sau:
+    - Tài liệu mục tiêu đã được thêm vào nguồn dữ liệu của Amazon Kendra chưa
+    - Nguồn dữ liệu của Amazon Kendra đã được đồng bộ chưa
+    - Hãy thử thay đổi cách diễn đạt đầu vào
+  notitledoc: Tài liệu không có tiêu đề
+  no_settings_found: Không tìm thấy cài đặt.
+  modelselect: Lựa chọn mô hình AI
+  modelselectcan: Bạn có thể chọn mô hình AI từ hộp chọn
+  page: Trang
+  please_refer: Vui lòng tham khảo.
+  ragcan: Bạn có thể trò chuyện bằng phương pháp RAG (Retrieval Augmented Generation).
+  recmodel: Mô hình được đề xuất
+  retrieving: Đang lấy tài liệu tham khảo từ Kendra...
+  searchresult: Kết quả tìm kiếm
+  speed: Loại tốc độ
+  strong: Loại đa năng
+  title: SIO-AI (Hệ thống Tìm kiếm Tài liệu AI)
+  tr: <Tham khảo> Tên đã được thay đổi từ tháng 4 năm 2025. Tên cũ： Power AI Chat
+setting:
+  ai: Generative AI
+  ai_items:
+    agent_name: Tên Agent
+    image_gen_model: Tên mô hình tạo hình ảnh
+    llm_model: Tên mô hình LLM
+    model_region: Vùng mô hình LLM & tạo hình ảnh
+    video_gen_model: Tên mô hình tạo video
+  config_message: >-
+    Thay đổi cài đặt được thực hiện bằng <0>AWS CDK</0> chứ không phải trên màn hình này. Ngoài ra, nếu xảy ra lỗi khi thực thi trường hợp sử dụng, 
+    hãy chắc chắn kiểm tra xem bạn đã kích hoạt mô hình được chỉ định trong {{region}} .Để biết cách thực hiện từng cách, vui lòng tham khảo 
+    <1>generative-ai-use-cases</1>.
+  items:
+    agent_enabled: Agent được bật
+    language: Cài đặt ngôn ngữ
+    language_help: Có thể thay đổi ngôn ngữ hiển thị
+    line_break_enter: Nhấn Enter để xuống dòng
+    login_status: Trạng thái đăng nhập
+    rag_enabled: RAG (Amazon Kendra) được bật
+    rag_kb_enabled: RAG (Knowledge Base) được bật
+    show_tools: Hiển thị công cụ
+    show_use_case_builder: Hiển thị Use Case Builder
+    typing_animation: Hiệu ứng đánh máy
+    version: Phiên bản
+    version_help: Tham chiếu đến version trong package.json của generative-ai-use-cases
+  recent_updates: Cập nhật gần đây
+  signout: Đăng xuất
+  title: Thông tin cài đặt
+  update:
+    message: >-
+      Có cập nhật trên GitHub. Nếu muốn sử dụng các tính năng mới nhất, vui lòng pull nhánh main của <0>generative-ai-use-cases</0> 
+      và deploy lại.
+  user: Cài đặt người dùng
+  view_all_updates: Xem tất cả cập nhật
+shared:
+  contact_admin: Vui lòng liên hệ với quản trị viên.
+  error: Lỗi
+  not_found_message: Không tìm thấy trang. Có thể lịch sử hội thoại không được chia sẻ hoặc đã bị xóa.
+sketch:
+  clear: Xóa
+  pen_size: Kích thước bút
+  upload_image: Tải lên hình ảnh
+summarize:
+  additional_context: Ngữ cảnh bổ sung
+  additional_context_placeholder: Có thể nhập các điểm bổ sung muốn xem xét (như tính thân mật, v.v.)
+  enter_text: Vui lòng nhập
+  result_placeholder: Văn bản được tóm tắt sẽ được hiển thị ở đây
+  text_to_summarize: Văn bản muốn tóm tắt
+  title: Tóm tắt
+transcribe:
+  detailed_parameters: Tham số chi tiết
+  direct_input: Nhập trực tiếp
+  direct_input_instruction: Vui lòng nhập trực tiếp nội dung nguồn cho biên bản cuộc họp vào vùng "Bản chuyển đổi" bên dưới
+  direct_input_placeholder: Vui lòng nhập nội dung nguồn cho biên bản cuộc họp tại đây...
+  file_upload: Tải lên tệp
+  max_speakers: Max Speakers
+  max_speakers_help: Số lượng người nói tối đa được nhận dạng
+  mic_input: Đầu vào microphone
+  result_placeholder: Kết quả nhận dạng giọng nói sẽ được hiển thị ở đây
+  screen_audio: Âm thanh màn hình
+  screen_audio_error: Lỗi âm thanh màn hình
+  screen_audio_notice: 'Đối với Windows: Chọn tab "Toàn bộ màn hình" và bật "Chia sẻ âm thanh hệ thống".<br/>Đối với Mac: Chọn "Chrome Tab" và bật "Also share tab audio".<br/>Chrome và Edge hoạt động. Firefox không hoạt động.'
+  select_input_method: Vui lòng chọn từ đầu vào microphone hoặc tải lên tệp
+  speaker_names: Tên người nói (phân cách bằng dấu phẩy)
+  speaker_recognition: Nhận dạng người nói
+  start_recording: Bắt đầu ghi âm
+  stop_recording: Dừng ghi âm
+  supported_files: 'Có thể sử dụng các tệp mp3, mp4, wav, flac, ogg, amr, webm, m4a'
+  title: Nhận dạng giọng nói
+translate:
+  additional_context: Ngữ cảnh bổ sung
+  additional_context_placeholder: Có thể nhập các điểm bổ sung muốn xem xét (như tính thân mật, v.v.)
+  auto_detect_language: Tự động phát hiện ngôn ngữ
+  auto_translate: Dịch tự động
+  contextHelp: Thông tin ngữ cảnh giúp cải thiện độ chính xác dịch thuật bằng cách cung cấp thông tin nền về cuộc họp.
+  continue_output: Xuất tiếp tục
+  enter_text: Vui lòng nhập
+  model: Mô hình dịch thời gian thực
+  realtimeTranslation: Dịch thời gian thực
+  result_placeholder: Kết quả dịch thuật sẽ được hiển thị ở đây
+  systemGeneratedContext: Ngữ cảnh được tạo bởi hệ thống
+  systemGeneratedContextPlaceholder: Ngữ cảnh được tạo tự động dựa trên nội dung cuộc họp
+  target_language: Ngôn ngữ dịch thời gian thực
+  text_to_translate: Văn bản muốn dịch
+  title: Dịch thuật
+  translating: Đang dịch...
+  translation: Bản dịch
+  userDefinedContext: Ngữ cảnh do người dùng định nghĩa
+  userDefinedContextPlaceholder: 'Nhập ngữ cảnh để cải thiện độ chính xác dịch thuật (ví dụ: chủ đề cuộc họp, thuật ngữ chuyên môn, v.v.)'
+useCaseBuilder:
+  accessError: Lỗi truy cập
+  addInputExample: Thêm ví dụ đầu vào
+  attach_file: Đính kèm tệp
+  blog:
+    generate_article: Tạo bài viết blog
+    generate_article_context: >-
+      Vui lòng tạo bài viết blog giải thích cơ chế của Generative AI và lợi ích của việc sử dụng Generative AI trên AWS. Khi tạo bài viết, hãy nhất định tuân thủ <rules></rules>.
+      <rules>
+      - Vui lòng viết theo định dạng markdown với cấu trúc chương.
+      - Hãy viết bài viết hướng đến người mới bắt đầu với Generative AI và AWS.
+      - Không sử dụng các thuật ngữ mà người mới bắt đầu IT không hiểu hoặc thay thế bằng từ ngữ dễ hiểu.
+      - Hãy viết bài viết để người đọc hiểu được Generative AI có thể làm gì.
+      - Vì lượng văn bản ít sẽ khiến người đọc không hài lòng, hãy tăng lượng văn bản bằng cách bổ sung thông tin chung.
+      - Hãy viết văn bản thu hút sự quan tâm của người đọc.
+      </rules>
+    generate_article_description: Tự động tạo bài viết blog dựa trên thông tin tham khảo. Bằng cách thiết lập ngữ cảnh chi tiết, dễ dàng tạo ra bài viết theo ý định của bạn.
+    generate_thumbnail: Tạo hình ảnh thumbnail cho bài viết blog
+    generate_thumbnail_content: >-
+      Vui lòng tạo hình ảnh thumbnail cho OGP của bài viết blog. Hãy tạo hình ảnh mà người ta có thể nhận ra ngay đây là bài viết về cloud hoặc AI.
+      Tóm tắt bài viết blog được thiết lập trong <article></article>.
+      <article>
+      {{summarizedSentence}}
+      </article>
+    generate_thumbnail_description: Tạo thumbnail cho OGP (bản xem trước bài viết hiển thị khi chia sẻ liên kết bài viết). Bằng cách thiết lập thumbnail hấp dẫn cho OGP, có thể thu hút sự quan tâm của người đọc.
+    reference_info: Thông tin tham khảo
+    reference_info_context: Vui lòng chỉ trích xuất phần giải thích tổng quan về Generative AI, phần giải thích cơ chế và phần giải thích về AWS.
+    reference_info_description: >-
+      Tự động lấy thông tin tham khảo cho bài viết bằng cách chỉ định URL.
+      Bằng cách thiết lập ngữ cảnh bổ sung, có thể trích xuất chỉ thông tin mong muốn.
+    summarize_article: Tóm tắt
+    summarize_article_description: Tóm tắt bài viết cho OGP (bản xem trước bài viết hiển thị khi chia sẻ liên kết bài viết). Bằng cách thiết lập OGP phù hợp, có thể truyền đạt đúng tóm tắt bài viết khi bài viết được chia sẻ.
+  builderMode: Chế độ builder
+  cancel: Hủy
+  create: Tạo
+  createDescription: Tạo trường hợp sử dụng. Vui lòng kiểm tra hoạt động trong preview trước khi tạo. Có thể chỉnh sửa sau khi tạo.
+  createErrorCondition: Không đáp ứng điều kiện để tạo trường hợp sử dụng có thể tạo. Vui lòng đáp ứng tất cả các điều kiện sau.
+  createNew: Tạo mới
+  creating: Đang tạo...
+  delete: Xóa
+  deleteConfirmation: có xóa không?
+  deleteDescription: Xóa trường hợp sử dụng. Nếu đang được chia sẻ, người dùng khác cũng sẽ không thể truy cập.
+  deleteSharedWarning: Trường hợp sử dụng này đang được chia sẻ. Nếu xóa, tất cả người dùng sẽ không thể sử dụng trường hợp sử dụng này.
+  deleteUseCaseTitle: Xóa trường hợp sử dụng của tôi
+  deleting: Đang xóa...
+  description: Mô tả
+  edit: Chỉnh sửa trường hợp sử dụng
+  enterPromptTemplate: Vui lòng nhập template prompt
+  enterTitle: Vui lòng nhập tiêu đề
+  error:
+    duplicate_select_options: '{{select:{{label}}}} chứa tùy chọn trùng lặp.'
+    empty_select_options: '{{select:{{label}}}} chứa tùy chọn trống.'
+    missing_kb_text_form: >-
+      Vui lòng mô tả form {{text{{label}}}}
+      để nhập truy vấn tìm kiếm Knowledge Base trong template prompt.
+    missing_select_options: '{{select}} không có tùy chọn được thiết lập. Vui lòng thiết lập như {{select:nhãn:tùy chọn1,tùy chọn2}}'
+    missing_text_form: 'Vui lòng mô tả form {{text{{label}}}} để nhập truy vấn tìm kiếm Amazon Kendra trong template prompt.'
+    rag_kendra_not_enabled: >-
+      {{retrieveKendra}} được chỉ định trong template prompt nhưng RAG chat (Amazon
+      Kendra) không được bật trong GenU.。
+    rag_knowledge_base_not_enabled: >-
+      {{retrieveKnowledgeBase}} được chỉ định trong template prompt nhưng RAG chat
+      (Knowledge Base) không được bật trong GenU.
+  favorites: Yêu thích
+  fileUploadDescription: Tệp có thể đính kèm khác nhau tùy theo mô hình
+  fileUploadDisabled: Không thể đính kèm tệp
+  fileUploadEnabled: Có thể đính kèm tệp
+  help:
+    emailReplyExample: Ví dụ trả lời email
+    emailReplyPrompt: |-
+      Bạn là người phụ trách trả lời email.
+      Vui lòng tạo email trả lời tuân thủ các quy tắc sau.
+      <rules>
+      - Đây là email gửi cho đối tác kinh doanh. Cần sử dụng kính ngữ nhưng vì đã xây dựng được mối quan hệ nên không cần văn phong quá trang trọng.
+      - Hiểu nội dung email cần trả lời và tạo email trả lời phù hợp với nội dung trả lời.
+      - Tuyệt đối không đưa vào email những điều không thể đọc được từ email cần trả lời và nội dung trả lời.
+      </rules>
+      <replymail>
+      {{text:Nội dung email cần trả lời}}
+      </replymail>
+      <content>
+      {{text:Nội dung trả lời}}
+      </content>
+    example: Ví dụ
+    formPlaceholderDescription: >-
+      {{form}} là placeholder để định nghĩa form đầu vào. Viết như {{form}} hoặc {{form:nhãn}}.
+      {{form}} tạo form nhận đầu vào văn bản nhưng không nhúng đầu vào vào template prompt.
+      Sử dụng trong trường hợp "muốn truy vấn nguồn dữ liệu bằng RAG v.v. nhưng không muốn nhúng chính nội dung truy vấn vào prompt".
+    formPlaceholderExample:
+      prompt: |-
+        Bạn là AI assistant tạo quiz dựa trên thông tin được cung cấp.
+
+        {{form:Tìm kiếm thông tin làm cơ sở cho quiz}}
+
+        Vui lòng đọc thông tin sau và tạo quiz 4 lựa chọn.
+        Hãy cho biết đáp án đúng.
+
+        <information>
+        {{retrieveKendra:Tìm kiếm thông tin làm cơ sở cho quiz}}
+        </information>
+      title: Tạo quiz
+    placeholder: Placeholder
+    placeholderDescription: >-
+      Placeholder được viết như {{loại đầu vào:nhãn}}.
+      Vì nhãn trở thành định danh, placeholder có cùng nhãn được coi là cùng đầu vào.
+      Có thể viết {{loại đầu vào}} bằng cách bỏ qua nhãn. Trong trường hợp đó, placeholder không có nhãn được coi là cùng đầu vào.
+      Prompt thực tế được thực thi có thể kiểm tra từ lịch sử hội thoại của GenU.
+    placeholderList: Danh sách placeholder
+    promptTemplateDescription: >-
+      Giống như "mẫu" để đưa ra hướng dẫn cho Generative AI.
+      Có thể chuẩn bị sẵn định dạng văn bản hướng dẫn tùy theo mục đích.
+      Trong template prompt có thể định nghĩa placeholder
+      để nhúng văn bản khi thực thi.
+    promptTemplateTitle: Template prompt là gì?
+    retrieveKendraDescription: >-
+      {{retrieveKendra}} nhúng kết quả retrieve từ Amazon Kendra vào template prompt.
+      Viết như {{retrieveKendra}} hoặc {{retrieveKendra:nhãn}}.
+      {{retrieveKendra}} cần placeholder riêng ({{text}}) để nhập truy vấn tìm kiếm.
+      Chúng phải có cùng nhãn. 
+      Để sử dụng chức năng này, RAG chat (Amazon Kendra) phải được bật trong GenU.
+      Nếu chưa được bật, vui lòng liên hệ với quản trị viên.
+    retrieveKendraExample:
+      prompt: |-
+        Bạn là AI assistant trả lời câu hỏi của người dùng.
+        Vui lòng đọc thông tin sau.
+
+        <information>
+        {{retrieveKendra:Câu hỏi}}
+        </information>
+
+        Dựa trên thông tin trên, vui lòng trả lời câu hỏi sau.
+
+        <questions>
+        {{text:Câu hỏi}}
+        </questions>
+      title: RAG đơn giản
+    retrieveKnowledgeBaseDescription: >-
+      {{retrieveKnowledgeBase}} nhúng kết quả retrieve từ Knowledge Base vào template prompt.
+      Viết như {{retrieveKnowledgeBase}} hoặc {{retrieveKnowledgeBase:nhãn}}.
+      {{retrieveKnowledgeBase}} cần placeholder riêng ({{text}}) để nhập truy vấn tìm kiếm.
+      Chúng phải có cùng nhãn. 
+      Để sử dụng chức năng này, RAG chat (Knowledge Base) phải được bật trong GenU.
+      Nếu chưa được bật, vui lòng liên hệ với quản trị viên.
+    retrieveKnowledgeBaseExample:
+      prompt: |-
+        Bạn là AI assistant trả lời câu hỏi của người dùng.
+        Vui lòng đọc thông tin sau.
+
+        <information>
+        {{retrieveKnowledgeBase:Câu hỏi}}
+        </information>
+
+        Dựa trên thông tin trên, vui lòng trả lời câu hỏi sau.
+
+        <questions>
+        {{text:Câu hỏi}}
+        </questions>
+      title: RAG đơn giản
+    selectPlaceholderDescription: >-
+      {{select}} là placeholder để định nghĩa selectbox.
+      {{select}} không thể bỏ qua nhãn và tùy chọn.
+      Phải viết như {{select:nhãn:lựa chọn1,lựa chọn2}}.
+      Lựa chọn được định nghĩa phân cách bằng dấu phẩy. Nếu không muốn hiển thị nhãn, sử dụng nhãn trống như {{select::lựa chọn1,lựa chọn2}}. (Nhãn trống khác với không có nhãn.)
+    selectPlaceholderExample:
+      prompt: |-
+        Bạn là chuyên gia am hiểu về dịch vụ AWS.
+
+        Vui lòng trả lời câu hỏi về dịch vụ sau.
+        {{select:Dịch vụ AWS:Amazon Bedrock,Amazon S3,AWS Lambda}}
+
+        Câu hỏi như sau.
+        {{text:Câu hỏi}}
+      title: Câu hỏi về dịch vụ AWS
+    textPlaceholderDescription: >-
+      {{text}} là placeholder cơ bản nhất.
+      Viết như {{text}} hoặc {{text:nhãn}}.
+      {{text}} tạo form nhận đầu vào văn bản và nhúng giá trị đã nhập nguyên trạng vào template prompt.
+  helpTitle: Trợ giúp
+  inputExamples: Ví dụ đầu vào
+  loadMore: Tải thêm
+  mainMenu: Menu chính
+  meeting:
+    create_minutes: Tạo biên bản cuộc họp
+    create_minutes_context: >-
+      Vui lòng tạo biên bản định dạng markdown dựa trên nội dung phát biểu trong cuộc họp.
+      Hãy tạo chương theo từng chủ đề đã thảo luận trong cuộc họp và tóm tắt nội dung thảo luận, quyết định, công việc cần làm.
+    create_minutes_description: Sử dụng chức năng "Tạo văn bản" để tạo biên bản. Bằng cách chỉ định ngữ cảnh chi tiết, có thể hướng dẫn định dạng biên bản và mức độ chi tiết ghi chép.
+    formatting: Định dạng biên bản cuộc họp
+    formatting_context: >-
+      Kết quả chuyển đổi giọng nói thành văn bản của dữ liệu ghi âm đã được nhập, vui lòng định dạng theo <rules></rules>.
+      <rules>
+      - Vui lòng loại bỏ các từ thừa (như "ờm", "à", "thì").
+      - Hãy viết lại nội dung có vẻ như là lỗi nhận dạng của chuyển đổi giọng nói thành văn bản thành nội dung đúng.
+      - Nếu liên từ v.v. bị bỏ qua, hãy bổ sung để dễ đọc.
+      - Hỏi đáp cũng không bỏ qua mà ghi chép.
+      </rules>
+    formatting_description: Sử dụng chức năng "Tạo văn bản" để định dạng tệp chuyển đổi giọng nói thành văn bản. Loại bỏ những từ hoặc cụm từ không mang ý nghĩa chính xác và sửa chữa các phần nhận dạng giọng nói không chính xác để con người dễ hiểu.
+    transcription: Chuyển đổi giọng nói thành văn bản
+    transcription_description: >-
+      Sử dụng chức năng "Nhận dạng giọng nói" để chuyển đổi nội dung hội thoại thành văn bản từ dữ liệu ghi âm. Vui lòng thực hiện với tệp âm thanh tùy ý.
+      Khi hoàn thành nhận dạng giọng nói, hãy nhấn nút "Định dạng" (kết quả nhận dạng giọng nói sẽ được sao chép tự động).
+  menuCreate: Tạo
+  menuDelete: Xóa
+  menuFileAttachment: Đính kèm tệp
+  menuInputExamples: Ví dụ đầu vào
+  menuModelSelection: Lựa chọn mô hình
+  menuUpdate: Cập nhật
+  menuUseCaseDefinition: Định nghĩa trường hợp sử dụng
+  modelFixed: Mô hình đã được cố định.
+  modelFixedDescription: UI lựa chọn mô hình không hiển thị nên người dùng có thể sử dụng trường hợp sử dụng mà không cần ý thức về sự tồn tại của AI tạo sinh
+  modelNotFixed: Mô hình chưa được cố định.
+  modelNotFixedDescription: UI lựa chọn mô hình được hiển thị và người dùng có thể tự do lựa chọn mô hình.
+  myUseCases: Trường hợp sử dụng của tôi
+  noMyUseCases: Không có trường hợp sử dụng của tôi.
+  noUpdateContent: Không có nội dung cập nhật
+  noUserInput: Trường hợp sử dụng không nhận đầu vào từ người dùng. Vui lòng thêm placeholder vào template prompt hoặc bật đính kèm tệp.
+  notExistOrNotShared: Trường hợp sử dụng này không tồn tại hoặc là trường hợp sử dụng không được chia sẻ.
+  notSharedDescription: Trường hợp sử dụng này không được chia sẻ nên chỉ bạn mới có thể sử dụng.
+  ok: OK
+  preview: Xem trước
+  private: Riêng tư
+  promptTemplate: Template prompt
+  promptTemplateHint: >-
+    Không thể tạo trường hợp sử dụng không nhận đầu vào từ người dùng.Vui lòng định nghĩa Placeholder trong template prompt hoặc 
+    bật đính kèm tệp.
+  promptTemplatePlaceholder: Về cách viết template prompt, vui lòng xem "Trợ giúp" hoặc "Bộ sưu tập mẫu".
+  recentlyUsed: Lịch sử sử dụng
+  resultPlaceholder: Kết quả sẽ được hiển thị ở đây
+  returnToTop: Quay về màn hình TOP
+  samples: Bộ sưu tập mẫu
+  share: Chia sẻ
+  shareUrlDescription: Bằng cách truy cập URL chia sẻ này, người dùng khác cũng có thể sử dụng trường hợp sử dụng này.
+  shared: Được chia sẻ
+  sharedDescription: Trường hợp sử dụng này có thể được sử dụng bởi tất cả người dùng có thể đăng nhập vào ứng dụng này.
+  title: Tiêu đề
+  untitled: Không có tiêu đề
+  untitledUseCase: Trường hợp sử dụng không có tiêu đề
+  update: Cập nhật
+  updateDescription: Cập nhật trường hợp sử dụng. Nếu trường hợp sử dụng được chia sẻ và người dùng khác cũng đang sử dụng, nội dung đó cũng sẽ được cập nhật.
+  updateErrorCondition: Để cập nhật, vui lòng đáp ứng tất cả các điều kiện sau.
+  updating: Đang cập nhật...
+video:
+  aspectRatio: Tỷ lệ khung hình
+  clear: Xóa
+  dimension: Kích thước màn hình
+  duration: Độ dài video (giây)
+  error:
+    empty_prompt: Vui lòng nhập prompt
+    invalid_parameters: Tham số không hợp lệ
+    model_not_selected: Mô hình chưa được chọn
+  fps: FPS
+  generate: Tạo
+  generation:
+    failed: Tạo video thất bại ({{error}})
+    started: Đã bắt đầu công việc tạo video. Không có vấn đề gì nếu rời khỏi trang trong quá trình tạo.
+  job:
+    delete_confirm: Bạn có chắc chắn muốn xóa công việc này không?
+    delete_failed: Xóa công việc thất bại
+    delete_success: Công việc đã được xóa
+    list: Danh sách công việc
+    no_jobs: Không có công việc tạo
+  load:
+    more: Tải thêm
+  loading: Đang tải...
+  loop: Lặp lại
+  model: Mô hình
+  no_preview: Không có bản xem trước
+  press:
+    play: Vui lòng nhấn nút phát
+  preview_loading: Đang tải bản xem trước...
+  prompt:
+    display: Prompt sẽ được hiển thị ở đây
+    placeholder: Kids are playing with many balls
+    title: Prompt
+  resolution: Độ phân giải
+  seed:
+    help: Giá trị seed của số ngẫu nhiên. Chỉ định cùng giá trị seed sẽ tạo ra cùng video.
+    title: Giá trị seed
+  status:
+    completed: Hoàn thành
+    failed: Thất bại
+    finalizing: Đang kết thúc
+    inprogress: Đang xử lý
+  supportedExtensions: 'Phần mở rộng được hỗ trợ: {{acceptedExtensions}}'
+  supportedImageDimensions: 'Kích thước hình ảnh được hỗ trợ: {{supportedDimensions}}'
+  table:
+    date: Ngày giờ
+    delete: Xóa
+    download: Tải xuống
+    model: Mô hình
+    play: Phát
+    prompt: Prompt
+    status: Trạng thái
+  taskType: Loại nhiệm vụ
+  upload: Tải lên
+  uploadImage: Tải lên hình ảnh
+  uploadImageHelp: Có thể chỉ định hình ảnh được sử dụng cho khung đầu tiên của video
+videoAnalyzer:
+  camera: Camera
+  clear: Xóa
+  errors:
+    cameraAccessFailed: 'Không thể truy cập webcam:'
+  label: Phân tích video gần thời gian thực
+  model: Mô hình
+  start: Bắt đầu
+  stop: Dừng
+  title: Phân tích video
+voiceChat:
+  close: Kết thúc Phiên
+  default_system_prompt: You are an AI assistant.
+  im_listening: Hãy phát biểu
+  start: Bắt đầu phiên
+  title: Voice Chat
+webcontent:
+  additional_context: Ngữ cảnh bổ sung
+  additional_context_placeholder: 'Có thể nhập các điểm bổ sung muốn xem xét (ví dụ: tóm tắt)'
+  enter_url: Vui lòng nhập URL
+  error_message: >-
+    Xảy ra lỗi khi truy cập URL được chỉ định. Có thể scraping bị cấm hoặc URL
+    sai. Nếu có vẻ là vấn đề tạm thời, vui lòng thực hiện lại.
+  fetched: Đã lấy
+  instruction: Vui lòng chỉ định trang web có nội dung chính là văn bản như blog, bài viết, tài liệu. Nếu không, có thể không xuất ra bình thường.
+  loading: Đang tải...
+  not_fetched: Chưa lấy
+  not_fetched_instruction: Chưa lấy. Vui lòng nhập URL và nhấn nút thực thi.
+  original_text: 'Văn bản trước khi trích xuất ({{status}})'
+  result_placeholder: Văn bản được trích xuất sẽ được hiển thị ở đây
+  title: Trích xuất nội dung Web
+  website_to_extract: Trang web muốn trích xuất nội dung
+writer:
+  ai:
+    ask_ai: Hỏi AI
+    continue_instruct: Tiếp tục hướng dẫn AI
+    discard: Loại bỏ
+    edit_selection: Chỉnh sửa vùng được chọn
+    error: Đã xảy ra lỗi
+    generate: Tạo
+    insert_below: Chèn dưới vùng được chọn
+    instruct_ai: Hướng dẫn AI
+    options:
+      collect_data: Điều tra và bổ sung dữ liệu chứng minh
+      continue: Xuất tiếp tục
+      fact_check: Kiểm tra sự thật
+      fix: Hiệu đính
+      improve: Cải thiện
+      longer: Làm dài hơn
+      search: Tìm kiếm và viết...
+      shorter: Làm ngắn hơn
+    replace_selection: Thay thế vùng được chọn
+    search_instruct: Hướng dẫn AI tìm kiếm
+    thinking: Đang suy nghĩ
+    trace: Theo dõi
+    use_search_engine: Sử dụng công cụ tìm kiếm
+  amazonBedrockDescription: >-
+    Amazon Bedrock là dịch vụ quản lý hoàn toàn, cung cấp khả năng lựa chọn các mô hình nền tảng (FM) hiệu suất cao từ các công ty AI hàng đầu như AI21 Labs, Anthropic, Cohere, Meta, Stability
+    AI, Amazon thông qua API duy nhất, và cung cấp các chức năng rộng rãi cần thiết để xây dựng ứng dụng AI tạo sinh với bảo mật, quyền riêng tư và AI có trách nhiệm.
+  appearance: Giao diện
+  autoCompleteDescription: >-
+    Có thể đưa ra hướng dẫn cho AI đối với văn bản được chọn. Ví dụ như các thao tác "cải thiện" "hiệu đính" "làm ngắn" "làm dài" hoặc cũng có thể nhập hướng dẫn tùy chỉnh.
+  autoCompleteFeature: Chức năng tự động hoàn thành AI
+  background: Màu nền
+  characters: Ký tự
+  clear: Xóa
+  clear_comments: Xóa bình luận
+  clear_success: Đã xóa editor
+  color: Màu chữ
+  colors:
+    blue: Xanh dương
+    default: Mặc định
+    gray: Xám
+    green: Xanh lá
+    orange: Cam
+    pink: Hồng
+    purple: Tím
+    red: Đỏ
+    yellow: Vàng
+  dark: Tối
+  description: Công cụ hỗ trợ viết, cải thiện và hiệu đính văn bản. Có thể viết hiệu quả với sự hỗ trợ của AI.
+  example1: 'Ví dụ, có thể cho AI xuất tiếp tục của văn bản này:'
+  example2: 'Ngoài ra, cũng có thể kiểm tra sự thật trong văn bản. Hãy thử chọn văn bản sau và chọn "Kiểm tra sự thật":'
+  factCheckExample: Barack Obama là tổng thống thứ 43 của Hoa Kỳ. Ông đã làm tổng thống từ 2001 đến 2009.
+  incorrectTextExample: Tôi đã đi đến Nhật Bản. Tokyo là thành phố rất đẹp.
+  light: Sáng
+  link: Liên kết
+  no_issues: Không tìm thấy vấn đề
+  no_results: Không có kết quả
+  paste_link: Dán liên kết
+  replace: Thay thế
+  review: Hiệu đính
+  reviewDescription: Có thể thực hiện hiệu đính toàn bộ tài liệu. Phát hiện lỗi chính tả và lỗi ngữ pháp, đề xuất phương án sửa chữa.
+  reviewFeature: Chức năng hiệu đính
+  saved: Đã lưu
+  saving: Đang lưu
+  system: Hệ thống
+  textEditorDescription: >-
+    Editor này có thể được sử dụng như editor văn bản thông thường. Hỗ trợ các định dạng cơ bản như in đậm, in nghiêng, danh sách, tiêu đề. Ngoài ra, số ký tự đang viết cũng được hiển thị.
+  title: Viết văn
+  tutorial: Hướng dẫn
+  tutorial_success: Đã tải hướng dẫn
+  useAsTextEditor: Sử dụng như editor văn bản

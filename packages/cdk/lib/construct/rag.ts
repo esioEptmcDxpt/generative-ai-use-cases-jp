@@ -17,7 +17,8 @@ import {
   RestApi,
 } from 'aws-cdk-lib/aws-apigateway';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Runtime } from 'aws-cdk-lib/aws-lambda';
+import { LAMBDA_RUNTIME_NODEJS } from '../../consts';
+import { ISecurityGroup, IVpc } from 'aws-cdk-lib/aws-ec2';
 
 const KENDRA_STATE_CFN_PARAMETER_NAME = 'kendraState';
 
@@ -34,6 +35,10 @@ export interface RagProps {
   // Resource
   readonly userPool: UserPool;
   readonly api: RestApi;
+
+  // Closed network
+  readonly vpc?: IVpc;
+  readonly securityGroups?: ISecurityGroup[];
 }
 
 export interface IndexScheduleCron {
@@ -181,7 +186,14 @@ export class Rag extends Construct {
         sources: [s3Deploy.Source.asset('./rag-docs')],
         destinationBucket: dataSourceBucket,
         // There is a possibility that access logs are left in the same Bucket in the previous configuration, so this setting is left
-        exclude: ['AccessLogs/*', 'logs*', 'docs/bedrock-ug.pdf.metadata.json'],
+        exclude: [
+          'AccessLogs/*',
+          'logs*',
+          'docs/bedrock-ug.pdf.metadata.json',
+          'docs/nova-ug.pdf.metadata.json',
+        ],
+        prune: false,
+        memoryLimit: 1024,
       });
 
       let index: kendra.CfnIndex;
@@ -497,7 +509,7 @@ export class Rag extends Construct {
     // Add RAG related APIs
     // Lambda
     const queryFunction = new NodejsFunction(this, 'Query', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: LAMBDA_RUNTIME_NODEJS,
       entry: './lambda/queryKendra.ts',
       timeout: Duration.minutes(15),
       bundling: {
@@ -508,6 +520,8 @@ export class Rag extends Construct {
         INDEX_ID: kendraIndexId,
         LANGUAGE: kendraIndexLanguage,
       },
+      vpc: props.vpc,
+      securityGroups: props.securityGroups,
     });
     queryFunction.role?.addToPrincipalPolicy(
       new iam.PolicyStatement({
@@ -518,7 +532,7 @@ export class Rag extends Construct {
     );
 
     const retrieveFunction = new NodejsFunction(this, 'Retrieve', {
-      runtime: Runtime.NODEJS_LATEST,
+      runtime: LAMBDA_RUNTIME_NODEJS,
       entry: './lambda/retrieveKendra.ts',
       timeout: Duration.minutes(15),
       bundling: {
@@ -529,6 +543,8 @@ export class Rag extends Construct {
         INDEX_ID: kendraIndexId,
         LANGUAGE: kendraIndexLanguage,
       },
+      vpc: props.vpc,
+      securityGroups: props.securityGroups,
     });
     retrieveFunction.role?.addToPrincipalPolicy(
       new iam.PolicyStatement({

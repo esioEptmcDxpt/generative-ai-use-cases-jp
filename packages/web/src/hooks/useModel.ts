@@ -1,5 +1,8 @@
 import { Model, ModelConfiguration } from 'generative-ai-use-cases';
-import { modelFeatureFlags } from '@generative-ai-use-cases/common';
+import {
+  CRI_PREFIX_PATTERN,
+  modelMetadata,
+} from '@generative-ai-use-cases/common';
 
 const modelRegion = import.meta.env.VITE_APP_MODEL_REGION;
 
@@ -15,20 +18,31 @@ const bedrockModelConfigs = (
 const bedrockModelIds: string[] = bedrockModelConfigs.map(
   (model) => model.modelId
 );
+const lightModelIds: string[] = bedrockModelConfigs
+  .filter((model) => modelMetadata[model.modelId].flags.light)
+  .map((model) => model.modelId);
 const modelIdsInModelRegion: string[] = bedrockModelConfigs
   .filter((model) => model.region === modelRegion)
   .map((model) => model.modelId);
-
+const duplicateBaseModelIds = new Set(
+  bedrockModelIds
+    .map((modelId) => modelId.replace(CRI_PREFIX_PATTERN, ''))
+    .filter((item, index, arr) => arr.indexOf(item) !== index)
+);
 const visionModelIds: string[] = bedrockModelIds.filter(
-  (modelId) => modelFeatureFlags[modelId].image
+  (modelId) => modelMetadata[modelId].flags.image
 );
 const visionEnabled: boolean = visionModelIds.length > 0;
 
-const endpointNames: string[] = JSON.parse(
-  import.meta.env.VITE_APP_ENDPOINT_NAMES
+const endpointConfigs: ModelConfiguration[] = (
+  JSON.parse(import.meta.env.VITE_APP_ENDPOINT_NAMES) as ModelConfiguration[]
 )
-  .map((name: string) => name.trim())
-  .filter((name: string) => name);
+  .map((model) => ({
+    modelId: model.modelId.trim(),
+    region: model.region.trim(),
+  }))
+  .filter((model) => model.modelId);
+const endpointNames = endpointConfigs.map((model) => model.modelId);
 
 const imageModelConfigs = (
   JSON.parse(import.meta.env.VITE_APP_IMAGE_MODEL_IDS) as ModelConfiguration[]
@@ -57,6 +71,21 @@ const videoModelConfigs = (
 const videoGenModelIds: string[] = videoModelConfigs.map(
   (model) => model.modelId
 );
+const speechToSpeechModelConfigs = (
+  JSON.parse(
+    import.meta.env.VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS
+  ) as ModelConfiguration[]
+)
+  .map(
+    (model: ModelConfiguration): ModelConfiguration => ({
+      modelId: model.modelId.trim(),
+      region: model.region.trim(),
+    })
+  )
+  .filter((model) => model.modelId);
+const speechToSpeechModelIds: string[] = speechToSpeechModelConfigs.map(
+  (model) => model.modelId
+);
 
 const agentNames: string[] = JSON.parse(import.meta.env.VITE_APP_AGENT_NAMES)
   .map((name: string) => name.trim())
@@ -82,8 +111,13 @@ const textModels = [
         region: model.region,
       }) as Model
   ),
-  ...endpointNames.map(
-    (name) => ({ modelId: name, type: 'sagemaker' }) as Model
+  ...endpointConfigs.map(
+    (model) =>
+      ({
+        modelId: model.modelId,
+        type: 'sagemaker',
+        region: model.region,
+      }) as Model
   ),
 ];
 const imageGenModels = [
@@ -98,6 +132,16 @@ const imageGenModels = [
 ];
 const videoGenModels = [
   ...videoModelConfigs.map(
+    (model) =>
+      ({
+        modelId: model.modelId,
+        type: 'bedrock',
+        region: model.region,
+      }) as Model
+  ),
+];
+const speechToSpeechModels = [
+  ...speechToSpeechModelConfigs.map(
     (model) =>
       ({
         modelId: model.modelId,
@@ -130,11 +174,38 @@ export const findModelByModelId = (modelId: string) => {
 
 const searchAgent = agentNames.find((name) => name.includes('Search'));
 
+const modelDisplayName = (modelId: string): string => {
+  // If there are multiple instances of the same model, add CRI suffix to the display name
+  let displayName = modelMetadata[modelId]?.displayName ?? modelId;
+  if (duplicateBaseModelIds.has(modelId.replace(CRI_PREFIX_PATTERN, ''))) {
+    const criMatch = modelId.match(CRI_PREFIX_PATTERN);
+    if (criMatch) {
+      displayName += ` (${criMatch[1].toUpperCase()})`;
+    }
+  }
+  return displayName;
+};
+
+const getModelMetadata = (modelId: string) => {
+  const model = modelMetadata[modelId];
+  if (!model) {
+    return {
+      displayName: modelId,
+      flags: {},
+    };
+  }
+  return model;
+};
+
 export const MODELS = {
   modelRegion: modelRegion,
-  modelIds: [...bedrockModelIds, ...endpointNames],
+  modelIds: bedrockModelIds,
+  allModelIds: [...bedrockModelIds, ...endpointNames],
   modelIdsInModelRegion,
-  modelFeatureFlags: modelFeatureFlags,
+  modelMetadata,
+  getModelMetadata,
+  modelDisplayName,
+  lightModelIds,
   visionModelIds: visionModelIds,
   visionEnabled: visionEnabled,
   imageGenModelIds: imageGenModelIds,
@@ -148,4 +219,6 @@ export const MODELS = {
   searchAgent: searchAgent,
   flows,
   flowChatEnabled: flows.length > 0,
+  speechToSpeechModelIds: speechToSpeechModelIds,
+  speechToSpeechModels: speechToSpeechModels,
 };

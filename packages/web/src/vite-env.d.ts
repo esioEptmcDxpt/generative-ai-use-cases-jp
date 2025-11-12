@@ -27,6 +27,16 @@ interface ImportMetaEnv {
   readonly VITE_APP_USE_CASE_BUILDER_ENABLED: string;
   readonly VITE_APP_OPTIMIZE_PROMPT_FUNCTION_ARN: string;
   readonly VITE_APP_HIDDEN_USE_CASES: string;
+  readonly VITE_APP_SPEECH_TO_SPEECH_NAMESPACE: string;
+  readonly VITE_APP_SPEECH_TO_SPEECH_EVENT_API_ENDPOINT: string;
+  readonly VITE_APP_SPEECH_TO_SPEECH_MODEL_IDS: string;
+  readonly VITE_APP_MCP_ENABLED: string;
+  readonly VITE_APP_MCP_ENDPOINT: string;
+  readonly VITE_APP_COGNITO_USER_POOL_PROXY_ENDPOINT: string;
+  readonly VITE_APP_COGNITO_IDENTITY_POOL_PROXY_ENDPOINT: string;
+  readonly VITE_APP_AGENT_CORE_ENABLED: string;
+  readonly VITE_APP_AGENT_CORE_GENERIC_RUNTIME: string;
+  readonly VITE_APP_AGENT_CORE_EXTERNAL_RUNTIMES: string;
 }
 
 interface ImportMeta {
