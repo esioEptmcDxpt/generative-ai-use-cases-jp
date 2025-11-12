@@ -585,7 +585,7 @@ rag:
   searchresult: 검색 결과
   speed: 속도형
   strong: 만능형
-  title: RAG 채팅
+  title: SIO-AI (AI 문서 검색 시스템)
   tr: <참고> 2025년 4월부터 명칭이 변경되었습니다. 구명칭： 전력 AI 채팅
 setting:
   ai_items:

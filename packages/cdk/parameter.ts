@@ -11,10 +11,7 @@ const getContext = (app: cdk.App): StackInput => {
   const params = stackInputSchema.parse(app.node.getAllContext());
   return params;
 };
-const speechToSpeechModelConfig = {
-  modelId: 'amazon.nova-sonic-v1:0',
-  region: 'ap-northeast-1'
-};
+
 // If you want to define parameters directly
 const envs: Record<string, Partial<StackInput>> = {
   // If you want to define an anonymous environment, uncomment the following and the content of cdk.json will be ignored.
@@ -55,7 +52,12 @@ const envs: Record<string, Partial<StackInput>> = {
       'amazon.titan-image-generator-v1',
     ],
     videoGenerationModelIds: ['luma.ray-v2:0'],
-    speechToSpeechModelIds: [speechToSpeechModelConfig],
+    speechToSpeechModelIds: [
+      {
+        modelId: 'amazon.nova-sonic-v1:0',
+        region: 'ap-northeast-1',
+      },
+    ],
     ragEnabled: true,
     kendraIndexArn:
       'arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe',
@@ -161,7 +163,12 @@ const envs: Record<string, Partial<StackInput>> = {
       'amazon.titan-image-generator-v1',
     ],
     videoGenerationModelIds: ['luma.ray-v2:0'],
-    speechToSpeechModelIds: [speechToSpeechModelConfig],
+    speechToSpeechModelIds: [
+      {
+        modelId: 'amazon.nova-sonic-v1:0',
+        region: 'ap-northeast-1',
+      },
+    ],
     ragEnabled: true,
     kendraIndexArn:
       'arn:aws:kendra:ap-northeast-1:326497581172:index/3ce313b7-4bfb-4257-8127-11db308dfdbe',

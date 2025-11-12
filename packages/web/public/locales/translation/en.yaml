@@ -868,7 +868,7 @@ rag:
   retrieving: Retrieving reference documents from Kendra...
   speed: Speed Type
   strong: Versatile Type
-  title: RAG Chat
+  title: SIO-AI (AI Document Search System)
   tr: <Reference> The name has been changed since April 2025. Previous name 「Power AI Chat」
 setting:
   ai_items:

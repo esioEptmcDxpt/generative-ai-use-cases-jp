@@ -605,7 +605,7 @@ rag:
   searchresult: 搜索结果
   speed: 速度型
   strong: 全能型
-  title: RAG聊天
+  title: SIO-AI (AI文档检索系统)
   tr: ＜参考＞自2025年4月起更改名称。原名称：电力AI聊天
 setting:
   ai_items:
@@ -692,7 +692,7 @@ useCaseBuilder:
   blog:
     generate_article: 创建博客文章
     generate_article_context: >-
-      请生成一篇解释生成式AI机制和在AWS上使用生成式AI优势的博客文章。生成文章时，请务必遵守<rules></rules>。 <rules> -
+      请生成一篇解释生成式AI机制和���AWS上使用生成式AI优势的博客文章。生成文章时，请务必遵守<rules></rules>。 <rules> -
       请使用markdown格式分章节编写。 - 请针对生成式AI和AWS初学者编写文章。 - 不要使用IT初学者不理解的术语，或将其替换为易懂的词语。
       - 请编写一篇能让读者了解生成式AI能做什么的文章。 - 由于文章内容太少会让读者不满意，请补充一般信息以增加文章量。 -
       请编写能吸引读者兴趣的文章。 </rules>
