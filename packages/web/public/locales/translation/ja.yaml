@@ -551,7 +551,7 @@ landing:
       description: >-
         画像生成 AI
         は、テキストや画像を元に新しい画像を生成できます。アイデアを即座に可視化することができ、デザイン作業などの効率化を期待できます。こちらの機能では、プロンプトの作成を
-        LLM に支援してもらうことが��きます。
+        LLM に支援してもらうことができます。
       title: 画像生成
     mcp_chat:
       description: >-
@@ -1055,7 +1055,7 @@ useCaseBuilder:
   menuModelSelection: モデル選択
   menuUpdate: 更新
   menuUseCaseDefinition: ユースケース定義
-  modelFixed: モデルが固定化されています。
+  modelFixed: モ��ルが固定化されています。
   modelFixedDescription: モデル選択の UI が表示されないため、ユーザーは生成 AI の存在を意識せずにユースケースを利用できます
   modelNotFixed: モデルは固定化されていません。
   modelNotFixedDescription: モデル選択の UI が表示され、ユーザーは自由にモデルを選択できます。
